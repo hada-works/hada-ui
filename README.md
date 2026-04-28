@@ -174,7 +174,7 @@ The codebase follows strict conventions so AI agents produce accurate, non-break
 
 ## 🏢 About Hada Works
 
-**Hada UI** is maintained by [Hada Works](https://github.com/hada-works) — a team of operators and engineers who build and run enterprise software at scale.
+**Hada UI** is maintained by [Hada](https://hada.works) — a team of operators and engineers who build and run enterprise software at scale.
 
 We build tools we actually use. Everything in this template has been validated in production environments handling real business complexity.
 
