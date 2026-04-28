@@ -14,24 +14,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { IssueStatusBadge } from "@/components/shared/StatusBadge"
 import { PriorityBadge } from "@/components/shared/PriorityBadge"
+import { IssueTypeBadge } from "@/components/shared/IssueTypeBadge"
 import { ISSUES, PROJECTS, CURRENT_USER } from "@/store/mock-data"
 import { IssueStatus, IssueType, Priority } from "@/types"
 import { cn } from "@/lib/utils"
-
-// Use badge variant strings — rendered via Badge component below
-const TYPE_VARIANT: Record<IssueType, "info" | "destructive" | "secondary" | "warning"> = {
-  task:    "info",
-  bug:     "destructive",
-  story:   "secondary",
-  subtask: "warning",
-}
-
-const TYPE_LABEL: Record<IssueType, string> = {
-  task:    "Task",
-  bug:     "Bug",
-  story:   "Story",
-  subtask: "Sub-task",
-}
 
 const ACTIVITY = [
   { type: "status",   actor: "Alex Nguyen",  detail: "changed status to In Progress", time: "1 day ago" },
@@ -214,9 +200,7 @@ export function IssueDetail() {
           <div className="mx-auto max-w-3xl px-8 py-8">
             {/* Title */}
             <div className="flex items-start gap-3 mb-4">
-              <Badge variant={TYPE_VARIANT[issue.type]} className="shrink-0 mt-0.5">
-                {TYPE_LABEL[issue.type]}
-              </Badge>
+              <IssueTypeBadge type={issue.type} className="shrink-0 mt-0.5" />
               <h1 className="text-xl font-semibold leading-snug">{issue.title}</h1>
             </div>
 
@@ -255,9 +239,7 @@ export function IssueDetail() {
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-muted/40 transition-colors"
                       onClick={() => navigate(`/issues/${parentIssue.id}`)}
                     >
-                      <Badge variant={TYPE_VARIANT[parentIssue.type]} className="shrink-0 text-[10px] h-4 px-1.5">
-                        {TYPE_LABEL[parentIssue.type]}
-                      </Badge>
+                      <IssueTypeBadge type={parentIssue.type} className="shrink-0" />
                       <span className="font-mono text-xs text-muted-foreground w-20 shrink-0">{parentIssue.identifier}</span>
                       <IssueStatusBadge status={parentIssue.status} />
                       <span className="text-xs truncate flex-1">{parentIssue.title}</span>

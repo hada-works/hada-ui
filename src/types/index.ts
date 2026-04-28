@@ -86,6 +86,70 @@ export interface Project {
   createdAt: string
 }
 
+// ─── Purchases / Bulk-buy ────────────────────────────────────────────────────
+
+export type RoleKey    = "MDM" | "SCM"
+export type StepStatus = "pending" | "approved" | "rejected" | "info_needed" | "skipped"
+export type OverallStatus = "pending_mdm" | "pending_scm" | "approved" | "rejected" | "info_needed" | "parallel"
+
+export interface ApprovalStep {
+  role:         RoleKey
+  status:       StepStatus
+  approvedBy?:  string
+  approvedAt?:  string
+  reasonGroup?: string
+  note?:        string
+}
+
+export interface BulkComment {
+  id:     string
+  author: string
+  role:   RoleKey | "Requester"
+  text:   string
+  time:   string
+}
+
+export interface BulkItem {
+  id:          string
+  sku:         string
+  productName: string
+  category:    string
+  supplier:    string
+  requestedBy: string
+  requestedAt: string
+  // Order
+  qtyOrdered:      number
+  unitPrice:       number
+  orderValue:      number
+  expectedArrival: string
+  // Inventory at request date
+  stockDC:         number
+  stockTotal:      number
+  // Deal window
+  dealStart: string
+  dealEnd:   string
+  // Velocity & promotion
+  projectedDailySales: number
+  promotion:           string
+  feasibilityNote:     string
+  // Sales benchmarks
+  avgSales28d:      number
+  avgSalesNonPromo: number
+  daysStockDC:      number
+  daysStockTotal:   number
+  // Derived / forecast
+  projectedStockAtArrival:  number
+  salesFcVsActualDiff:      number
+  projectedSellingDays:     number
+  projectedDCDaysPostDeal:  number
+  totalDaysPostPromo:       number
+  scmDeadline:              string
+  // Workflow
+  steps:    [ApprovalStep, ApprovalStep]
+  parallel: boolean
+  comments: BulkComment[]
+}
+
 export interface Issue {
   id: string
   identifier: string
