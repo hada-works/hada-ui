@@ -11,6 +11,8 @@ import { Projects } from "@/pages/Projects"
 import { NewProject } from "@/pages/NewProject"
 import { Members } from "@/pages/Members"
 import { BulkBuyApproval } from "@/pages/BulkBuyApproval"
+import { PurchasesDashboard } from "@/pages/PurchasesDashboard"
+import { PurchasesSettings } from "@/pages/PurchasesSettings"
 import { Analytics } from "@/pages/Analytics"
 import { Notifications } from "@/pages/Notifications"
 import { Settings } from "@/pages/Settings"
@@ -37,6 +39,8 @@ export default function App() {
             <Route path="/projects/:projectId/settings" element={<NewProject />} />
             {/* Purchases */}
             <Route path="/purchases/bulk-buy" element={<BulkBuyApproval />} />
+            <Route path="/purchases/dashboard" element={<PurchasesDashboard />} />
+            <Route path="/purchases/settings" element={<PurchasesSettings />} />
             {/* Secondary */}
             <Route path="/members" element={<Members />} />
             <Route path="/analytics" element={<Analytics />} />

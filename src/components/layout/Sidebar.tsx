@@ -5,7 +5,7 @@ import {
   Settings, ChevronsUpDown,
   Check, Building2, Users, BarChart3, Bell,
   ChevronRight, Plus, PanelLeftClose, PanelLeftOpen, MoreHorizontal,
-  ShoppingCart, ClipboardCheck,
+  ShoppingCart, ClipboardCheck, SlidersHorizontal,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/store/app-store"
@@ -358,6 +358,22 @@ export function AppSidebar() {
                           <Link to="/purchases/bulk-buy" className="flex items-center gap-1.5">
                             <ClipboardCheck className="size-3 shrink-0" />
                             Bulk-buy Approval
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/dashboard"}>
+                          <Link to="/purchases/dashboard" className="flex items-center gap-1.5">
+                            <LayoutDashboard className="size-3 shrink-0" />
+                            Dashboard
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/settings"}>
+                          <Link to="/purchases/settings" className="flex items-center gap-1.5">
+                            <SlidersHorizontal className="size-3 shrink-0" />
+                            Settings
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

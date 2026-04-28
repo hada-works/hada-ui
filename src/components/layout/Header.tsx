@@ -1,3 +1,4 @@
+import React from "react"
 import { Search, Bell, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,9 +12,10 @@ interface HeaderProps {
   title: string
   description?: string
   action?: { label: string; onClick: () => void }
+  actions?: React.ReactNode
 }
 
-export function Header({ title, description, action }: HeaderProps) {
+export function Header({ title, description, action, actions }: HeaderProps) {
   return (
     <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6">
       <div className="flex-1">
@@ -54,6 +56,7 @@ export function Header({ title, description, action }: HeaderProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {actions}
         {action && (
           <Button size="sm" className="h-8 gap-1.5" onClick={action.onClick}>
             <Plus className="size-3.5" />
