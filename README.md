@@ -1,15 +1,17 @@
-# hada-ui
+# Hada UI
 
 > **Enterprise UI Template** — Built by makers who actually run large-scale businesses.
 
 A production-grade, highly customizable frontend template engineered for enterprise applications. Not a toy project, not a demo — this is the foundation we use to ship real products, fast.
 
+> **⚡ Official UI Framework of [Hada](https://hada.works)** — Hada UI is the primary UI framework powering the Hada platform. Every component, layout pattern, and design decision is battle-tested in production at Hada scale.
+
 ---
 
-## Why hada-ui?
+## Why Hada UI?
 
 Most UI templates are built to look good in screenshots.  
-**hada-ui** is built to survive production.
+**Hada UI** is built to survive production.
 
 We've operated enterprise platforms across B2B SaaS, internal tooling, and large-scale operations. Every pattern here reflects real problems we've solved — approval workflows, multi-entity project management, complex data grids, role-based UX, and more.
 
@@ -28,14 +30,14 @@ The architecture is intentionally layered:
 - **Global state** via a lightweight store — swap out for Redux, Zustand, or any state manager
 
 ### 🤖 AI First & AI Coding Ready
-hada-ui is designed to be navigated, extended, and modified by AI coding agents (Cursor, Antigravity, Copilot, Claude, etc.):
+Hada UI is designed to be navigated, extended, and modified by AI coding agents (Cursor, Antigravity, Copilot, Claude, etc.):
 - Strict folder structure with predictable naming conventions
 - Co-located types, stores, and components — minimal context-switching for AI agents
 - Pages are self-contained — AI can modify one screen without breaking others
 - Fully typed with TypeScript — AI suggestions are accurate, not guesswork
 
 ### 🧱 Production Architecture, Not a Starter Kit
-| Aspect | Typical Template | hada-ui |
+| Aspect | Typical Template | Hada UI |
 |--------|-----------------|---------|
 | Component library | shadcn copy-paste | Radix UI + custom CVA variants |
 | State management | useState everywhere | Centralized store with typed actions |
@@ -64,7 +66,7 @@ hada-ui is designed to be navigated, extended, and modified by AI coding agents 
 ## 🗂️ Project Structure
 
 ```
-hada-ui/
+Hada UI/
 ├── src/
 │   ├── components/
 │   │   ├── layout/          # AppLayout, Header, Sidebar
@@ -172,7 +174,7 @@ The codebase follows strict conventions so AI agents produce accurate, non-break
 
 ## 🏢 About Hada Works
 
-**hada-ui** is maintained by [Hada Works](https://github.com/hada-works) — a team of operators and engineers who build and run enterprise software at scale.
+**Hada UI** is maintained by [Hada Works](https://github.com/hada-works) — a team of operators and engineers who build and run enterprise software at scale.
 
 We build tools we actually use. Everything in this template has been validated in production environments handling real business complexity.
 
