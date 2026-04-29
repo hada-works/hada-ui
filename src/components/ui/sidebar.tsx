@@ -185,7 +185,7 @@ SidebarFooter.displayName = "SidebarFooter"
 
 export const SidebarContent = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-2", className)} {...props} />
+    <div ref={ref} className={cn("flex flex-1 flex-col gap-1.5 overflow-y-auto overflow-x-hidden py-2", className)} {...props} />
   )
 )
 SidebarContent.displayName = "SidebarContent"
@@ -215,8 +215,8 @@ export const SidebarGroupLabel = React.forwardRef<
     <Comp
       ref={ref}
       className={cn(
-        "flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/60 outline-none transition-[height,opacity,margin] duration-200 overflow-hidden whitespace-nowrap",
-        !open && "h-0 opacity-0 -mb-2 pointer-events-none",
+        "flex h-7 shrink-0 items-center rounded-md px-2 text-sm font-medium text-sidebar-foreground/60 outline-none transition-[height,opacity,margin] duration-200 overflow-hidden whitespace-nowrap",
+        !open && "h-0 opacity-0 pointer-events-none",
         className
       )}
       {...props}

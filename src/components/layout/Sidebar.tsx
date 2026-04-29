@@ -43,7 +43,7 @@ function NavItem({ href, icon: Icon, label }: { href: string; icon: React.Elemen
   const active = href === "/" ? location.pathname === "/" : location.pathname.startsWith(href)
 
   const inner = (
-    <SidebarMenuButton asChild isActive={active}>
+    <SidebarMenuButton asChild isActive={active} className="h-7">
       <Link to={href} className="flex items-center gap-2">
         <Icon className="size-4 shrink-0" />
         <span className={cn(
@@ -160,7 +160,7 @@ export function AppSidebar() {
                   location.pathname === "/" && "text-sidebar-foreground font-semibold"
                 )}
               >
-                <LayoutDashboard className="size-3.5 shrink-0" />
+                <LayoutDashboard className="size-4 shrink-0" />
                 Dashboard
               </Link>
             </SidebarGroupLabel>
@@ -179,9 +179,9 @@ export function AppSidebar() {
             <div className="flex items-center">
               <SidebarGroupLabel asChild>
                 <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
-                  <MessageSquare className="size-3.5 shrink-0" />
+                  <MessageSquare className="size-4 shrink-0" />
                   Feedbacks
-                  <ChevronRight className="chevron ml-auto size-3.5 transition-transform duration-200" />
+                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               {open && (
@@ -259,9 +259,9 @@ export function AppSidebar() {
             <div className="flex items-center">
               <SidebarGroupLabel asChild>
                 <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
-                  <FolderKanban className="size-3.5 shrink-0" />
+                  <FolderKanban className="size-4 shrink-0" />
                   Projects
-                  <ChevronRight className="chevron ml-auto size-3.5 transition-transform duration-200" />
+                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               {open && (
@@ -339,9 +339,9 @@ export function AppSidebar() {
             <div className="flex items-center">
               <SidebarGroupLabel asChild>
                 <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
-                  <ShoppingCart className="size-3.5 shrink-0" />
+                  <ShoppingCart className="size-4 shrink-0" />
                   Purchases
-                  <ChevronRight className="chevron ml-auto size-3.5 transition-transform duration-200" />
+                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
             </div>
@@ -397,7 +397,7 @@ export function AppSidebar() {
                     location.pathname.startsWith(item.href) && "text-sidebar-foreground font-semibold"
                   )}
                 >
-                  <item.icon className="size-3.5 shrink-0" />
+                  <item.icon className="size-4 shrink-0" />
                   {item.label}
                 </Link>
               </SidebarGroupLabel>
