@@ -70,16 +70,23 @@ Hada UI/
 ├── src/
 │   ├── components/
 │   │   ├── layout/          # AppLayout, Header, Sidebar
-│   │   ├── shared/          # StatusBadge, PriorityBadge, EmptyState
-│   │   └── ui/              # Button, Input, Select, DatePicker, ...
+│   │   ├── shared/          # StatusBadge, PriorityBadge, EpicChip,
+│   │   │                    # IssueTypeBadge, UserAvatar, EmptyState
+│   │   └── ui/              # Button, Input, Select, DatePicker, Sidebar, ...
 │   ├── pages/               # One file per screen
 │   │   ├── Dashboard.tsx
-│   │   ├── Issues.tsx        # Full issue tracker with filters & detail
+│   │   ├── Issues.tsx            # Full issue tracker with filters & detail
 │   │   ├── IssueDetail.tsx
-│   │   ├── Feedbacks.tsx     # Customer feedback management
+│   │   ├── issues/               # Issue sub-page components
+│   │   ├── Feedbacks.tsx         # Customer feedback management
 │   │   ├── FeedbackDetail.tsx
-│   │   ├── BulkBuyApproval.tsx  # Multi-step procurement approval
+│   │   ├── NewBoard.tsx          # Create / edit feedback board
 │   │   ├── Projects.tsx
+│   │   ├── NewProject.tsx        # Create / edit project
+│   │   ├── BulkBuyApproval.tsx   # Multi-step procurement approval
+│   │   ├── bulk-buy/             # Bulkbuy sub-page components
+│   │   ├── PurchasesDashboard.tsx  # Purchases → Insights screen
+│   │   ├── PurchasesSettings.tsx   # Purchases → Bulkbuy settings screen
 │   │   ├── Members.tsx
 │   │   ├── Analytics.tsx
 │   │   ├── Notifications.tsx
@@ -95,6 +102,31 @@ Hada UI/
 ├── tailwind.config.js
 ├── tsconfig.json
 └── vite.config.ts
+```
+
+---
+
+## 🧭 Navigation Structure
+
+The sidebar follows a two-level hierarchy. Level 1 order (top → bottom):
+
+```
+Dashboard
+Purchases
+  ├── Insights          → /purchases/insights
+  ├── Bulkbuy approval  → /purchases/bulk-buy
+  └── Bulkbuy settings  → /purchases/settings
+Projects
+  ├── All Issues        → /issues
+  └── [project list]    → /projects/:projectId
+Feedbacks
+  ├── All Feedbacks     → /feedbacks
+  └── [board list]      → /feedbacks/board/:boardId
+─────────────────────────
+Members
+Analytics
+Notifications
+Settings
 ```
 
 ---
@@ -120,20 +152,23 @@ npm run build
 
 ## 📋 Included Screens
 
-| Screen | Description |
-|--------|-------------|
-| **Dashboard** | KPI summary, activity feed, quick actions |
-| **Issues** | Full issue tracker — filters, priority, status, assignee |
-| **Issue Detail** | Thread view, status updates, linked entities |
-| **Feedbacks** | Customer feedback inbox with tagging |
-| **Feedback Detail** | Feedback thread + internal notes |
-| **Bulk Buy Approval** | Multi-step procurement approval workflow |
-| **Projects** | Project card grid with status tracking |
-| **New Project / Board** | Creation flows with rich form UX |
-| **Members** | Team directory with role management |
-| **Analytics** | Placeholder for data visualization integration |
-| **Notifications** | Notification center with read/unread states |
-| **Settings** | Profile, workspace, and preference management |
+| Screen | Route | Description |
+|--------|-------|-------------|
+| **Dashboard** | `/` | KPI summary, activity feed, quick actions |
+| **Purchases — Insights** | `/purchases/insights` | Procurement analytics & KPI dashboard |
+| **Purchases — Bulkbuy approval** | `/purchases/bulk-buy` | Multi-step procurement approval workflow |
+| **Purchases — Bulkbuy settings** | `/purchases/settings` | Procurement workflow configuration |
+| **Projects** | `/projects` | Project card grid with status tracking |
+| **New Project** | `/projects/new` | Project creation flow |
+| **Issues** | `/issues` | Full issue tracker — filters, priority, status, assignee |
+| **Issue Detail** | `/issues/:id` | Thread view, status updates, linked entities |
+| **Feedbacks** | `/feedbacks` | Customer feedback inbox with tagging |
+| **Feedback Detail** | `/feedbacks/:id` | Feedback thread + internal notes |
+| **New Board** | `/feedbacks/new-board` | Feedback board creation flow |
+| **Members** | `/members` | Team directory with role management |
+| **Analytics** | `/analytics` | Placeholder for data visualization integration |
+| **Notifications** | `/notifications` | Notification center with read/unread states |
+| **Settings** | `/settings` | Profile, workspace, and preference management |
 
 ---
 
@@ -187,3 +222,12 @@ MIT — use it, fork it, ship it.
 ---
 
 *Built with conviction. Maintained by operators.*
+
+---
+
+## 📝 Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| v1.1.0 | 2026-04-29 | Reorder nav: Purchases → Projects → Feedbacks; rename Purchases sub-items (Insights, Bulkbuy approval, Bulkbuy settings); update route `/purchases/dashboard` → `/purchases/insights`; remove redundant `+` action icons on Projects & Feedbacks; sidebar spacing & icon/font size sync between expanded/collapsed states |
+| v1.0.0 | 2026-04-28 | Initial release |
