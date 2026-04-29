@@ -147,7 +147,7 @@ export function BulkBuyApproval() {
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
       <Header
-        title="Bulk-buy Approval"
+        title="Bulkbuy approval"
         description="Phê duyệt đơn mua hàng lô / gói — MDM → SCM"
         action={{ label: "Paste hàng loạt", onClick: () => setShowPaste(true) }}
       />

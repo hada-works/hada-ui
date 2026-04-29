@@ -173,76 +173,48 @@ export function AppSidebar() {
           )}
         </SidebarGroup>
 
-        {/* ── Feedbacks (2-level collapsible) ── */}
+        {/* ── Purchases (2-level collapsible) ── */}
         <SidebarGroup>
-          <Collapsible open={open ? feedbackOpen : false} onOpenChange={setFeedbackOpen}>
+          <Collapsible open={open ? purchasesOpen : false} onOpenChange={setPurchasesOpen}>
             <div className="flex items-center">
               <SidebarGroupLabel asChild>
                 <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
-                  <MessageSquare className="size-4 shrink-0" />
-                  Feedbacks
+                  <ShoppingCart className="size-4 shrink-0" />
+                  Purchases
                   <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
-              {open && (
-                <SidebarGroupAction asChild>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button onClick={() => navigate("/feedbacks/new-board")} aria-label="New board">
-                        <Plus className="size-3.5" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">New board</TooltipContent>
-                  </Tooltip>
-                </SidebarGroupAction>
-              )}
             </div>
-
             <SidebarGroupContent>
               <SidebarMenu>
-                {/* Collapsed: icon with tooltip */}
                 {!open && (
-                  <NavItem href="/feedbacks" icon={MessageSquare} label="Feedbacks" />
+                  <NavItem href="/purchases/bulk-buy" icon={ShoppingCart} label="Purchases" />
                 )}
-
-                {/* Expanded: board list inside collapsible */}
                 {open && (
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/feedbacks"}>
-                          <Link to="/feedbacks">All Feedbacks</Link>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/insights"}>
+                          <Link to="/purchases/insights" className="flex items-center gap-1.5">
+                            <LayoutDashboard className="size-3 shrink-0" />
+                            Insights
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
-                      {tenantBoards.map(board => (
-                        <SidebarMenuSubItem key={board.id} className="group/board-item">
-                          <SidebarMenuSubButton
-                            asChild
-                            isActive={location.pathname === `/feedbacks/board/${board.id}`}
-                          >
-                            <Link to={`/feedbacks/board/${board.id}`}>
-                              <span className="shrink-0">{board.emoji}</span>
-                              <span className="truncate flex-1">{board.name}</span>
-                              <button
-                                onClick={e => { e.preventDefault(); e.stopPropagation(); navigate(`/feedbacks/board/${board.id}/settings`) }}
-                                className="ml-auto opacity-0 group-hover/board-item:opacity-100 hover:text-sidebar-foreground transition-opacity p-0.5 rounded"
-                                title="Board settings"
-                              >
-                                <MoreHorizontal className="size-3" />
-                              </button>
-                            </Link>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
                       <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild>
-                          <button
-                            className="w-full text-sidebar-foreground/40 hover:text-sidebar-foreground gap-1"
-                            onClick={() => navigate("/feedbacks/new-board")}
-                          >
-                            <Plus className="size-3" />
-                            New board
-                          </button>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/bulk-buy"}>
+                          <Link to="/purchases/bulk-buy" className="flex items-center gap-1.5">
+                            <ClipboardCheck className="size-3 shrink-0" />
+                            Bulkbuy approval
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/settings"}>
+                          <Link to="/purchases/settings" className="flex items-center gap-1.5">
+                            <SlidersHorizontal className="size-3 shrink-0" />
+                            Bulkbuy settings
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
@@ -264,28 +236,14 @@ export function AppSidebar() {
                   <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
-              {open && (
-                <SidebarGroupAction asChild>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button onClick={() => navigate("/projects/new")} aria-label="New project">
-                        <Plus className="size-3.5" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">New project</TooltipContent>
-                  </Tooltip>
-                </SidebarGroupAction>
-              )}
+
             </div>
 
             <SidebarGroupContent>
               <SidebarMenu>
-                {/* Collapsed: icon with tooltip */}
                 {!open && (
                   <NavItem href="/projects" icon={FolderKanban} label="Projects" />
                 )}
-
-                {/* Expanded: All Issues + project list inside collapsible */}
                 {open && (
                   <CollapsibleContent>
                     <SidebarMenuSub>
@@ -333,48 +291,62 @@ export function AppSidebar() {
           </Collapsible>
         </SidebarGroup>
 
-        {/* ── Purchases (2-level collapsible) ── */}
+        {/* ── Feedbacks (2-level collapsible) ── */}
         <SidebarGroup>
-          <Collapsible open={open ? purchasesOpen : false} onOpenChange={setPurchasesOpen}>
+          <Collapsible open={open ? feedbackOpen : false} onOpenChange={setFeedbackOpen}>
             <div className="flex items-center">
               <SidebarGroupLabel asChild>
                 <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
-                  <ShoppingCart className="size-4 shrink-0" />
-                  Purchases
+                  <MessageSquare className="size-4 shrink-0" />
+                  Feedbacks
                   <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
+
             </div>
+
             <SidebarGroupContent>
               <SidebarMenu>
                 {!open && (
-                  <NavItem href="/purchases/bulk-buy" icon={ShoppingCart} label="Purchases" />
+                  <NavItem href="/feedbacks" icon={MessageSquare} label="Feedbacks" />
                 )}
                 {open && (
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/bulk-buy"}>
-                          <Link to="/purchases/bulk-buy" className="flex items-center gap-1.5">
-                            <ClipboardCheck className="size-3 shrink-0" />
-                            Bulk-buy Approval
-                          </Link>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/feedbacks"}>
+                          <Link to="/feedbacks">All Feedbacks</Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
+                      {tenantBoards.map(board => (
+                        <SidebarMenuSubItem key={board.id} className="group/board-item">
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={location.pathname === `/feedbacks/board/${board.id}`}
+                          >
+                            <Link to={`/feedbacks/board/${board.id}`}>
+                              <span className="shrink-0">{board.emoji}</span>
+                              <span className="truncate flex-1">{board.name}</span>
+                              <button
+                                onClick={e => { e.preventDefault(); e.stopPropagation(); navigate(`/feedbacks/board/${board.id}/settings`) }}
+                                className="ml-auto opacity-0 group-hover/board-item:opacity-100 hover:text-sidebar-foreground transition-opacity p-0.5 rounded"
+                                title="Board settings"
+                              >
+                                <MoreHorizontal className="size-3" />
+                              </button>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
                       <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/dashboard"}>
-                          <Link to="/purchases/dashboard" className="flex items-center gap-1.5">
-                            <LayoutDashboard className="size-3 shrink-0" />
-                            Dashboard
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/settings"}>
-                          <Link to="/purchases/settings" className="flex items-center gap-1.5">
-                            <SlidersHorizontal className="size-3 shrink-0" />
-                            Settings
-                          </Link>
+                        <SidebarMenuSubButton asChild>
+                          <button
+                            className="w-full text-sidebar-foreground/40 hover:text-sidebar-foreground gap-1"
+                            onClick={() => navigate("/feedbacks/new-board")}
+                          >
+                            <Plus className="size-3" />
+                            New board
+                          </button>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>

@@ -39,7 +39,7 @@ export default function App() {
             <Route path="/projects/:projectId/settings" element={<NewProject />} />
             {/* Purchases */}
             <Route path="/purchases/bulk-buy" element={<BulkBuyApproval />} />
-            <Route path="/purchases/dashboard" element={<PurchasesDashboard />} />
+            <Route path="/purchases/insights" element={<PurchasesDashboard />} />
             <Route path="/purchases/settings" element={<PurchasesSettings />} />
             {/* Secondary */}
             <Route path="/members" element={<Members />} />
