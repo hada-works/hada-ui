@@ -1,6 +1,6 @@
 # DESIGN.md — Hada UI Architecture & Design Standards
 
-> Bắt buộc tuân thủ cho mọi thay đổi. PR làm trái quy định phải giải thích lý do rõ ràng trước khi merge.
+> Mandatory for all changes. PRs that deviate from these standards must provide a clear justification before merging.
 
 ---
 
