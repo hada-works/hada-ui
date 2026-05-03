@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useApp } from "@/store/app-store"
 import { cn } from "@/lib/utils"
-import { GBP_LOCATIONS, GBP_REVIEWS } from "../constants"
+import { GBP_LOCATIONS, GBP_REVIEWS } from "../mock-data"
 import type { GbpReviewSentiment } from "@/types"
 
 // ─── Star rating display ──────────────────────────────────────────────────────

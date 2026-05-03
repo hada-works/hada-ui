@@ -7,7 +7,8 @@ import { Header } from "@/components/layout/Header"
 import { Badge } from "@/components/ui/badge"
 import { useApp } from "@/store/app-store"
 import { cn } from "@/lib/utils"
-import { GBP_LOCATIONS, NBA_ACTIONS } from "../constants"
+import { NBA_ACTIONS } from "../constants"
+import { GBP_LOCATIONS } from "../mock-data"
 import { HealthBadge } from "../components/HealthBadge"
 import { ScoreBar } from "../components/ScoreBar"
 import { LocationsTable } from "../components/LocationsTable"
@@ -267,7 +268,7 @@ export function GbpDashboardPage() {
               <div className="rounded-lg border bg-card p-4">
                 <h2 className="text-sm font-semibold mb-4">Profile Field Completion</h2>
                 <div className="space-y-2.5">
-                  <CompletionRow label="Website URL"  pct={stats.completion.website}     />
+                  <CompletionRow label="Location page"  pct={stats.completion.website}     />
                   <CompletionRow label="Phone number" pct={stats.completion.phone}       />
                   <CompletionRow label="Category"     pct={stats.completion.category}    />
                   <CompletionRow label="Opening hours" pct={stats.completion.hours}      />

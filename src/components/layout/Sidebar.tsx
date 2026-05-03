@@ -6,7 +6,7 @@ import {
   Check, Building2, Users, BarChart3, Bell,
   ChevronRight, Plus, PanelLeftClose, PanelLeftOpen, MoreHorizontal,
   ShoppingCart, ClipboardCheck, SlidersHorizontal,
-  MapPin, Star, Cog,
+  MapPin, Star, Cog, TrendingUp,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/store/app-store"
@@ -254,6 +254,14 @@ export function AppSidebar() {
                           <Link to="/gbp/dashboard" className="flex items-center gap-1.5">
                             <LayoutDashboard className="size-3 shrink-0" />
                             Dashboard
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/insights"}>
+                          <Link to="/gbp/insights" className="flex items-center gap-1.5">
+                            <TrendingUp className="size-3 shrink-0" />
+                            Insights
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

@@ -309,7 +309,7 @@ function TemplateMatrixCard({
 // ─── Bulk fields ──────────────────────────────────────────────────────────────
 
 const BULK_FIELDS = [
-  { icon: Globe,    key: "website",     label: "Website URL"    },
+  { icon: Globe,    key: "website",     label: "Location page"    },
   { icon: Phone,    key: "phone",       label: "Phone number"   },
   { icon: Tag,      key: "category",    label: "Category"       },
   { icon: Clock3,   key: "hours",       label: "Business hours" },

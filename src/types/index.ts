@@ -247,6 +247,20 @@ export interface GbpReviewItem {
   responseDate?: string
 }
 
+export interface GbpInsightPoint {
+  month:      string    // "YYYY-MM"
+  clicks:     number    // location-page / website clicks
+  calls:      number    // phone-call clicks
+  directions: number    // direction requests
+  newReviews: number    // new reviews added that month
+  avgRating:  number    // weighted avg rating that month
+  r1: number            // new 1-star reviews
+  r2: number
+  r3: number
+  r4: number
+  r5: number
+}
+
 export interface Issue {
   id: string
   identifier: string

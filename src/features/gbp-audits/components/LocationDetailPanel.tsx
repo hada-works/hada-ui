@@ -13,7 +13,8 @@ import type { GbpLocation, GbpAttributes } from "@/types"
 import { HealthBadge } from "./HealthBadge"
 import { ScoreBar } from "./ScoreBar"
 import { FieldIcon, fieldState, photoState } from "./FieldIcon"
-import { GBP_REVIEWS, BRAND_CANONICAL_NAME } from "../constants"
+import { BRAND_CANONICAL_NAME } from "../constants"
+import { GBP_REVIEWS } from "../mock-data"
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -74,7 +75,7 @@ function RatingDist({ dist }: { dist: [number, number, number, number, number] }
 // ─── Profile completeness field rows ─────────────────────────────────────────
 
 const FIELD_DEFS = [
-  { icon: Globe,    label: "Website",     getState: (l: GbpLocation) => fieldState(l.fields.hasWebsite)     },
+  { icon: Globe,    label: "Location page",     getState: (l: GbpLocation) => fieldState(l.fields.hasWebsite)     },
   { icon: Phone,    label: "Phone",       getState: (l: GbpLocation) => fieldState(l.fields.hasPhone)       },
   { icon: Tag,      label: "Category",    getState: (l: GbpLocation) => fieldState(l.fields.hasCategory)    },
   { icon: Clock3,   label: "Hours",       getState: (l: GbpLocation) => fieldState(l.fields.hasHours)       },
@@ -223,7 +224,7 @@ export function LocationDetailPanel({ location: loc, onClose }: LocationDetailPa
                   <MetaRow label="Điện thoại phụ" value={p.additionalPhone} />
                 )}
                 <div className="flex items-baseline justify-between px-3 py-1.5 border-b border-border/50 last:border-0 gap-3">
-                  <span className="text-[11px] text-muted-foreground shrink-0">Website</span>
+                  <span className="text-[11px] text-muted-foreground shrink-0">Location page</span>
                   <a
                     href={p.website}
                     target="_blank"
