@@ -249,12 +249,18 @@ function mkInsightSeries(
     const directions = noise(dirs0    * growth * seas)
     const nr         = noise(reviews0 * growth * seas)
 
-    // Weighted-toward-positive star split
-    const r5 = Math.round(rng() * nr * 0.46)
-    const r4 = Math.round(rng() * (nr - r5) * 0.52)
-    const r3 = Math.round(rng() * (nr - r5 - r4) * 0.44)
-    const r2 = Math.round(rng() * (nr - r5 - r4 - r3) * 0.38)
-    const r1 = Math.max(0, nr - r5 - r4 - r3 - r2)
+    // Multinomial star sampling: cumulative weights → avg ≈ 4.0
+    // CUM[k] = P(star ≤ k+1): 5 % 1★ · 8 % 2★ · 12 % 3★ · 30 % 4★ · 45 % 5★
+    const CUM = [0.05, 0.13, 0.25, 0.55, 1.00]
+    let r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0
+    for (let j = 0; j < nr; j++) {
+      const p = rng()
+      if      (p < CUM[0]) r1++
+      else if (p < CUM[1]) r2++
+      else if (p < CUM[2]) r3++
+      else if (p < CUM[3]) r4++
+      else                 r5++
+    }
 
     const total     = r5 + r4 + r3 + r2 + r1 || 1
     const avgRating = Math.round((r5 * 5 + r4 * 4 + r3 * 3 + r2 * 2 + r1) / total * 10) / 10

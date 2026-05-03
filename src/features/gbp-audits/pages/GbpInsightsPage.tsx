@@ -65,13 +65,13 @@ function fmtMonth(m: string): string {
 function xLabelStep(n: number) { return n <= 4 ? 1 : n <= 12 ? 2 : n <= 24 ? 3 : 6 }
 
 // ─── SVG geometry ─────────────────────────────────────────────────────────────
+// viewBox always matches the actual rendered width (via ResizeObserver) so that
+// font sizes, padding and strokes stay at exact pixel values at any container size.
 
-const W  = 600
 const PL = 54, PR = 20, PT = 20, PB = 38
-const PW = W - PL - PR
 
-function pH(svgH: number) { return svgH - PT - PB }
-function xAt(i: number, n: number) { return PL + (n <= 1 ? PW / 2 : (i / (n - 1)) * PW) }
+function pH(svgH: number)                           { return svgH - PT - PB }
+function xAt(i: number, n: number, pw: number)      { return PL + (n <= 1 ? pw / 2 : (i / (n - 1)) * pw) }
 function yAt(v: number, lo: number, hi: number, svgH: number) {
   const norm = hi === lo ? 0.5 : (v - lo) / (hi - lo)
   return PT + (1 - norm) * pH(svgH)
@@ -82,6 +82,25 @@ function niceRange(lo: number, hi: number, pad = 0.08): [number, number] {
 }
 function yTicks(lo: number, hi: number, count = 5): number[] {
   return Array.from({ length: count }, (_, i) => lo + (i / (count - 1)) * (hi - lo))
+}
+
+// ─── useContainerWidth ────────────────────────────────────────────────────────
+// Measures the wrapper div so the SVG viewBox == rendered pixel width → 1:1 mapping.
+
+function useContainerWidth(defaultW = 600) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [W, setW] = useState(defaultW)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const ro = new ResizeObserver(entries => {
+      const w = entries[0].contentRect.width
+      if (w > 0) setW(Math.round(w))
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+  return { ref, W }
 }
 
 // ─── Colour palette ───────────────────────────────────────────────────────────
@@ -113,166 +132,196 @@ interface LineChartProps {
 }
 
 function LineChart({ id, series, labels, svgH = 180, yDomain, formatY = fmtK, showArea = true }: LineChartProps) {
+  const { ref: wrapRef, W } = useContainerWidth()
+  const PW = W - PL - PR
   const [hovered, setHovered] = useState<number | null>(null)
   const n = labels.length
   const H = svgH
 
   const allVals = series.flatMap(s => s.data)
   const [lo, hi] = yDomain ?? niceRange(Math.min(...allVals), Math.max(...allVals))
-  const x = useCallback((i: number) => xAt(i, n), [n])
+  const x = useCallback((i: number) => xAt(i, n, PW), [n, PW])
   const y = useCallback((v: number) => yAt(v, lo, hi, H), [lo, hi, H])
+
+  const ticks = yTicks(lo, hi)
+  const step  = xLabelStep(n)
+
+  // Mouse → data index: direct pixel coords since viewBox == rendered size
+  const onMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    const relX = e.clientX - r.left - PL
+    if (relX < 0 || relX > PW) { setHovered(null); return }
+    setHovered(Math.max(0, Math.min(n - 1, Math.round(relX / PW * (n - 1)))))
+  }, [n, PW])
+
+  return (
+    <div ref={wrapRef}>
+      <svg width="100%" height={svgH} viewBox={`0 0 ${W} ${svgH}`}
+        onMouseMove={onMouseMove} onMouseLeave={() => setHovered(null)}
+        style={{ overflow: "visible", display: "block", fontFamily: "inherit" }}>
+        <defs>
+          {series.map((s, si) => (
+            <linearGradient key={si} id={`${id}-g${si}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor={s.color} stopOpacity={0.22} />
+              <stop offset="100%" stopColor={s.color} stopOpacity={0.01} />
+            </linearGradient>
+          ))}
+        </defs>
+
+        {/* Y grid + ticks */}
+        {ticks.map((t, ti) => (
+          <g key={ti}>
+            <line x1={PL} y1={y(t)} x2={PL + PW} y2={y(t)}
+              stroke="hsl(var(--border))" strokeWidth={ti === 0 ? 1 : 0.5} />
+            <text x={PL - 5} y={y(t) + 4} textAnchor="end" fontSize={10} fill="hsl(var(--muted-foreground))">
+              {formatY(t)}
+            </text>
+          </g>
+        ))}
+
+        {/* X labels */}
+        {labels.map((l, i) => i % step === 0 && (
+          <text key={i} x={x(i)} y={PT + pH(H) + 26} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
+            {fmtMonth(l)}
+          </text>
+        ))}
+
+        {/* Area + line */}
+        {series.map((s, si) => {
+          const pts  = s.data.map((v, i) => `${x(i)},${y(v)}`).join(" ")
+          const area = `M ${x(0)},${PT + pH(H)} ${s.data.map((v, i) => `L ${x(i)},${y(v)}`).join(" ")} L ${x(n - 1)},${PT + pH(H)} Z`
+          return (
+            <g key={si}>
+              {showArea && <path d={area} fill={`url(#${id}-g${si})`} />}
+              <polyline points={pts} fill="none" stroke={s.color} strokeWidth={s.strokeWidth ?? 2} strokeLinejoin="round" />
+            </g>
+          )
+        })}
+
+        {/* Hover guideline + dots + tooltip */}
+        {hovered !== null && (
+          <>
+            <line x1={x(hovered)} y1={PT} x2={x(hovered)} y2={PT + pH(H)}
+              stroke="hsl(var(--muted-foreground))" strokeWidth={1} strokeDasharray="4 3" />
+            {series.map((s, si) => (
+              <circle key={si} cx={x(hovered)} cy={y(s.data[hovered])} r={4}
+                fill={s.color} stroke="hsl(var(--card))" strokeWidth={2} />
+            ))}
+            {(() => {
+              const tx   = x(hovered)
+              const tipW = series.length > 1 ? 140 : 110
+              const tipH = series.length * 18 + 24
+              const tipX = hovered < n * 0.65 ? tx + 10 : tx - 10 - tipW
+              const tipY = PT + 4
+              return (
+                <g>
+                  <rect x={tipX} y={tipY} width={tipW} height={tipH} rx={4}
+                    fill="hsl(var(--popover))" stroke="hsl(var(--border))" strokeWidth={1} />
+                  <text x={tipX + 8} y={tipY + 14} fontSize={11} fontWeight="600" fill="hsl(var(--popover-foreground))">
+                    {fmtMonth(labels[hovered])}
+                  </text>
+                  {series.map((s, si) => (
+                    <g key={si}>
+                      <rect x={tipX + 8}  y={tipY + 22 + si * 18} width={8} height={8} rx={2} fill={s.color} />
+                      <text x={tipX + 20} y={tipY + 30 + si * 18} fontSize={10} fill="hsl(var(--popover-foreground))">
+                        {s.label}: {formatY(s.data[hovered])}
+                      </text>
+                    </g>
+                  ))}
+                </g>
+              )
+            })()}
+          </>
+        )}
+      </svg>
+    </div>
+  )
+}
+
+// ─── BarChart ─────────────────────────────────────────────────────────────────
+// Uses edge-based slot positioning so bars never overlap the Y-axis label zone.
+
+interface BarChartProps { data: number[]; labels: string[]; color: string; label: string; svgH?: number; formatY?: (v: number) => string }
+
+function BarChart({ data, labels, color, label, svgH = 160, formatY = fmtK }: BarChartProps) {
+  const { ref: wrapRef, W } = useContainerWidth()
+  const PW = W - PL - PR
+  const [hovered, setHovered] = useState<number | null>(null)
+  const n     = labels.length
+  const H     = svgH
+  const [lo, hi] = niceRange(0, Math.max(...data))
+  const y     = (v: number) => yAt(v, lo, hi, H)
+
+  // Each bar lives in its own slot; no bar extends past PL or PL+PW
+  const slotW = PW / Math.max(1, n)
+  const bw    = Math.max(2, slotW * 0.70)
+  const bLeft = (i: number) => PL + i * slotW + (slotW - bw) / 2
+  const lx    = (i: number) => PL + (i + 0.5) * slotW   // x-axis label centre
 
   const ticks = yTicks(lo, hi)
   const step  = xLabelStep(n)
 
   const onMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const r = e.currentTarget.getBoundingClientRect()
-    const relX = (e.clientX - r.left) / r.width * W - PL
+    const relX = e.clientX - r.left - PL
     if (relX < 0 || relX > PW) { setHovered(null); return }
-    setHovered(Math.max(0, Math.min(n - 1, Math.round(relX / PW * (n - 1)))))
-  }, [n])
+    setHovered(Math.min(n - 1, Math.floor(relX / slotW)))
+  }, [n, PW, slotW])
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} width="100%" onMouseMove={onMouseMove} onMouseLeave={() => setHovered(null)}
-      style={{ overflow: "visible", display: "block", fontFamily: "inherit" }}>
-      <defs>
-        {series.map((s, si) => (
-          <linearGradient key={si} id={`${id}-g${si}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor={s.color} stopOpacity={0.22} />
-            <stop offset="100%" stopColor={s.color} stopOpacity={0.01} />
-          </linearGradient>
+    <div ref={wrapRef}>
+      <svg width="100%" height={svgH} viewBox={`0 0 ${W} ${svgH}`}
+        onMouseMove={onMouseMove} onMouseLeave={() => setHovered(null)}
+        style={{ overflow: "visible", display: "block", fontFamily: "inherit" }}>
+
+        {/* Y grid + ticks */}
+        {ticks.map((t, ti) => (
+          <g key={ti}>
+            <line x1={PL} y1={y(t)} x2={PL + PW} y2={y(t)}
+              stroke="hsl(var(--border))" strokeWidth={ti === 0 ? 1 : 0.5} />
+            <text x={PL - 5} y={y(t) + 4} textAnchor="end" fontSize={10} fill="hsl(var(--muted-foreground))">
+              {formatY(t)}
+            </text>
+          </g>
         ))}
-      </defs>
 
-      {/* Y grid + ticks */}
-      {ticks.map((t, ti) => (
-        <g key={ti}>
-          <line x1={PL} y1={y(t)} x2={PL + PW} y2={y(t)}
-            stroke="hsl(var(--border))" strokeWidth={ti === 0 ? 1 : 0.5} />
-          <text x={PL - 5} y={y(t) + 4} textAnchor="end" fontSize={10} fill="hsl(var(--muted-foreground))">
-            {formatY(t)}
+        {/* X labels — centred on slot */}
+        {labels.map((_, i) => i % step === 0 && (
+          <text key={i} x={lx(i)} y={PT + pH(H) + 26} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
+            {fmtMonth(labels[i])}
           </text>
-        </g>
-      ))}
+        ))}
 
-      {/* X labels */}
-      {labels.map((l, i) => i % step === 0 && (
-        <text key={i} x={x(i)} y={PT + pH(H) + 26} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
-          {fmtMonth(l)}
-        </text>
-      ))}
+        {/* Bars */}
+        {data.map((v, i) => (
+          <rect key={i}
+            x={bLeft(i)} y={y(v)} width={bw} height={Math.max(0, PT + pH(H) - y(v))}
+            fill={color} opacity={hovered === null || hovered === i ? 1 : 0.40} rx={2} />
+        ))}
 
-      {/* Area + line */}
-      {series.map((s, si) => {
-        const pts = s.data.map((v, i) => `${x(i)},${y(v)}`).join(" ")
-        const area = `M ${x(0)},${PT + pH(H)} ${s.data.map((v, i) => `L ${x(i)},${y(v)}`).join(" ")} L ${x(n - 1)},${PT + pH(H)} Z`
-        return (
-          <g key={si}>
-            {showArea && <path d={area} fill={`url(#${id}-g${si})`} />}
-            <polyline points={pts} fill="none" stroke={s.color} strokeWidth={s.strokeWidth ?? 2} strokeLinejoin="round" />
-          </g>
-        )
-      })}
-
-      {/* Hover guideline + dots */}
-      {hovered !== null && (
-        <>
-          <line x1={x(hovered)} y1={PT} x2={x(hovered)} y2={PT + pH(H)}
-            stroke="hsl(var(--muted-foreground))" strokeWidth={1} strokeDasharray="4 3" />
-          {series.map((s, si) => (
-            <circle key={si} cx={x(hovered)} cy={y(s.data[hovered])} r={4}
-              fill={s.color} stroke="hsl(var(--card))" strokeWidth={2} />
-          ))}
-          {/* Tooltip */}
-          {(() => {
-            const tx   = x(hovered)
-            const tipW = series.length > 1 ? 140 : 110
-            const tipH = series.length * 18 + 24
-            const isR  = hovered < n * 0.65
-            const tipX = isR ? tx + 10 : tx - 10 - tipW
-            const tipY = PT + 4
-            return (
-              <g>
-                <rect x={tipX} y={tipY} width={tipW} height={tipH} rx={4}
-                  fill="hsl(var(--popover))" stroke="hsl(var(--border))" strokeWidth={1} />
-                <text x={tipX + 8} y={tipY + 14} fontSize={11} fontWeight="600" fill="hsl(var(--popover-foreground))">
-                  {fmtMonth(labels[hovered])}
-                </text>
-                {series.map((s, si) => (
-                  <g key={si}>
-                    <rect x={tipX + 8}  y={tipY + 22 + si * 18} width={8} height={8} rx={2} fill={s.color} />
-                    <text x={tipX + 20} y={tipY + 30 + si * 18} fontSize={10} fill="hsl(var(--popover-foreground))">
-                      {s.label}: {formatY(s.data[hovered])}
-                    </text>
-                  </g>
-                ))}
-              </g>
-            )
-          })()}
-        </>
-      )}
-    </svg>
-  )
-}
-
-// ─── BarChart ─────────────────────────────────────────────────────────────────
-
-interface BarChartProps { data: number[]; labels: string[]; color: string; label: string; svgH?: number; formatY?: (v: number) => string }
-
-function BarChart({ data, labels, color, label, svgH = 160, formatY = fmtK }: BarChartProps) {
-  const [hovered, setHovered] = useState<number | null>(null)
-  const n = labels.length
-  const H = svgH
-  const [lo, hi] = niceRange(0, Math.max(...data))
-  const y  = (v: number) => yAt(v, lo, hi, H)
-  const bw = Math.max(2, PW / n * 0.72)
-  const bx = (i: number) => xAt(i, n) - bw / 2
-
-  const ticks = yTicks(lo, hi)
-  const step  = xLabelStep(n)
-
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} width="100%"
-      onMouseLeave={() => setHovered(null)}
-      style={{ overflow: "visible", display: "block", fontFamily: "inherit" }}>
-      {ticks.map((t, ti) => (
-        <g key={ti}>
-          <line x1={PL} y1={y(t)} x2={PL + PW} y2={y(t)}
-            stroke="hsl(var(--border))" strokeWidth={ti === 0 ? 1 : 0.5} />
-          <text x={PL - 5} y={y(t) + 4} textAnchor="end" fontSize={10} fill="hsl(var(--muted-foreground))">
-            {formatY(t)}
-          </text>
-        </g>
-      ))}
-      {labels.map((l, i) => i % step === 0 && (
-        <text key={i} x={xAt(i, n)} y={PT + pH(H) + 26} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
-          {fmtMonth(l)}
-        </text>
-      ))}
-      {data.map((v, i) => (
-        <rect key={i} x={bx(i)} y={y(v)} width={bw} height={Math.max(0, PT + pH(H) - y(v))}
-          fill={color} opacity={hovered === null || hovered === i ? 1 : 0.45} rx={2}
-          onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)} />
-      ))}
-      {hovered !== null && (() => {
-        const tx   = xAt(hovered, n)
-        const tipW = 110; const tipH = 40
-        const tipX = hovered < n * 0.65 ? tx + 10 : tx - 10 - tipW
-        return (
-          <g>
-            <rect x={tipX} y={PT + 4} width={tipW} height={tipH} rx={4}
-              fill="hsl(var(--popover))" stroke="hsl(var(--border))" strokeWidth={1} />
-            <text x={tipX + 8} y={PT + 17} fontSize={11} fontWeight="600" fill="hsl(var(--popover-foreground))">
-              {fmtMonth(labels[hovered])}
-            </text>
-            <rect x={tipX + 8}  y={PT + 24} width={8} height={8} rx={2} fill={color} />
-            <text x={tipX + 20} y={PT + 32} fontSize={10} fill="hsl(var(--popover-foreground))">
-              {label}: {formatY(data[hovered])}
-            </text>
-          </g>
-        )
-      })()}
-    </svg>
+        {/* Hover guideline + tooltip */}
+        {hovered !== null && (() => {
+          const cx   = bLeft(hovered) + bw / 2
+          const tipW = 110; const tipH = 40
+          const tipX = hovered < n * 0.65 ? cx + 10 : cx - 10 - tipW
+          return (
+            <g>
+              <line x1={cx} y1={PT} x2={cx} y2={PT + pH(H)}
+                stroke="hsl(var(--muted-foreground))" strokeWidth={1} strokeDasharray="4 3" />
+              <rect x={tipX} y={PT + 4} width={tipW} height={tipH} rx={4}
+                fill="hsl(var(--popover))" stroke="hsl(var(--border))" strokeWidth={1} />
+              <text x={tipX + 8} y={PT + 17} fontSize={11} fontWeight="600" fill="hsl(var(--popover-foreground))">
+                {fmtMonth(labels[hovered])}
+              </text>
+              <rect x={tipX + 8}  y={PT + 24} width={8} height={8} rx={2} fill={color} />
+              <text x={tipX + 20} y={PT + 32} fontSize={10} fill="hsl(var(--popover-foreground))">
+                {label}: {formatY(data[hovered])}
+              </text>
+            </g>
+          )
+        })()}
+      </svg>
+    </div>
   )
 }
 
@@ -282,79 +331,106 @@ const STAR_COLORS = [C.r1, C.r2, C.r3, C.r4, C.r5]
 const STAR_LABELS = ["1★", "2★", "3★", "4★", "5★"]
 
 function StackedBarChart({ points, labels }: { points: GbpInsightPoint[]; labels: string[] }) {
+  const { ref: wrapRef, W } = useContainerWidth()
+  const PW  = W - PL - PR
   const [hovered, setHovered] = useState<number | null>(null)
-  const n  = labels.length
-  const H  = 160
-  const bw = Math.max(2, PW / n * 0.78)
-  const by = PT + pH(H)
+  const n    = labels.length
+  const H    = 160
+  const by   = PT + pH(H)
   const step = xLabelStep(n)
 
+  // Edge-based slot positioning
+  const slotW = PW / Math.max(1, n)
+  const bw    = Math.max(2, slotW * 0.78)
+  const bLeft = (i: number) => PL + i * slotW + (slotW - bw) / 2
+  const lx    = (i: number) => PL + (i + 0.5) * slotW
+
+  const onMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    const relX = e.clientX - r.left - PL
+    if (relX < 0 || relX > PW) { setHovered(null); return }
+    setHovered(Math.min(n - 1, Math.floor(relX / slotW)))
+  }, [n, PW, slotW])
+
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} width="100%"
-      onMouseLeave={() => setHovered(null)}
-      style={{ overflow: "visible", display: "block", fontFamily: "inherit" }}>
-      <line x1={PL} y1={PT} x2={PL + PW} y2={PT} stroke="hsl(var(--border))" strokeWidth={0.5} />
-      <line x1={PL} y1={by} x2={PL + PW} y2={by} stroke="hsl(var(--border))" strokeWidth={1} />
-      {[0, 25, 50, 75, 100].map(pct => {
-        const yy = PT + pH(H) * (1 - pct / 100)
-        return (
-          <g key={pct}>
-            {pct > 0 && pct < 100 && <line x1={PL} y1={yy} x2={PL + PW} y2={yy} stroke="hsl(var(--border))" strokeWidth={0.4} />}
-            <text x={PL - 5} y={yy + 4} textAnchor="end" fontSize={10} fill="hsl(var(--muted-foreground))">{pct}%</text>
-          </g>
-        )
-      })}
-      {labels.map((l, i) => i % step === 0 && (
-        <text key={i} x={xAt(i, n)} y={by + 26} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
-          {fmtMonth(l)}
-        </text>
-      ))}
-      {points.map((pt, i) => {
-        const vals  = [pt.r1, pt.r2, pt.r3, pt.r4, pt.r5]
-        const total = vals.reduce((a, v) => a + v, 0) || 1
-        const cx    = xAt(i, n)
-        let cumPct  = 0
-        return (
-          <g key={i} onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)}>
-            {vals.map((v, si) => {
-              const pct = v / total * 100
-              const barH = pH(H) * pct / 100
-              const barY = by - pH(H) * (cumPct + pct) / 100
-              cumPct += pct
-              return (
-                <rect key={si} x={cx - bw / 2} y={barY} width={bw} height={barH}
-                  fill={STAR_COLORS[si]} opacity={hovered === null || hovered === i ? 1 : 0.45} />
-              )
-            })}
-          </g>
-        )
-      })}
-      {hovered !== null && (() => {
-        const pt    = points[hovered]
-        const vals  = [pt.r1, pt.r2, pt.r3, pt.r4, pt.r5]
-        const total = vals.reduce((a, v) => a + v, 0) || 1
-        const cx    = xAt(hovered, n)
-        const tipW  = 120; const tipH = 5 * 18 + 26
-        const tipX  = hovered < n * 0.65 ? cx + 10 : cx - 10 - tipW
-        return (
-          <g>
-            <rect x={tipX} y={PT + 4} width={tipW} height={tipH} rx={4}
-              fill="hsl(var(--popover))" stroke="hsl(var(--border))" strokeWidth={1} />
-            <text x={tipX + 8} y={PT + 18} fontSize={11} fontWeight="600" fill="hsl(var(--popover-foreground))">
-              {fmtMonth(labels[hovered])}
-            </text>
-            {[4,3,2,1,0].map((si, ri) => (
-              <g key={si}>
-                <rect x={tipX + 8} y={PT + 26 + ri * 18} width={8} height={8} rx={2} fill={STAR_COLORS[si]} />
-                <text x={tipX + 20} y={PT + 34 + ri * 18} fontSize={10} fill="hsl(var(--popover-foreground))">
-                  {STAR_LABELS[si]}: {vals[si]} ({Math.round(vals[si] / total * 100)}%)
-                </text>
-              </g>
-            ))}
-          </g>
-        )
-      })()}
-    </svg>
+    <div ref={wrapRef}>
+      <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`}
+        onMouseMove={onMouseMove} onMouseLeave={() => setHovered(null)}
+        style={{ overflow: "visible", display: "block", fontFamily: "inherit" }}>
+
+        {/* Grid lines */}
+        <line x1={PL} y1={PT} x2={PL + PW} y2={PT} stroke="hsl(var(--border))" strokeWidth={0.5} />
+        <line x1={PL} y1={by} x2={PL + PW} y2={by} stroke="hsl(var(--border))" strokeWidth={1} />
+        {[25, 50, 75].map(pct => {
+          const yy = PT + pH(H) * (1 - pct / 100)
+          return <line key={pct} x1={PL} y1={yy} x2={PL + PW} y2={yy} stroke="hsl(var(--border))" strokeWidth={0.4} />
+        })}
+
+        {/* Y ticks */}
+        {[0, 25, 50, 75, 100].map(pct => (
+          <text key={pct} x={PL - 5} y={PT + pH(H) * (1 - pct / 100) + 4}
+            textAnchor="end" fontSize={10} fill="hsl(var(--muted-foreground))">{pct}%</text>
+        ))}
+
+        {/* X labels */}
+        {labels.map((_, i) => i % step === 0 && (
+          <text key={i} x={lx(i)} y={by + 26} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
+            {fmtMonth(labels[i])}
+          </text>
+        ))}
+
+        {/* Stacked bars */}
+        {points.map((pt, i) => {
+          const vals  = [pt.r1, pt.r2, pt.r3, pt.r4, pt.r5]
+          const total = vals.reduce((a, v) => a + v, 0) || 1
+          const bx    = bLeft(i)
+          let cum     = 0
+          return (
+            <g key={i}>
+              {vals.map((v, si) => {
+                const pct  = v / total * 100
+                const barH = pH(H) * pct / 100
+                const barY = by - pH(H) * (cum + pct) / 100
+                cum += pct
+                return (
+                  <rect key={si} x={bx} y={barY} width={bw} height={Math.max(0, barH)}
+                    fill={STAR_COLORS[si]} opacity={hovered === null || hovered === i ? 1 : 0.40} />
+                )
+              })}
+            </g>
+          )
+        })}
+
+        {/* Hover guideline + tooltip */}
+        {hovered !== null && (() => {
+          const pt    = points[hovered]
+          const vals  = [pt.r1, pt.r2, pt.r3, pt.r4, pt.r5]
+          const total = vals.reduce((a, v) => a + v, 0) || 1
+          const cx    = bLeft(hovered) + bw / 2
+          const tipW  = 128; const tipH = 5 * 18 + 26
+          const tipX  = hovered < n * 0.65 ? cx + 10 : cx - 10 - tipW
+          return (
+            <g>
+              <line x1={cx} y1={PT} x2={cx} y2={by}
+                stroke="hsl(var(--muted-foreground))" strokeWidth={1} strokeDasharray="4 3" />
+              <rect x={tipX} y={PT + 4} width={tipW} height={tipH} rx={4}
+                fill="hsl(var(--popover))" stroke="hsl(var(--border))" strokeWidth={1} />
+              <text x={tipX + 8} y={PT + 18} fontSize={11} fontWeight="600" fill="hsl(var(--popover-foreground))">
+                {fmtMonth(labels[hovered])}
+              </text>
+              {[4, 3, 2, 1, 0].map((si, ri) => (
+                <g key={si}>
+                  <rect x={tipX + 8} y={PT + 26 + ri * 18} width={8} height={8} rx={2} fill={STAR_COLORS[si]} />
+                  <text x={tipX + 20} y={PT + 34 + ri * 18} fontSize={10} fill="hsl(var(--popover-foreground))">
+                    {STAR_LABELS[si]}: {vals[si]} ({Math.round(vals[si] / total * 100)}%)
+                  </text>
+                </g>
+              ))}
+            </g>
+          )
+        })()}
+      </svg>
+    </div>
   )
 }
 
