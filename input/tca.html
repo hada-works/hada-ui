@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TC Advisors - Vietnam GBP Location Audit</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1424;
+    --bg3: #151b2e;
+    --card: #1a2138;
+    --card2: #1f2845;
+    --border: #2a3454;
+    --border2: #344066;
+    --accent: #3b82f6;
+    --accent2: #60a5fa;
+    --accent3: #93c5fd;
+    --gold: #f59e0b;
+    --gold2: #fbbf24;
+    --red: #ef4444;
+    --red2: #f87171;
+    --green: #10b981;
+    --green2: #34d399;
+    --orange: #f97316;
+    --purple: #8b5cf6;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --radius: 12px;
+    --radius2: 8px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* TOP HEADER */
+  .top-header {
+    background: linear-gradient(135deg, #0f1424 0%, #1a2138 50%, #0f1a30 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .header-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+    gap: 24px;
+  }
+  .brand-block {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand-logo {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; color: #fff;
+    letter-spacing: -1px;
+    box-shadow: 0 0 20px rgba(59,130,246,0.4);
+  }
+  .brand-text { line-height: 1.2; }
+  .brand-name { font-size: 15px; font-weight: 700; color: var(--text); }
+  .brand-sub { font-size: 11px; color: var(--text3); font-weight: 400; }
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .meta-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 11px;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .meta-chip span { color: var(--accent2); font-weight: 600; }
+  .audit-date {
+    font-size: 11px; color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .si-badge {
+    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: flex;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 24px 32px;
+    gap: 24px;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .sidebar-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .sidebar-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+  .filter-group { margin-bottom: 14px; }
+  .filter-label {
+    font-size: 11px;
+    color: var(--text2);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .filter-select, .filter-input {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .filter-select:focus, .filter-input:focus { border-color: var(--accent); }
+  .filter-select option { background: var(--bg3); }
+
+  .stat-mini {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-mini:last-child { border-bottom: none; }
+  .stat-mini-label { font-size: 11px; color: var(--text2); }
+  .stat-mini-val { font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--text2);
+    margin-bottom: 8px;
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* MAIN CONTENT */
+  .main { flex: 1; min-width: 0; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px;
+    margin-bottom: 24px;
+  }
+  .tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); background: var(--card2); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(59,130,246,0.4);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* SUMMARY TAB */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .kpi-card.blue::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .kpi-card.red::before { background: linear-gradient(90deg, var(--red), var(--orange)); }
+  .kpi-card.green::before { background: linear-gradient(90deg, var(--green), #059669); }
+  .kpi-card.gold::before { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+  .kpi-card.purple::before { background: linear-gradient(90deg, var(--purple), #a78bfa); }
+  .kpi-label { font-size: 11px; color: var(--text2); font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-val { font-size: 32px; font-weight: 800; font-family: 'JetBrains Mono', monospace; line-height: 1; }
+  .kpi-val.blue { color: var(--accent2); }
+  .kpi-val.red { color: var(--red2); }
+  .kpi-val.green { color: var(--green2); }
+  .kpi-val.gold { color: var(--gold2); }
+  .kpi-val.purple { color: #a78bfa; }
+  .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* PROGRESS BAR */
+  .progress-item { margin-bottom: 12px; }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .progress-label { font-size: 11px; color: var(--text2); }
+  .progress-val { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text); font-weight: 600; }
+  .progress-bar {
+    height: 6px;
+    background: var(--bg2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+
+  /* CITY TABLE */
+  .city-table { width: 100%; border-collapse: collapse; }
+  .city-table th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    font-weight: 600;
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .city-table td {
+    font-size: 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+  }
+  .city-table tr:last-child td { border-bottom: none; }
+  .city-table tr:hover td { background: var(--card2); }
+
+  /* LOCATION TABLE */
+  .loc-table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .loc-table-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .loc-table-title { font-size: 13px; font-weight: 700; }
+  .loc-count { font-size: 11px; color: var(--text2); background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; font-family: 'JetBrains Mono', monospace; }
+  .table-scroll { overflow-x: auto; }
+  .data-table { width: 100%; border-collapse: collapse; min-width: 900px; }
+  .data-table th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text3);
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .data-table td {
+    font-size: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(59,130,246,0.04); }
+
+  .health-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .health-pill.critical { background: rgba(239,68,68,0.15); color: var(--red2); border: 1px solid rgba(239,68,68,0.3); }
+  .health-pill.warning { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+  .health-pill.good { background: rgba(16,185,129,0.15); color: var(--green2); border: 1px solid rgba(16,185,129,0.3); }
+
+  .status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .status-icon.ok { background: rgba(16,185,129,0.2); color: var(--green2); }
+  .status-icon.miss { background: rgba(239,68,68,0.2); color: var(--red2); }
+  .status-icon.warn { background: rgba(249,115,22,0.2); color: #fb923c; }
+
+  .loc-name { font-weight: 600; color: var(--text); font-size: 12px; }
+  .loc-addr { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  /* MISSING FIELDS */
+  .missing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .missing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+  }
+  .missing-field-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .missing-field-name { font-size: 12px; font-weight: 700; color: var(--text); }
+  .missing-count-badge {
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .missing-count-badge.critical { background: rgba(239,68,68,0.15); color: var(--red2); }
+  .missing-count-badge.ok { background: rgba(16,185,129,0.15); color: var(--green2); }
+  .missing-pct-bar {
+    height: 4px;
+    background: var(--bg2);
+    border-radius: 2px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .missing-pct-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+  .missing-loc-list { display: flex; flex-direction: column; gap: 4px; max-height: 130px; overflow-y: auto; }
+  .missing-loc-item {
+    font-size: 10px;
+    color: var(--text3);
+    padding: 3px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .missing-loc-item:last-child { border-bottom: none; }
+  .missing-loc-item::before { content: ''; width: 4px; height: 4px; background: var(--red2); border-radius: 50%; flex-shrink: 0; }
+
+  /* REVIEW TAB */
+  .review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .review-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .review-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .review-loc-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .review-loc-city { font-size: 10px; color: var(--text3); margin-bottom: 12px; }
+  .review-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .rating-big { font-size: 28px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+  .stars { display: flex; gap: 2px; }
+  .star { font-size: 12px; }
+  .star.full { color: var(--gold2); }
+  .star.half { color: var(--gold); opacity: 0.7; }
+  .star.empty { color: var(--text3); }
+  .review-count { font-size: 11px; color: var(--text2); }
+  .review-response-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .response-label { font-size: 10px; color: var(--text3); }
+  .response-val { font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .review-dist { display: flex; gap: 4px; margin-top: 10px; }
+  .review-dist-bar {
+    flex: 1; height: 30px; background: var(--bg2); border-radius: 4px;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    overflow: hidden; position: relative;
+  }
+  .review-dist-fill { width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; transition: height 0.6s; }
+  .review-dist-label { font-size: 9px; color: var(--text3); margin-top: 3px; }
+
+  /* NEXT BEST ACTION */
+  .nba-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .nba-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .nba-priority {
+    position: absolute;
+    top: 16px; right: 16px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 20px;
+    padding: 2px 8px;
+  }
+  .nba-priority.high { background: rgba(239,68,68,0.15); color: var(--red2); }
+  .nba-priority.medium { background: rgba(249,115,22,0.15); color: #fb923c; }
+  .nba-priority.low { background: rgba(16,185,129,0.15); color: var(--green2); }
+  .nba-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .nba-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .nba-desc { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 12px; }
+  .nba-impact {
+    font-size: 11px;
+    color: var(--accent2);
+    font-weight: 500;
+    padding: 6px 10px;
+    background: rgba(59,130,246,0.08);
+    border-radius: 6px;
+    border-left: 2px solid var(--accent);
+  }
+  .nba-locations { margin-top: 10px; }
+  .nba-loc-tag {
+    display: inline-block;
+    font-size: 10px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 8px;
+    margin: 2px;
+    color: var(--text3);
+  }
+
+  .action-timeline {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .timeline-item {
+    display: flex;
+    gap: 16px;
+    position: relative;
+    padding-bottom: 20px;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .timeline-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .timeline-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border);
+    margin-top: 4px;
+  }
+  .timeline-item:last-child .timeline-line { display: none; }
+  .timeline-content { flex: 1; }
+  .timeline-week { font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin-bottom: 3px; }
+  .timeline-action { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .timeline-detail { font-size: 11px; color: var(--text2); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* BRAND CONSISTENCY */
+  .brand-warn { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 6px; padding: 8px 12px; font-size: 11px; color: var(--gold2); margin-bottom: 12px; }
+
+  @media (max-width: 1200px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .missing-grid { grid-template-columns: repeat(2, 1fr); }
+    .nba-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 900px) {
+    .layout { flex-direction: column; padding: 16px; }
+    .sidebar { width: 100%; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .tabs { overflow-x: auto; }
+  }
+  .filter-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    border: none;
+    border-radius: var(--radius2);
+    color: #fff;
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+  .filter-btn:hover { opacity: 0.85; }
+  .section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    font-weight: 700;
+    margin-bottom: 12px;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="header-inner">
+    <div class="brand-block">
+      <div class="brand-logo">TC</div>
+      <div class="brand-text">
+        <div class="brand-name">TC Advisors &mdash; Vietnam GBP Audit</div>
+        <div class="brand-sub">Google Business Profile Location Health Dashboard</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="meta-chip">Locations: <span id="hdr-total">27</span></div>
+      <div class="meta-chip">Critical: <span id="hdr-critical" style="color:var(--red2)">0</span></div>
+      <div class="meta-chip">Avg Score: <span id="hdr-avg">0%</span></div>
+      <div class="audit-date">Audit Date: May 01, 2025</div>
+      <div class="si-badge">SingleInterface</div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Filters &amp; Controls</div>
+      <div class="filter-group">
+        <div class="filter-label">City / Province</div>
+        <select class="filter-select" id="filterCity" onchange="applyFilters()">
+          <option value="all">All Cities</option>
+          <option value="Ho Chi Minh City">Ho Chi Minh City</option>
+          <option value="Hanoi">Hanoi</option>
+          <option value="Da Nang">Da Nang</option>
+          <option value="Hai Phong">Hai Phong</option>
+          <option value="Can Tho">Can Tho</option>
+          <option value="Nha Trang">Nha Trang</option>
+          <option value="Bien Hoa">Bien Hoa</option>
+          <option value="Hue">Hue</option>
+          <option value="Vung Tau">Vung Tau</option>
+          <option value="Quy Nhon">Quy Nhon</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Health Score Range</div>
+        <select class="filter-select" id="filterHealth" onchange="applyFilters()">
+          <option value="all">All Scores</option>
+          <option value="critical" selected>Critical (&lt;50%)</option>
+          <option value="warning">Warning (50-74%)</option>
+          <option value="good">Good (75%+)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Missing Field</div>
+        <select class="filter-select" id="filterMissing" onchange="applyFilters()">
+          <option value="all">Any / All</option>
+          <option value="website">Missing Website</option>
+          <option value="phone">Missing Phone</option>
+          <option value="category">Missing Category</option>
+          <option value="hours">Missing Hours</option>
+          <option value="photos">Missing Photos</option>
+          <option value="description">Missing Description</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Sort By</div>
+        <select class="filter-select" id="filterSort" onchange="applyFilters()">
+          <option value="health_asc">Health Score (Low to High)</option>
+          <option value="health_desc">Health Score (High to Low)</option>
+          <option value="rating_desc">Rating (High to Low)</option>
+          <option value="reviews_desc">Most Reviews</option>
+          <option value="name_asc">Name A-Z</option>
+        </select>
+      </div>
+      <button class="filter-btn" onclick="resetFilters()">Reset Filters</button>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Quick Stats</div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Total Locations</span>
+        <span class="stat-mini-val" id="sb-total" style="color:var(--accent2)">27</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Critical (&lt;50%)</span>
+        <span class="stat-mini-val" id="sb-critical" style="color:var(--red2)">0</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Warning (50-74%)</span>
+        <span class="stat-mini-val" id="sb-warning" style="color:#fb923c">0</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Good (75%+)</span>
+        <span class="stat-mini-val" id="sb-good" style="color:var(--green2)">0</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Avg Health Score</span>
+        <span class="stat-mini-val" id="sb-avg" style="color:var(--text)">0%</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Missing Website</span>
+        <span class="stat-mini-val" id="sb-nowebsite" style="color:var(--red2)">0</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Missing Phone</span>
+        <span class="stat-mini-val" id="sb-nophone" style="color:var(--red2)">0</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Missing Category</span>
+        <span class="stat-mini-val" id="sb-nocat" style="color:var(--orange)">0</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Avg Rating</span>
+        <span class="stat-mini-val" id="sb-avgrating" style="color:var(--gold2)">0.0</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-label">Total Reviews</span>
+        <span class="stat-mini-val" id="sb-totalreviews" style="color:var(--text)">0</span>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Legend</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--red2)"></span>Critical &lt; 50%</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#fb923c"></span>Warning 50-74%</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--green2)"></span>Good 75%+</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--gold2)"></span>Brand Inconsistency</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--purple)"></span>No Reviews Response</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('summary', this)">Summary</button>
+      <button class="tab-btn" onclick="switchTab('audit', this)">Location Audit</button>
+      <button class="tab-btn" onclick="switchTab('missing', this)">Missing Fields</button>
+      <button class="tab-btn" onclick="switchTab('reviews', this)">Review Analysis</button>
+      <button class="tab-btn" onclick="switchTab('nba', this)">Next Best Action</button>
+    </div>
+
+    <!-- TAB 1: SUMMARY -->
+    <div id="tab-summary" class="tab-content active">
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Total Locations</div>
+          <div class="kpi-val blue" id="kpi-total">27</div>
+          <div class="kpi-sub">Across Vietnam</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Critical Locations</div>
+          <div class="kpi-val red" id="kpi-critical">0</div>
+          <div class="kpi-sub">Health score &lt; 50%</div>
+        </div>
+        <div class="kpi-card gold">
+          <div class="kpi-label">Average Health Score</div>
+          <div class="kpi-val gold" id="kpi-avg">0%</div>
+          <div class="kpi-sub">Portfolio average</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Avg Star Rating</div>
+          <div class="kpi-val green" id="kpi-rating">0.0</div>
+          <div class="kpi-sub" id="kpi-reviews-sub">across all locations</div>
+        </div>
+      </div>
+
+      <div class="brand-warn" id="brand-warn-box">
+        Brand Name Consistency Alert: Some listings may use variations of "TC Advisors" or "TC Advisory". Standardize to one canonical brand name across all GBP listings immediately.
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="card-title"><span class="card-title-dot" style="background:var(--accent)"></span>Profile Completeness by Field</div>
+          <div id="completeness-bars"></div>
+        </div>
+        <div class="summary-card">
+          <div class="card-title"><span class="card-title-dot" style="background:var(--gold)"></span>Locations by City</div>
+          <table class="city-table" id="city-table"></table>
+        </div>
+      </div>
+
+      <div class="summary-card" style="margin-bottom:16px;">
+        <div class="card-title"><span class="card-title-dot" style="background:var(--red)"></span>Health Score Distribution</div>
+        <div id="health-dist" style="display:flex;gap:8px;align-items:flex-end;height:90px;margin-top:8px;"></div>
+        <div style="display:flex;gap:20px;margin-top:12px;flex-wrap:wrap;">
+          <div class="legend-item"><span class="legend-dot" style="background:var(--red2)"></span>Critical (0-49%): <b id="dist-crit" style="color:var(--red2);margin-left:4px;">0</b></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#fb923c"></span>Warning (50-74%): <b id="dist-warn" style="color:#fb923c;margin-left:4px;">0</b></div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--green2)"></span>Good (75%+): <b id="dist-good" style="color:var(--green2);margin-left:4px;">0</b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: LOCATION AUDIT -->
+    <div id="tab-audit" class="tab-content">
+      <div class="loc-table-wrap">
+        <div class="loc-table-header">
+          <div>
+            <div class="loc-table-title">TC Advisors &mdash; GBP Location Audit</div>
+          </div>
+          <div class="loc-count" id="audit-count">27 locations</div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Location Name</th>
+                <th>City</th>
+                <th>Brand Consistent</th>
+                <th>Health Score</th>
+                <th>Website</th>
+                <th>Phone</th>
+                <th>Category</th>
+                <th>Hours</th>
+                <th>Photos</th>
+                <th>Description</th>
+                <th>Rating</th>
+                <th>Reviews</th>
+                <th>Responses</th>
+              </tr>
+            </thead>
+            <tbody id="audit-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: MISSING FIELDS -->
+    <div id="tab-missing" class="tab-content">
+      <div class="section-label">Missing Fields Overview</div>
+      <div class="missing-grid" id="missing-grid"></div>
+      <div class="loc-table-wrap" style="margin-top:16px;">
+        <div class="loc-table-header">
+          <div class="loc-table-title">Locations Requiring Immediate Attention</div>
+          <div class="loc-count" id="missing-count">0 critical</div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Location</th>
+                <th>City</th>
+                <th>Health</th>
+                <th>Missing Fields</th>
+                <th>Website</th>
+                <th>Phone</th>
+                <th>Category</th>
+                <th>Hours</th>
+                <th>Photos</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody id="missing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: REVIEW ANALYSIS -->
+    <div id="tab-reviews" class="tab-content">
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="kpi-card gold">
+          <div class="kpi-label">Portfolio Avg Rating</div>
+          <div class="kpi-val gold" id="rev-avg-rating">0.0</div>
+          <div class="kpi-sub">out of 5 stars</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">Total Reviews</div>
+          <div class="kpi-val blue" id="rev-total">0</div>
+          <div class="kpi-sub">across all locations</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">No Responses</div>
+          <div class="kpi-val red" id="rev-no-resp">0</div>
+          <div class="kpi-sub">locations with 0% response</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">Avg Response Rate</div>
+          <div class="kpi-val" id="rev-resp-rate" style="color:#a78bfa;">0%</div>
+          <div class="kpi-sub">portfolio-wide</div>
+        </div>
+      </div>
+      <div class="section-label">Review Performance by Location</div>
+      <div class="review-grid" id="review-grid"></div>
+    </div>
+
+    <!-- TAB 5: NEXT BEST ACTION -->
+    <div id="tab-nba" class="tab-content">
+      <div class="section-label">Recommended Actions &mdash; Prioritized</div>
+      <div class="nba-grid" id="nba-grid"></div>
+      <div class="action-timeline">
+        <div class="card-title" style="margin-bottom:20px;"><span class="card-title-dot" style="background:var(--accent)"></span>90-Day Action Timeline</div>
+        <div id="timeline-content"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ============================================================
+// DATA: 27 TC Advisors Vietnam Locations
+// ============================================================
+const RAW_LOCATIONS = [
+  {
+    id:1, name:"TC Advisors - Quan 1",
+    brandName:"TC Advisors", city:"Ho Chi Minh City",
+    address:"12 Nguyen Hue, District 1, Ho Chi Minh City",
+    health:38, hasWebsite:false, hasPhone:false, hasCategory:true,
+    hasHours:true, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.2, reviews:14, responseRate:0
+  },
+  {
+    id:2, name:"TC Advisors - Quan 3",
+    brandName:"TC Advisory", city:"Ho Chi Minh City",
+    address:"45 Vo Van Tan, District 3, Ho Chi Minh City",
+    health:42, hasWebsite:false, hasPhone:true, hasCategory:true,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:false, rating:3.8, reviews:21, responseRate:10
+  },
+  {
+    id:3, name:"TC Advisors - Binh Thanh",
+    brandName:"TC Advisors", city:"Ho Chi Minh City",
+    address:"88 Dien Bien Phu, Binh Thanh, Ho Chi Minh City",
+    health:29, hasWebsite:false, hasPhone:false, hasCategory:false,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:2.9, reviews:7, responseRate:0
+  },
+  {
+    id:4, name:"TC Advisors - Thu Duc",
+    brandName:"TC Advisors Vietnam", city:"Ho Chi Minh City",
+    address:"120 Vo Van Ngan, Thu Duc, Ho Chi Minh City",
+    health:45, hasWebsite:false, hasPhone:true, hasCategory:true,
+    hasHours:true, hasPhotos:false, hasDescription:false,
+    brandConsistent:false, rating:4.0, reviews:33, responseRate:15
+  },
+  {
+    id:5, name:"TC Advisors - Tan Binh",
+    brandName:"TC Advisors", city:"Ho Chi Minh City",
+    address:"220 Hoang Van Thu, Tan Binh, Ho Chi Minh City",
+    health:50, hasWebsite:true, hasPhone:true, hasCategory:true,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.5, reviews:18, responseRate:22
+  },
+  {
+    id:6, name:"TC Advisors - Phu Nhuan",
+    brandName:"TC Advisors", city:"Ho Chi Minh City",
+    address:"55 Phan Dinh Phung, Phu Nhuan, Ho Chi Minh City",
+    health:33, hasWebsite:false, hasPhone:false, hasCategory:true,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.1, reviews:9, responseRate:0
+  },
+  {
+    id:7, name:"TC Advisors - Ba Dinh",
+    brandName:"TC Advisors", city:"Hanoi",
+    address:"25 Phan Dinh Phung, Ba Dinh, Hanoi",
+    health:41, hasWebsite:false, hasPhone:true, hasCategory:true,
+    hasHours:true, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.7, reviews:27, responseRate:7
+  },
+  {
+    id:8, name:"TC Advisors - Hoan Kiem",
+    brandName:"TC Advisory Hanoi", city:"Hanoi",
+    address:"10 Dinh Tien Hoang, Hoan Kiem, Hanoi",
+    health:35, hasWebsite:false, hasPhone:false, hasCategory:true,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:false, rating:3.4, reviews:11, responseRate:0
+  },
+  {
+    id:9, name:"TC Advisors - Dong Da",
+    brandName:"TC Advisors", city:"Hanoi",
+    address:"78 Chua Lang, Dong Da, Hanoi",
+    health:48, hasWebsite:true, hasPhone:true, hasCategory:false,
+    hasHours:true, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:4.1, reviews:41, responseRate:30
+  },
+  {
+    id:10, name:"TC Advisors - Cau Giay",
+    brandName:"TC Advisors", city:"Hanoi",
+    address:"15 Tran Thai Tong, Cau Giay, Hanoi",
+    health:25, hasWebsite:false, hasPhone:false, hasCategory:false,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:2.6, reviews:5, responseRate:0
+  },
+  {
+    id:11, name:"TC Advisors - Hai Chau",
+    brandName:"TC Advisors Da Nang", city:"Da Nang",
+    address:"33 Bach Dang, Hai Chau, Da Nang",
+    health:37, hasWebsite:false, hasPhone:true, hasCategory:true,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:false, rating:3.6, reviews:19, responseRate:5
+  },
+  {
+    id:12, name:"TC Advisors - Son Tra",
+    brandName:"TC Advisors", city:"Da Nang",
+    address:"99 Pham Van Dong, Son Tra, Da Nang",
+    health:44, hasWebsite:false, hasPhone:true, hasCategory:true,
+    hasHours:true, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:4.2, reviews:38, responseRate:18
+  },
+  {
+    id:13, name:"TC Advisors - Ngu Hanh Son",
+    brandName:"TC Advisors", city:"Da Nang",
+    address:"15 Truong Sa, Ngu Hanh Son, Da Nang",
+    health:22, hasWebsite:false, hasPhone:false, hasCategory:false,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:0.0, reviews:0, responseRate:0
+  },
+  {
+    id:14, name:"TC Advisors - Ngo Quyen",
+    brandName:"TC Advisors", city:"Hai Phong",
+    address:"60 Quang Trung, Ngo Quyen, Hai Phong",
+    health:30, hasWebsite:false, hasPhone:false, hasCategory:true,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.0, reviews:8, responseRate:0
+  },
+  {
+    id:15, name:"TC Advisors - Le Chan",
+    brandName:"TC Advisory HP", city:"Hai Phong",
+    address:"12 Tran Hung Dao, Le Chan, Hai Phong",
+    health:27, hasWebsite:false, hasPhone:false, hasCategory:false,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:false, rating:2.8, reviews:6, responseRate:0
+  },
+  {
+    id:16, name:"TC Advisors - Ninh Kieu",
+    brandName:"TC Advisors", city:"Can Tho",
+    address:"18 Hai Ba Trung, Ninh Kieu, Can Tho",
+    health:40, hasWebsite:false, hasPhone:true, hasCategory:true,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.3, reviews:12, responseRate:8
+  },
+  {
+    id:17, name:"TC Advisors - Binh Thuy",
+    brandName:"TC Advisors Can Tho", city:"Can Tho",
+    address:"5 Hung Loi, Binh Thuy, Can Tho",
+    health:20, hasWebsite:false, hasPhone:false, hasCategory:false,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:false, rating:0.0, reviews:0, responseRate:0
+  },
+  {
+    id:18, name:"TC Advisors - Phuoc Hoa",
+    brandName:"TC Advisors", city:"Nha Trang",
+    address:"80 Nguyen Thien Thuat, Phuoc Hoa, Nha Trang",
+    health:46, hasWebsite:false, hasPhone:true, hasCategory:true,
+    hasHours:true, hasPhotos:false, hasDescription:true,
+    brandConsistent:true, rating:4.3, reviews:55, responseRate:20
+  },
+  {
+    id:19, name:"TC Advisors - Vinh Hai",
+    brandName:"TC Advisors", city:"Nha Trang",
+    address:"22 Pham Van Dong, Vinh Hai, Nha Trang",
+    health:32, hasWebsite:false, hasPhone:false, hasCategory:true,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.2, reviews:10, responseRate:0
+  },
+  {
+    id:20, name:"TC Advisors - Bien Hoa A",
+    brandName:"TC Advisors", city:"Bien Hoa",
+    address:"14 Nguyen Ai Quoc, Bien Hoa, Dong Nai",
+    health:43, hasWebsite:false, hasPhone:true, hasCategory:true,
+    hasHours:true, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.9, reviews:29, responseRate:12
+  },
+  {
+    id:21, name:"TC Advisors - Trang Bom",
+    brandName:"TC Advisors BH", city:"Bien Hoa",
+    address:"Quoc lo 1A, Trang Bom, Dong Nai",
+    health:18, hasWebsite:false, hasPhone:false, hasCategory:false,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:false, rating:0.0, reviews:0, responseRate:0
+  },
+  {
+    id:22, name:"TC Advisors - Phu Hoi",
+    brandName:"TC Advisors", city:"Hue",
+    address:"8 Ly Thuong Kiet, Phu Hoi, Hue",
+    health:49, hasWebsite:true, hasPhone:true, hasCategory:true,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.6, reviews:16, responseRate:25
+  },
+  {
+    id:23, name:"TC Advisors - Phu Cat",
+    brandName:"TC Advisors Hue", city:"Hue",
+    address:"33 Hung Vuong, Phu Cat, Hue",
+    health:24, hasWebsite:false, hasPhone:false, hasCategory:false,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:false, rating:2.5, reviews:4, responseRate:0
+  },
+  {
+    id:24, name:"TC Advisors - Vung Tau City",
+    brandName:"TC Advisors", city:"Vung Tau",
+    address:"102 Tran Hung Dao, Vung Tau City",
+    health:47, hasWebsite:false, hasPhone:true, hasCategory:true,
+    hasHours:true, hasPhotos:true, hasDescription:false,
+    brandConsistent:true, rating:4.4, reviews:62, responseRate:35
+  },
+  {
+    id:25, name:"TC Advisors - Quy Nhon Central",
+    brandName:"TC Advisors", city:"Quy Nhon",
+    address:"21 Nguyen Tat Thanh, Quy Nhon, Binh Dinh",
+    health:36, hasWebsite:false, hasPhone:true, hasCategory:false,
+    hasHours:false, hasPhotos:false, hasDescription:false,
+    brandConsistent:true, rating:3.3, reviews:11, responseRate:0
+  },
+  {
+    id:26, name:"TC Advisors - Tay Son",
+    brandName:"TC Advisors", city:"Quy Nhon",
+    address:"15 Tay Son, Quy Nhon, Binh Dinh",
+    health:78, hasWebsite:true, hasPhone:true, hasCategory:true,
+    hasHours:true, hasPhotos:true, hasDescription:true,
+    brandConsistent:true, rating:4.6, reviews:88, responseRate:72
+  },
+  {
+    id:27, name:"TC Advisors - Nguyen Hue HN",
+    brandName:"TC Advisors", city:"Hanoi",
+    address:"7 Nguyen Hue, Hoan Kiem, Hanoi",
+    health:82, hasWebsite:true, hasPhone:true, hasCategory:true,
+    hasHours:true, hasPhotos:true, hasDescription:true,
+    brandConsistent:true, rating:4.7, reviews:104, responseRate:85
+  }
+];
+
+let filteredLocations = [...RAW_LOCATIONS];
+
+// ============================================================
+// UTILITY
+// ============================================================
+function getHealthClass(score) {
+  if (score < 50) return 'critical';
+  if (score < 75) return 'warning';
+  return 'good';
+}
+function getHealthColor(score) {
+  if (score < 50) return 'var(--red2)';
+  if (score < 75) return '#fb923c';
+  return 'var(--green2)';
+}
+function statusIcon(val) {
+  if (val === null) return `<span class="status-icon warn">?</span>`;
+  return val
+    ? `<span class="status-icon ok">Y</span>`
+    : `<span class="status-icon miss">N</span>`;
+}
+function stars(rating) {
+  if (!rating) return '<span style="color:var(--text3);font-size:11px;">No rating</span>';
+  let s = '';
+  for (let i = 1; i <= 5; i++) {
+    if (rating >= i) s += `<span class="star full">&#9733;</span>`;
+    else if (rating >= i - 0.5) s += `<span class="star half">&#9733;</span>`;
+    else s += `<span class="star empty">&#9733;</span>`;
+  }
+  return `<div class="stars">${s}</div>`;
+}
+function countMissing(loc) {
+  let count = 0;
+  if (!loc.hasWebsite) count++;
+  if (!loc.hasPhone) count++;
+  if (!loc.hasCategory) count++;
+  if (!loc.hasHours) count++;
+  if (!loc.hasPhotos) count++;
+  if (!loc.hasDescription) count++;
+  return count;
+}
+
+// ============================================================
+// FILTERS
+// ============================================================
+function applyFilters() {
+  const city = document.getElementById('filterCity').value;
+  const health = document.getElementById('filterHealth').value;
+  const missing = document.getElementById('filterMissing').value;
+  const sort = document.getElementById('filterSort').value;
+
+  filteredLocations = RAW_LOCATIONS.filter(loc => {
+    if (city !== 'all' && loc.city !== city) return false;
+    if (health === 'critical' && loc.health >= 50) return false;
+    if (health === 'warning' && (loc.health < 50 || loc.health >= 75)) return false;
+    if (health === 'good' && loc.health < 75) return false;
+    if (missing === 'website' && loc.hasWebsite) return false;
+    if (missing === 'phone' && loc.hasPhone) return false;
+    if (missing === 'category' && loc.hasCategory) return false;
+    if (missing === 'hours' && loc.hasHours) return false;
+    if (missing === 'photos' && loc.hasPhotos) return false;
+    if (missing === 'description' && loc.hasDescription) return false;
+    return true;
+  });
+
+  filteredLocations.sort((a, b) => {
+    if (sort === 'health_asc') return a.health - b.health;
+    if (sort === 'health_desc') return b.health - a.health;
+    if (sort === 'rating_desc') return b.rating - a.rating;
+    if (sort === 'reviews_desc') return b.reviews - a.reviews;
+    if (sort === 'name_asc') return a.name.localeCompare(b.name);
+    return 0;
+  });
+
+  renderAll();
+}
+
+function resetFilters() {
+  document.getElementById('filterCity').value = 'all';
+  document.getElementById('filterHealth').value = 'all';
+  document.getElementById('filterMissing').value = 'all';
+  document.getElementById('filterSort').value = 'health_asc';
+  filteredLocations = [...RAW_LOCATIONS];
+  renderAll();
+}
+
+// ============================================================
+// RENDER ALL
+// ============================================================
+function renderAll() {
+  renderSidebar();
+  renderHeader();
+  renderSummary();
+  renderAudit();
+  renderMissing();
+  renderReviews();
+  renderNBA();
+}
+
+// ============================================================
+// SIDEBAR + HEADER
+// ============================================================
+function renderSidebar() {
+  const locs = filteredLocations;
+  const total = locs.length;
+  const critical = locs.filter(l => l.health < 50).length;
+  const warning = locs.filter(l => l.health >= 50 && l.health < 75).length;
+  const good = locs.filter(l => l.health >= 75).length;
+  const avg = total ? Math.round(locs.reduce((a, b) => a + b.health, 0) / total) : 0;
+  const noWebsite = locs.filter(l => !l.hasWebsite).length;
+  const noPhone = locs.filter(l => !l.hasPhone).length;
+  const noCat = locs.filter(l => !l.hasCategory).length;
+  const ratings = locs.filter(l => l.rating > 0).map(l => l.rating);
+  const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 'N/A';
+  const totalReviews = locs.reduce((a, b) => a + b.reviews, 0);
+
+  document.getElementById('sb-total').textContent = total;
+  document.getElementById('sb-critical').textContent = critical;
+  document.getElementById('sb-warning').textContent = warning;
+  document.getElementById('sb-good').textContent = good;
+  document.getElementById('sb-avg').textContent = avg + '%';
+  document.getElementById('sb-nowebsite').textContent = noWebsite;
+  document.getElementById('sb-nophone').textContent = noPhone;
+  document.getElementById('sb-nocat').textContent = noCat;
+  document.getElementById('sb-avgrating').textContent = avgRating;
+  document.getElementById('sb-totalreviews').textContent = totalReviews;
+}
+
+function renderHeader() {
+  const locs = filteredLocations;
+  const total = locs.length;
+  const critical = locs.filter(l => l.health < 50).length;
+  const avg = total ? Math.round(locs.reduce((a, b) => a + b.health, 0) / total) : 0;
+  document.getElementById('hdr-total').textContent = total;
+  document.getElementById('hdr-critical').textContent = critical;
+  document.getElementById('hdr-avg').textContent = avg + '%';
+}
+
+// ============================================================
+// SUMMARY TAB
+// ============================================================
+function renderSummary() {
+  const locs = filteredLocations;
+  const total = locs.length;
+  const critical = locs.filter(l => l.health < 50).length;
+  const avg = total ? Math.round(locs.reduce((a, b) => a + b.health, 0) / total) : 0;
+  const ratings = locs.filter(l => l.rating > 0).map(l => l.rating);
+  const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : '0.0';
+  const totalReviews = locs.reduce((a, b) => a + b.reviews, 0);
+
+  document.getElementById('kpi-total').textContent = total;
+  document.getElementById('kpi-critical').textContent = critical;
+  document.getElementById('kpi-avg').textContent = avg + '%';
+  document.getElementById('kpi-rating').textContent = avgRating;
+  document.getElementById('kpi-reviews-sub').textContent = totalReviews + ' total reviews';
+
+  const warn = locs.filter(l => l.health >= 50 && l.health < 75).length;
+  const good = locs.filter(l => l.health >= 75).length;
+  document.getElementById('dist-crit').textContent = critical;
+  document.getElementById('dist-warn').textContent = warn;
+  document.getElementById('dist-good').textContent = good;
+
+  // Completeness bars
+  const fields = [
+    { label:'Website', key:'hasWebsite' },
+    { label:'Phone Number', key:'hasPhone' },
+    { label:'Primary Category', key:'hasCategory' },
+    { label:'Business Hours', key:'hasHours' },
+    { label:'Photos', key:'hasPhotos' },
+    { label:'Description', key:'hasDescription' },
+  ];
+  let barsHtml = '';
+  fields.forEach(f => {
+    const has = total ? locs.filter(l => l[f.key]).length : 0;
+    const pct = total ? Math.round((has / total) * 100) : 0;
+    const color = pct >= 75 ? 'var(--green2)' : pct >= 50 ? '#fb923c' : 'var(--red2)';
+    barsHtml += `
+      <div class="progress-item">
+        <div class="progress-header">
+          <span class="progress-label">${f.label}</span>
+          <span class="progress-val" style="color:${color}">${has}/${total} (${pct}%)</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${pct}%;background:${color};"></div>
+        </div>
+      </div>`;
+  });
+  document.getElementById('completeness-bars').innerHTML = barsHtml;
+
+  // City table
+  const cities = {};
+  locs.forEach(l => {
+    if (!cities[l.city]) cities[l.city] = { count:0, health:0, reviews:0 };
+    cities[l.city].count++;
+    cities[l.city].health += l.health;
+    cities[l.city].reviews += l.reviews;
+  });
+  let cityHtml = `<tr><th>City</th><th>Locations</th><th>Avg Health</th><th>Total Reviews</th></tr>`;
+  Object.entries(cities).sort((a,b) => b[1].count - a[1].count).forEach(([city, d]) => {
+    const ah = Math.round(d.health / d.count);
+    const color = getHealthColor(ah);
+    cityHtml += `<tr>
+      <td style="color:var(--text);font-weight:600;">${city}</td>
+      <td>${d.count}</td>
+      <td style="color:${color};font-weight:700;">${ah}%</td>
+      <td>${d.reviews}</td>
+    </tr>`;
+  });
+  document.getElementById('city-table').innerHTML = cityHtml;
+
+  // Health distribution chart
+  const buckets = [
+    {label:'0-9%',min:0,max:10,color:'#7f1d1d'},
+    {label:'10-19%',min:10,max:20,color:'#991b1b'},
+    {label:'20-29%',min:20,max:30,color:'#dc2626'},
+    {label:'30-39%',min:30,max:40,color:'#ef4444'},
+    {label:'40-49%',min:40,max:50,color:'#f87171'},
+    {label:'50-59%',min:50,max:60,color:'#f97316'},
+    {label:'60-69%',min:60,max:70,color:'#fbbf24'},
+    {label:'70-79%',min:70,max:80,color:'#a3e635'},
+    {label:'80-89%',min:80,max:90,color:'#34d399'},
+    {label:'90-100%',min:90,max:101,color:'#10b981'},
+  ];
+  const maxCount = Math.max(...buckets.map(b => locs.filter(l => l.health >= b.min && l.health < b.max).length), 1);
+  let distHtml = '';
+  buckets.forEach(b => {
+    const cnt = locs.filter(l => l.health >= b.min && l.health < b.max).length;
+    const h = Math.round((cnt / maxCount) * 80);
+    distHtml += `
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
+        <div style="font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${cnt}</div>
+        <div style="width:100%;height:${Math.max(h,2)}px;background:${b.color};border-radius:4px 4px 0 0;"></div>
+        <div style="font-size:8px;color:var(--text3);writing-mode:horizontal-tb;">${b.label}</div>
+      </div>`;
+  });
+  document.getElementById('health-dist').innerHTML = distHtml;
+}
+
+// ============================================================
+// AUDIT TAB
+// ============================================================
+function renderAudit() {
+  const locs = filteredLocations;
+  document.getElementById('audit-count').textContent = locs.length + ' locations';
+  let html = '';
+  locs.forEach((loc, i) => {
+    const hc = getHealthClass(loc.health);
+    const hcolor = getHealthColor(loc.health);
+    const brandOk = loc.brandConsistent;
+    html += `<tr>
+      <td style="color:var(--text3);font-family:'JetBrains Mono',monospace;">${i+1}</td>
+      <td>
+        <div class="loc-name">${loc.name}</div>
+        <div class="loc-addr">${loc.address}</div>
+        ${!brandOk ? `<div style="font-size:9px;color:var(--gold2);margin-top:2px;">Listed as: "${loc.brandName}"</div>` : ''}
+      </td>
+      <td style="color:var(--text2);">${loc.city}</td>
+      <td>
+        ${brandOk
+          ? `<span class="status-icon ok">Y</span>`
+          : `<span style="display:inline-flex;align-items:center;gap:4px;"><span class="status-icon warn">!</span><span style="font-size:10px;color:var(--gold2);">Mismatch</span></span>`}
+      </td>
+      <td>
+        <span class="health-pill ${hc}">${loc.health}%</span>
+      </td>
+      <td>${statusIcon(loc.hasWebsite)}</td>
+      <td>${statusIcon(loc.hasPhone)}</td>
+      <td>${statusIcon(loc.hasCategory)}</td>
+      <td>${statusIcon(loc.hasHours)}</td>
+      <td>${statusIcon(loc.hasPhotos)}</td>
+      <td>${statusIcon(loc.hasDescription)}</td>
+      <td style="color:var(--gold2);font-weight:700;font-family:'JetBrains Mono',monospace;">${loc.rating > 0 ? loc.rating.toFixed(1) : 'N/A'}</td>
+      <td style="color:var(--text2);font-family:'JetBrains Mono',monospace;">${loc.reviews}</td>
+      <td style="color:${loc.responseRate === 0 ? 'var(--red2)' : loc.responseRate < 30 ? '#fb923c' : 'var(--green2)'};font-family:'JetBrains Mono',monospace;font-weight:600;">${loc.responseRate}%</td>
+    </tr>`;
+  });
+  document.getElementById('audit-tbody').innerHTML = html;
+}
+
+// ============================================================
+// MISSING FIELDS TAB
+// ============================================================
+function renderMissing() {
+  const locs = filteredLocations;
+  const total = locs.length;
+  const fields = [
+    { key:'hasWebsite', label:'Website URL', icon:'W' },
+    { key:'hasPhone', label:'Phone Number', icon:'P' },
+    { key:'hasCategory', label:'Primary Category', icon:'C' },
+    { key:'hasHours', label:'Business Hours', icon:'H' },
+    { key:'hasPhotos', label:'Photos', icon:'I' },
+    { key:'hasDescription', label:'Business Description', icon:'D' },
+  ];
+  const colors = [
+    { fill:'var(--red2)', bg:'rgba(239,68,68,0.15)' },
+    { fill:'#fb923c', bg:'rgba(249,115,22,0.15)' },
+    { fill:var_gold2_equiv='var(--gold2)', bg:'rgba(245,158,11,0.15)' },
+    { fill:'#a78bfa', bg:'rgba(139,92,246,0.15)' },
+    { fill:'var(--accent2)', bg:'rgba(96,165,250,0.15)' },
+    { fill:'var(--green2)', bg:'rgba(52,211,153,0.15)' },
+  ];
+  let html = '';
+  fields.forEach((f, fi) => {
+    const missing = locs.filter(l => !l[f.key]);
+    const cnt = missing.length;
+    const pct = total ? Math.round((cnt / total) * 100) : 0;
+    const c = colors[fi];
+    html += `
+      <div class="missing-card">
+        <div class="missing-field-header">
+          <div class="missing-field-name">${f.label}</div>
+          <span class="missing-count-badge ${cnt > 0 ? 'critical' : 'ok'}">${cnt} missing</span>
+        </div>
+        <div class="missing-pct-bar">
+          <div class="missing-pct-fill" style="width:${pct}%;background:${c.fill};"></div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">${pct}% of locations missing this field</div>
+        <div class="missing-loc-list">
+          ${missing.map(l => `<div class="missing-loc-item">${l.name}</div>`).join('')}
+          ${cnt === 0 ? '<div style="font-size:11px;color:var(--green2);">All locations have this field</div>' : ''}
+        </div>
+      </div>`;
+  });
+  document.getElementById('missing-grid').innerHTML = html;
+
+  // Missing table
+  const critical = locs.filter(l => l.health < 50 || countMissing(l) >= 3);
+  document.getElementById('missing-count').textContent = critical.length + ' requiring action';
+  let thtml = '';
+  critical.sort((a,b) => countMissing(b) - countMissing(a)).forEach((loc, i) => {
+    const mc = countMissing(loc);
+    thtml += `<tr>
+      <td style="color:var(--text3);font-family:'JetBrains Mono',monospace;">${i+1}</td>
+      <td><div class="loc-name">${loc.name}</div></td>
+      <td style="color:var(--text2);">${loc.city}</td>
+      <td><span class="health-pill ${getHealthClass(loc.health)}">${loc.health}%</span></td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${mc>=4?'var(--red2)':mc>=2?'#fb923c':'var(--green2)'};">${mc}/6</span></td>
+      <td>${statusIcon(loc.hasWebsite)}</td>
+      <td>${statusIcon(loc.hasPhone)}</td>
+      <td>${statusIcon(loc.hasCategory)}</td>
+      <td>${statusIcon(loc.hasHours)}</td>
+      <td>${statusIcon(loc.hasPhotos)}</td>
+      <td>${statusIcon(loc.hasDescription)}</td>
+    </tr>`;
+  });
+  document.getElementById('missing-tbody').innerHTML = thtml;
+}
+
+// ============================================================
+// REVIEW ANALYSIS TAB
+// ============================================================
+function renderReviews() {
+  const locs = filteredLocations;
+  const total = locs.length;
+  const ratings = locs.filter(l => l.rating > 0).map(l => l.rating);
+  const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : '0.0';
+  const totalReviews = locs.reduce((a, b) => a + b.reviews, 0);
+  const noResp = locs.filter(l => l.responseRate === 0).length;
+  const avgResp = total ? Math.round(locs.reduce((a, b) => a + b.responseRate, 0) / total) : 0;
+
+  document.getElementById('rev-avg-rating').textContent = avgRating;
+  document.getElementById('rev-total').textContent = totalReviews;
+  document.getElementById('rev-no-resp').textContent = noResp;
+  document.getElementById('rev-resp-rate').textContent = avgResp + '%';
+
+  let html = '';
+  locs.sort((a, b) => b.reviews - a.reviews).forEach(loc => {
+    const ratingColor = loc.rating >= 4 ? 'var(--green2)' : loc.rating >= 3 ? 'var(--gold2)' : 'var(--red2)';
+    // Simulated distribution based on rating
+    const dist = simulateDist(loc.rating, loc.reviews);
+    const maxD = Math.max(...dist, 1);
+    const distHtml = dist.map((v, i) => {
+      const h = Math.round((v / maxD) * 28);
+      const colors2 = ['#ef4444','#f97316','#fbbf24','#86efac','#34d399'];
+      return `
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <div style="font-size:8px;color:var(--text3);">${v}</div>
+          <div style="width:100%;height:${Math.max(h,2)}px;background:${colors2[i]};border-radius:2px 2px 0 0;margin-top:2px;"></div>
+          <div style="font-size:8px;color:var(--text3);margin-top:2px;">${i+1}&#9733;</div>
+        </div>`;
+    }).join('');
+    html += `
+      <div class="review-card">
+        <div class="review-loc-name">${loc.name}</div>
+        <div class="review-loc-city">${loc.city}</div>
+        <div class="review-rating-row">
+          <div class="rating-big" style="color:${ratingColor}">${loc.rating > 0 ? loc.rating.toFixed(1) : 'N/A'}</div>
+          <div>
+            ${stars(loc.rating)}
+            <div class="review-count">${loc.reviews} review${loc.reviews !== 1 ? 's' : ''}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:3px;align-items:flex-end;height:50px;">${distHtml}</div>
+        <div class="review-response-row">
+          <span class="response-label">Response Rate</span>
+          <span class="response-val" style="color:${loc.responseRate === 0 ? 'var(--red2)' : loc.responseRate < 30 ? '#fb923c' : 'var(--green2)'};">${loc.responseRate}%</span>
+        </div>
+        ${loc.responseRate === 0 ? `<div style="font-size:10px;color:var(--red2);margin-top:6px;padding:4px 8px;background:rgba(239,68,68,0.08);border-radius:4px;">No review responses &mdash; action required</div>` : ''}
+      </div>`;
+  });
+  document.getElementById('review-grid').innerHTML = html;
+}
+
+function simulateDist(rating, total) {
+  if (total === 0) return [0, 0, 0, 0, 0];
+  const r = Math.max(1, Math.min(5, rating));
+  const weights = [
+    Math.max(0, (3 - r) * 15 + 5),
+    Math.max(0, (3 - Math.abs(r - 2)) * 10 + 5),
+    Math.max(0, 15 + (r - 3) * 5),
+    Math.max(0, (r - 2) * 15),
+    Math.max(0, (r - 2.5) * 20)
+  ];
+  const sum = weights.reduce((a, b) => a + b, 0) || 1;
+  return weights.map(w => Math.round((w / sum) * total));
+}
+
+// ============================================================
+// NBA TAB
+// ============================================================
+function renderNBA() {
+  const locs = filteredLocations;
+  const noWebsite = locs.filter(l => !l.hasWebsite).length;
+  const noPhone = locs.filter(l => !l.hasPhone).length;
+  const noCat = locs.filter(l => !l.hasCategory).length;
+  const noHours = locs.filter(l => !l.hasHours).length;
+  const noPhotos = locs.filter(l => !l.hasPhotos).length;
+  const noResp = locs.filter(l => l.responseRate === 0).length;
+  const brandIssues = locs.filter(l => !l.brandConsistent).length;
+
+  const actions = [
+    {
+      icon:'N', iconBg:'rgba(239,68,68,0.15)', iconColor:'var(--red2)',
+      priority:'high', title:'Standardize Brand Name',
+      desc:`${brandIssues} location(s) are listed under different brand name variations (e.g., "TC Advisory", "TC Advisors Vietnam", "TC Advisors Hanoi"). This confuses customers and hurts Google's entity recognition.`,
+      impact:'Brand name consistency directly improves local search ranking and customer trust. Standardize to "TC Advisors" across all ${locs.length} GBP listings.',
+      locs: locs.filter(l => !l.brandConsistent).map(l => l.name)
+    },
+    {
+      icon:'W', iconBg:'rgba(59,130,246,0.15)', iconColor:'var(--accent2)',
+      priority:'high', title:'Add Website URLs to All Listings',
+      desc:`${noWebsite} out of ${locs.length} locations are missing a website link. This is a major credibility signal for Google and potential clients. Link each GBP to the corresponding location page on the TC Advisors website.`,
+      impact:'Adding website URLs can increase GBP click-through rates by up to 35% and improves overall health score by +10 points per listing.',
+      locs: locs.filter(l => !l.hasWebsite).map(l => l.name)
+    },
+    {
+      icon:'P', iconBg:'rgba(249,115,22,0.15)', iconColor:'#fb923c',
+      priority:'high', title:'Add Missing Phone Numbers',
+      desc:`${noPhone} locations have no phone number. A missing phone number signals an incomplete and untrustworthy listing to Google, reducing your chance of appearing in the Local 3-Pack.`,
+      impact:'Phone number presence is a verified contact signal that improves GBP ranking confidence and drives direct client inquiries.',
+      locs: locs.filter(l => !l.hasPhone).map(l => l.name)
+    },
+    {
+      icon:'R', iconBg:'rgba(139,92,246,0.15)', iconColor:'#a78bfa',
+      priority:'high', title:'Begin Responding to All Reviews',
+      desc:`${noResp} locations have a 0% review response rate. This signals inactivity and disengagement to both Google and prospective clients. In professional services, review responses are a key trust signal.`,
+      impact:'Responding to reviews within 48 hours can improve overall star rating perception and increase new client conversion by up to 25%.',
+      locs: locs.filter(l => l.responseRate === 0).map(l => l.name)
+    },
+    {
+      icon:'C', iconBg:'rgba(245,158,11,0.15)', iconColor:'var(--gold2)',
+      priority:'medium', title:'Set Primary Business Category',
+      desc:`${noCat} listings are missing a primary Google category. Without it, Google cannot accurately classify your business, drastically reducing appearance in relevant searches for advisory and consulting services.`,
+      impact:'Suggested category: "Business Management Consultant" or "Financial Consultant". Correct categorization can expand organic reach by 3-5x in local search.',
+      locs: locs.filter(l => !l.hasCategory).map(l => l.name)
+    },
+    {
+      icon:'H', iconBg:'rgba(52,211,153,0.15)', iconColor:'var(--green2)',
+      priority:'medium', title:'Add Business Hours',
+      desc:`${noHours} locations are missing operating hours. Customers and Google rely on hours to determine if a business is reachable. Missing hours can cause lost leads from time-sensitive inquiries.`,
+      impact:'Adding business hours reduces customer friction and tells Google your business is actively maintained, boosting listing quality score.',
+      locs: locs.filter(l => !l.hasHours).map(l => l.name)
+    },
+    {
+      icon:'I', iconBg:'rgba(96,165,250,0.15)', iconColor:'var(--accent2)',
+      priority:'medium', title:'Upload High-Quality Photos',
+      desc:`${noPhotos} locations have no photos on their GBP. For a professional advisory firm, photos of the office environment, team, and branding materials build legitimacy and are weighted by Google's ranking algorithm.`,
+      impact:'Listings with photos receive 42% more direction requests and 35% more website clicks than those without. Aim for minimum 5 photos per location.',
+      locs: locs.filter(l => !l.hasPhotos).map(l => l.name)
+    },
+    {
+      icon:'G', iconBg:'rgba(16,185,129,0.15)', iconColor:'var(--green2)',
+      priority:'low', title:'Generate More 4-5 Star Reviews',
+      desc:`Several TC Advisors locations have fewer than 15 reviews and low average ratings. Proactively request satisfied clients to leave reviews via follow-up emails, SMS, or QR codes in office lobbies.`,
+      impact:'Increasing review count and average rating above 4.0 significantly improves map pack visibility and increases client conversion rates.',
+      locs: locs.filter(l => l.rating < 4.0 || l.reviews < 20).map(l => l.name)
+    },
+  ];
+
+  let html = '';
+  actions.forEach(a => {
+    const topLocs = a.locs.slice(0, 5);
+    const extra = a.locs.length - 5;
+    html += `
+      <div class="nba-card">
+        <span class="nba-priority ${a.priority}">${a.priority} priority</span>
+        <div class="nba-icon" style="background:${a.iconBg};color:${a.iconColor};font-weight:800;font-size:14px;">${a.icon}</div>
+        <div class="nba-title">${a.title}</div>
+        <div class="nba-desc">${a.desc}</div>
+        <div class="nba-impact">${a.impact}</div>
+        ${topLocs.length > 0 ? `
+        <div class="nba-locations" style="margin-top:10px;">
+          ${topLocs.map(n => `<span class="nba-loc-tag">${n}</span>`).join('')}
+          ${extra > 0 ? `<span class="nba-loc-tag">+${extra} more</span>` : ''}
+        </div>` : ''}
+      </div>`;
+  });
+  document.getElementById('nba-grid').innerHTML = html;
+
+  const timeline = [
+    { week:'Week 1-2', color:'var(--red2)', action:'Brand Standardization + Phone Numbers', detail:'Update all GBP listings to use canonical brand name "TC Advisors". Add missing phone numbers for all ' + noPhone + ' locations.' },
+    { week:'Week 2-3', color:'#fb923c', action:'Add Website URLs + Primary Categories', detail:'Link location landing pages (or main site) to all ' + noWebsite + ' listings. Set "Financial Consultant" or "Business Management Consultant" as primary category.' },
+    { week:'Week 3-4', color:'var(--gold2)', action:'Start Responding to All Existing Reviews', detail:'Assign a team member to respond to all existing reviews across ' + noResp + ' non-responsive locations. Draft template responses for efficiency.' },
+    { week:'Week 4-6', color:'var(--accent2)', action:'Upload Photos + Add Business Hours', detail:'Collect and upload minimum 5 professional photos per location. Fill in accurate business hours for all ' + noHours + ' listings currently missing them.' },
+    { week:'Week 6-8', color:'var(--purple)', action:'Review Generation Campaign', detail:'Launch email/SMS review request campaign to existing clients. Target 10+ new reviews per location. Focus on lowest-rated branches first.' },
+    { week:'Week 8-12', color:'var(--green2)', action:'Monitor, Measure & Iterate', detail:'Use SingleInterface to track GBP health score improvements. Target portfolio average health score above 70% within 90 days. Re-audit monthly.' },
+  ];
+
+  let tlHtml = '';
+  timeline.forEach((t, i) => {
+    tlHtml += `
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-dot" style="background:${t.color};"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-week">${t.week}</div>
+          <div class="timeline-action">${t.action}</div>
+          <div class="timeline-detail">${t.detail}</div>
+        </div>
+      </div>`;
+  });
+  document.getElementById('timeline-content').innerHTML = tlHtml;
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  filteredLocations = RAW_LOCATIONS.filter(l => l.health < 50);
+  renderAll();
+});
+</script>
+</body>
+</html>

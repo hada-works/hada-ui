@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import type { BulkItem, RoleKey, StepStatus, ApprovalStep } from "@/types"
-import { MOCK_ITEMS } from "@/store/mock-data"
+import { MOCK_ITEMS } from "@/features/purchases/mock-data"
 import {
   deriveOverall, MONTH_FILTERS, STATUS_FILTERS,
   CURRENT_NAME, CURRENT_ROLE, mkDefaultItem, fmt,

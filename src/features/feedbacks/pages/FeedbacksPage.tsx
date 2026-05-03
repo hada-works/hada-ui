@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FeedbackStatusBadge } from "@/components/shared/StatusBadge"
 import { PriorityBadge } from "@/components/shared/PriorityBadge"
 import { EmptyState } from "@/components/shared/EmptyState"
-import { FEEDBACKS, FEEDBACK_BOARDS } from "@/store/mock-data"
+import { FEEDBACKS, FEEDBACK_BOARDS } from "@/features/feedbacks/mock-data"
 import { useApp } from "@/store/app-store"
 import { Feedback, FeedbackStatus } from "@/types"
 import { cn } from "@/lib/utils"

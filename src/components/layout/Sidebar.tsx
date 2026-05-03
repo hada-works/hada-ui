@@ -6,10 +6,13 @@ import {
   Check, Building2, Users, BarChart3, Bell,
   ChevronRight, Plus, PanelLeftClose, PanelLeftOpen, MoreHorizontal,
   ShoppingCart, ClipboardCheck, SlidersHorizontal,
+  MapPin, Star, Cog,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/store/app-store"
-import { TENANTS, FEEDBACK_BOARDS, PROJECTS } from "@/store/mock-data"
+import { TENANTS } from "@/store/mock-data"
+import { FEEDBACK_BOARDS } from "@/features/feedbacks/mock-data"
+import { PROJECTS } from "@/features/projects/mock-data"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import {
@@ -79,6 +82,7 @@ export function AppSidebar() {
   const [feedbackOpen,  setFeedbackOpen]  = useState(true)
   const [projectsOpen,  setProjectsOpen]  = useState(true)
   const [purchasesOpen, setPurchasesOpen] = useState(true)
+  const [gbpOpen,       setGbpOpen]       = useState(true)
 
   const tenantBoards   = FEEDBACK_BOARDS.filter(b => b.tenantId === currentTenant.id)
   const tenantProjects = PROJECTS.filter(p => p.tenantId === currentTenant.id)
@@ -214,6 +218,66 @@ export function AppSidebar() {
                           <Link to="/purchases/settings" className="flex items-center gap-1.5">
                             <SlidersHorizontal className="size-3 shrink-0" />
                             Bulkbuy settings
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </Collapsible>
+        </SidebarGroup>
+
+        {/* ── GBP Audits (2-level collapsible) ── */}
+        <SidebarGroup>
+          <Collapsible open={open ? gbpOpen : false} onOpenChange={setGbpOpen}>
+            <div className="flex items-center">
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
+                  <MapPin className="size-4 shrink-0" />
+                  GBP Audits
+                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+            </div>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {!open && (
+                  <NavItem href="/gbp/dashboard" icon={MapPin} label="GBP Audits" />
+                )}
+                {open && (
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/dashboard"}>
+                          <Link to="/gbp/dashboard" className="flex items-center gap-1.5">
+                            <LayoutDashboard className="size-3 shrink-0" />
+                            Dashboard
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/locations"}>
+                          <Link to="/gbp/locations" className="flex items-center gap-1.5">
+                            <MapPin className="size-3 shrink-0" />
+                            Locations
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/reviews"}>
+                          <Link to="/gbp/reviews" className="flex items-center gap-1.5">
+                            <Star className="size-3 shrink-0" />
+                            Reviews
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/settings"}>
+                          <Link to="/gbp/settings" className="flex items-center gap-1.5">
+                            <Cog className="size-3 shrink-0" />
+                            Settings
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

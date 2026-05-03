@@ -1,0 +1,42 @@
+import type { FeedbackBoard, Feedback } from "@/types"
+
+export const FEEDBACK_BOARDS: FeedbackBoard[] = [
+  // t1
+  { id: "b1", name: "Product",        emoji: "📦", tenantId: "t1", feedbackCount: 3 },
+  { id: "b2", name: "Design & UX",    emoji: "🎨", tenantId: "t1", feedbackCount: 2 },
+  { id: "b3", name: "Infrastructure", emoji: "🏗️", tenantId: "t1", feedbackCount: 2 },
+  { id: "b4", name: "Security",       emoji: "🔒", tenantId: "t1", feedbackCount: 2 },
+  // t2
+  { id: "b5", name: "Product",        emoji: "📦", tenantId: "t2", feedbackCount: 3 },
+  { id: "b6", name: "Integrations",   emoji: "🔌", tenantId: "t2", feedbackCount: 2 },
+  { id: "b7", name: "Access & Perms", emoji: "🛡️", tenantId: "t2", feedbackCount: 1 },
+  // t3
+  { id: "b8",  name: "Product",       emoji: "📦", tenantId: "t3", feedbackCount: 2 },
+  { id: "b9",  name: "Compliance",    emoji: "📋", tenantId: "t3", feedbackCount: 2 },
+  { id: "b10", name: "Mobile",        emoji: "📱", tenantId: "t3", feedbackCount: 1 },
+]
+
+export const FEEDBACKS: Feedback[] = [
+  // t1
+  { id: "f1",  title: "Dark mode support",         description: "Would love a dark mode for the entire dashboard. A system-level toggle that persists per user would be ideal.", status: "planned",      boardId: "b2", priority: "high",   upvotes: 142, authorId: "u2", authorName: "Sarah Chen",      tenantId: "t1", tags: ["ui","accessibility"], createdAt: "2025-04-01", updatedAt: "2025-04-10" },
+  { id: "f2",  title: "Bulk CSV export",           description: "Allow exporting any filtered table view as CSV. Right now we copy-paste data manually which is error-prone.",  status: "under_review", boardId: "b1", priority: "medium", upvotes: 89,  authorId: "u3", authorName: "John Doe",        tenantId: "t1", tags: ["export","data"],      createdAt: "2025-04-05", updatedAt: "2025-04-12" },
+  { id: "f3",  title: "Webhook notifications",     description: "Send webhook events whenever a feedback or issue status changes. Pipe events into Slack or PagerDuty.",        status: "in_progress",  boardId: "b3", priority: "high",   upvotes: 76,  authorId: "u4", authorName: "Maria Garcia",    tenantId: "t1", tags: ["integrations"],       createdAt: "2025-04-08", updatedAt: "2025-04-15" },
+  { id: "f4",  title: "Two-factor authentication", description: "Add TOTP-based 2FA. With enterprise clients this is a compliance requirement for SOC 2.",                      status: "completed",    boardId: "b4", priority: "urgent", upvotes: 201, authorId: "u5", authorName: "James Park",      tenantId: "t1", tags: ["security","auth"],    createdAt: "2025-03-15", updatedAt: "2025-04-20" },
+  { id: "f5",  title: "Mobile app",               description: "Native mobile app for iOS and Android. Field teams need on-the-go access.",                                    status: "open",         boardId: "b1", priority: "medium", upvotes: 315, authorId: "u6", authorName: "Emma Wilson",     tenantId: "t1", tags: ["mobile"],             createdAt: "2025-04-10", updatedAt: "2025-04-10" },
+  { id: "f6",  title: "API rate limit increase",  description: "Current 100 req/min limit is too restrictive for our automated pipelines.",                                   status: "declined",     boardId: "b3", priority: "low",    upvotes: 23,  authorId: "u7", authorName: "Tom Brown",       tenantId: "t1", tags: ["api"],                createdAt: "2025-04-12", updatedAt: "2025-04-18" },
+  { id: "f7",  title: "Custom dashboard widgets", description: "Let admins add/remove/reorder widgets. Drag-and-drop layout builder similar to Notion.",                       status: "open",         boardId: "b2", priority: "medium", upvotes: 58,  authorId: "u8", authorName: "Lin Wei",         tenantId: "t1", tags: ["ui","dashboard"],     createdAt: "2025-04-18", updatedAt: "2025-04-18" },
+  { id: "f8",  title: "SSO via SAML 2.0",        description: "IT policy mandates SSO for all SaaS tools. SAML 2.0 with Okta and Azure AD would unblock our full rollout.",  status: "planned",      boardId: "b4", priority: "urgent", upvotes: 178, authorId: "u9", authorName: "David Kim",       tenantId: "t1", tags: ["auth","enterprise"],  createdAt: "2025-03-28", updatedAt: "2025-04-22" },
+  // t2
+  { id: "f9",  title: "Kanban board view",        description: "Kanban-style board for issues. Cards draggable between columns with WIP limits.",                              status: "planned",      boardId: "b5", priority: "high",   upvotes: 204, authorId: "u10", authorName: "Priya Patel",    tenantId: "t2", tags: ["ui","productivity"],  createdAt: "2025-04-02", updatedAt: "2025-04-14" },
+  { id: "f10", title: "Time tracking per issue",  description: "Built-in timer or manual time-log on each issue so we can report billable hours.",                             status: "under_review", boardId: "b5", priority: "medium", upvotes: 97,  authorId: "u11", authorName: "Carlos Ruiz",    tenantId: "t2", tags: ["billing","tracking"], createdAt: "2025-04-07", updatedAt: "2025-04-16" },
+  { id: "f11", title: "Recurring tasks",          description: "Support recurring issues (daily standups, weekly reports). Auto-create on cron schedule.",                     status: "open",         boardId: "b5", priority: "medium", upvotes: 61,  authorId: "u12", authorName: "Yuki Tanaka",    tenantId: "t2", tags: ["automation"],         createdAt: "2025-04-11", updatedAt: "2025-04-11" },
+  { id: "f12", title: "Slack integration",        description: "Post issue updates to a Slack channel. Two-way: allow responding to comments from Slack.",                     status: "in_progress",  boardId: "b6", priority: "high",   upvotes: 143, authorId: "u13", authorName: "Anna Schmidt",   tenantId: "t2", tags: ["integrations","slack"], createdAt: "2025-04-03", updatedAt: "2025-04-19" },
+  { id: "f13", title: "Guest collaborator access",description: "Invite external stakeholders as read-only guests without giving them a full seat.",                            status: "open",         boardId: "b7", priority: "low",    upvotes: 39,  authorId: "u14", authorName: "Ben Taylor",     tenantId: "t2", tags: ["permissions"],        createdAt: "2025-04-15", updatedAt: "2025-04-15" },
+  { id: "f14", title: "Email digest",             description: "Weekly email summary of open feedbacks, critical issues, project progress. Configurable per user.",            status: "completed",    boardId: "b6", priority: "low",    upvotes: 28,  authorId: "u15", authorName: "Mei Lin",        tenantId: "t2", tags: ["notifications"],      createdAt: "2025-03-20", updatedAt: "2025-04-05" },
+  // t3
+  { id: "f15", title: "Offline mode",             description: "Allow reading and triaging issues without internet. Sync when connection is restored.",                        status: "open",         boardId: "b10",priority: "high",   upvotes: 87,  authorId: "u16", authorName: "Omar Hassan",    tenantId: "t3", tags: ["mobile","offline"],   createdAt: "2025-04-09", updatedAt: "2025-04-09" },
+  { id: "f16", title: "PDF report export",        description: "Export project status report as a branded PDF to send to clients.",                                            status: "under_review", boardId: "b8", priority: "medium", upvotes: 54,  authorId: "u17", authorName: "Fatima Al-Zahra",tenantId: "t3", tags: ["export","reports"],   createdAt: "2025-04-13", updatedAt: "2025-04-20" },
+  { id: "f17", title: "Custom issue fields",      description: "Configurable custom fields per issue type (e.g. client name, contract ID).",                                   status: "planned",      boardId: "b8", priority: "high",   upvotes: 119, authorId: "u18", authorName: "Jake Morrison",  tenantId: "t3", tags: ["customization"],      createdAt: "2025-04-06", updatedAt: "2025-04-17" },
+  { id: "f18", title: "Audit log",                description: "History of all changes to issues, feedbacks, and project settings for compliance.",                            status: "open",         boardId: "b9", priority: "urgent", upvotes: 162, authorId: "u19", authorName: "Sophie Blanc",   tenantId: "t3", tags: ["security","compliance"], createdAt: "2025-04-04", updatedAt: "2025-04-04" },
+  { id: "f19", title: "Bulk status update",       description: "Select multiple issues and change status in one action. Very tedious to do one-by-one.",                       status: "in_progress",  boardId: "b9", priority: "medium", upvotes: 76,  authorId: "u20", authorName: "Rafael Costa",   tenantId: "t3", tags: ["ux","bulk"],          createdAt: "2025-04-16", updatedAt: "2025-04-23" },
+]

@@ -150,6 +150,103 @@ export interface BulkItem {
   comments: BulkComment[]
 }
 
+// ─── GBP Audits ───────────────────────────────────────────────────────────────
+
+export type GbpHealthStatus = "critical" | "warning" | "healthy"
+
+export interface GbpFields {
+  hasWebsite:     boolean
+  hasPhone:       boolean
+  hasCategory:    boolean
+  hasHours:       boolean
+  photoCount:     number   // < 5 is flagged
+  hasDescription: boolean
+}
+
+export interface GbpReview {
+  totalCount:   number
+  avgRating:    number                                          // 1.0–5.0
+  responseRate: number                                          // 0–100
+  dist:         [number, number, number, number, number]        // [★1 … ★5]
+  positivePct:  number
+  neutralPct:   number
+  negativePct:  number
+}
+
+// Full GBP profile — only populated for locations with rich mock data
+export interface GbpBusinessHours {
+  monday:    string   // "07:00–22:00" | "Closed"
+  tuesday:   string
+  wednesday: string
+  thursday:  string
+  friday:    string
+  saturday:  string
+  sunday:    string
+}
+
+export interface GbpAttributes {
+  wheelchair:   boolean
+  parking:      boolean
+  wifi:         boolean
+  cashPayment:  boolean
+  cardPayment:  boolean
+  delivery:     boolean
+  dineIn:       boolean
+  takeout:      boolean
+}
+
+export interface GbpFullProfile {
+  primaryCategory:      string
+  secondaryCategories:  string[]
+  phone:                string
+  additionalPhone?:     string
+  website:              string
+  mapsUrl:              string
+  openingDate:          string          // "YYYY-MM"
+  shortDescription:     string         // up to 750 chars (Google limit)
+  regularHours:         GbpBusinessHours
+  hasSpecialHours:      boolean        // holiday / special hours set
+  attributes:           GbpAttributes
+  postCount:            number         // posts published in last 90 days
+  qaCount:              number         // published Q&A pairs
+  hasBookingLink:       boolean
+  hasMenuLink:          boolean
+  hasProductCatalog:    boolean
+  logoUploaded:         boolean
+  coverPhotoUploaded:   boolean
+}
+
+export interface GbpLocation {
+  id:            string
+  tenantId:      string
+  name:          string          // actual GBP name (may differ from brand standard)
+  nameIsCorrect: boolean         // matches canonical brand name?
+  city:          string
+  address:       string
+  healthScore:   number          // 0–100
+  status:        GbpHealthStatus
+  fields:        GbpFields
+  review:        GbpReview
+  lastAudit:     string          // YYYY-MM-DD
+  profile?:      GbpFullProfile  // rich profile — populated for select locations
+}
+
+export type GbpReviewSentiment = "positive" | "neutral" | "negative"
+
+export interface GbpReviewItem {
+  id:            string
+  tenantId:      string
+  locationId:    string          // references GbpLocation.id
+  reviewerName:  string
+  rating:        1 | 2 | 3 | 4 | 5
+  text:          string
+  date:          string          // YYYY-MM-DD
+  sentiment:     GbpReviewSentiment
+  responded:     boolean
+  response?:     string
+  responseDate?: string
+}
+
 export interface Issue {
   id: string
   identifier: string

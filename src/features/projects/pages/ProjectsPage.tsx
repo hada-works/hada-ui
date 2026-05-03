@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ProjectStatusBadge } from "@/components/shared/StatusBadge"
 import { EmptyState } from "@/components/shared/EmptyState"
-import { PROJECTS } from "@/store/mock-data"
+import { PROJECTS } from "@/features/projects/mock-data"
 import { useApp } from "@/store/app-store"
 
 export function ProjectsPage() {
