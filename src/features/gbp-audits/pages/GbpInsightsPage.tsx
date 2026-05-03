@@ -87,16 +87,16 @@ function yTicks(lo: number, hi: number, count = 5): number[] {
 // ─── Colour palette ───────────────────────────────────────────────────────────
 
 const C = {
-  clicks:     "hsl(211 100% 45%)",
-  calls:      "hsl(var(--warning))",
-  directions: "hsl(var(--success))",
-  reviews:    "hsl(211 100% 45%)",
-  rating:     "hsl(var(--warning))",
-  r5:         "hsl(152 69% 31%)",
-  r4:         "hsl(152 56% 46%)",
-  r3:         "hsl(var(--warning))",
-  r2:         "hsl(20 88% 52%)",
-  r1:         "hsl(var(--destructive))",
+  clicks:     "hsl(var(--info))",           // design token
+  calls:      "hsl(var(--warning))",        // design token
+  directions: "hsl(var(--success))",        // design token
+  reviews:    "hsl(var(--info))",           // design token
+  rating:     "hsl(var(--warning))",        // design token
+  r5:         "hsl(var(--success))",        // design token — exact match
+  r4:         "hsl(152 56% 46%)",           // chart-only tint (no token for lighter success)
+  r3:         "hsl(var(--warning))",        // design token
+  r2:         "hsl(20 88% 52%)",            // chart-only tint (no token for orange-red)
+  r1:         "hsl(var(--destructive))",    // design token
 }
 
 // ─── LineChart ────────────────────────────────────────────────────────────────
@@ -134,7 +134,7 @@ function LineChart({ id, series, labels, svgH = 180, yDomain, formatY = fmtK, sh
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" onMouseMove={onMouseMove} onMouseLeave={() => setHovered(null)}
-      style={{ overflow: "visible", display: "block" }}>
+      style={{ overflow: "visible", display: "block", fontFamily: "inherit" }}>
       <defs>
         {series.map((s, si) => (
           <linearGradient key={si} id={`${id}-g${si}`} x1="0" y1="0" x2="0" y2="1">
@@ -149,7 +149,7 @@ function LineChart({ id, series, labels, svgH = 180, yDomain, formatY = fmtK, sh
         <g key={ti}>
           <line x1={PL} y1={y(t)} x2={PL + PW} y2={y(t)}
             stroke="hsl(var(--border))" strokeWidth={ti === 0 ? 1 : 0.5} />
-          <text x={PL - 5} y={y(t) + 4} textAnchor="end" fontSize={9} fill="hsl(var(--muted-foreground))">
+          <text x={PL - 5} y={y(t) + 4} textAnchor="end" fontSize={10} fill="hsl(var(--muted-foreground))">
             {formatY(t)}
           </text>
         </g>
@@ -157,7 +157,7 @@ function LineChart({ id, series, labels, svgH = 180, yDomain, formatY = fmtK, sh
 
       {/* X labels */}
       {labels.map((l, i) => i % step === 0 && (
-        <text key={i} x={x(i)} y={PT + pH(H) + 26} textAnchor="middle" fontSize={9} fill="hsl(var(--muted-foreground))">
+        <text key={i} x={x(i)} y={PT + pH(H) + 26} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
           {fmtMonth(l)}
         </text>
       ))}
@@ -181,7 +181,7 @@ function LineChart({ id, series, labels, svgH = 180, yDomain, formatY = fmtK, sh
             stroke="hsl(var(--muted-foreground))" strokeWidth={1} strokeDasharray="4 3" />
           {series.map((s, si) => (
             <circle key={si} cx={x(hovered)} cy={y(s.data[hovered])} r={4}
-              fill={s.color} stroke="hsl(var(--background))" strokeWidth={2} />
+              fill={s.color} stroke="hsl(var(--card))" strokeWidth={2} />
           ))}
           {/* Tooltip */}
           {(() => {
@@ -194,14 +194,14 @@ function LineChart({ id, series, labels, svgH = 180, yDomain, formatY = fmtK, sh
             return (
               <g>
                 <rect x={tipX} y={tipY} width={tipW} height={tipH} rx={4}
-                  fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth={1} />
-                <text x={tipX + 8} y={tipY + 14} fontSize={9} fontWeight="600" fill="hsl(var(--foreground))">
+                  fill="hsl(var(--popover))" stroke="hsl(var(--border))" strokeWidth={1} />
+                <text x={tipX + 8} y={tipY + 14} fontSize={11} fontWeight="600" fill="hsl(var(--popover-foreground))">
                   {fmtMonth(labels[hovered])}
                 </text>
                 {series.map((s, si) => (
                   <g key={si}>
                     <rect x={tipX + 8}  y={tipY + 22 + si * 18} width={8} height={8} rx={2} fill={s.color} />
-                    <text x={tipX + 20} y={tipY + 30 + si * 18} fontSize={9} fill="hsl(var(--foreground))">
+                    <text x={tipX + 20} y={tipY + 30 + si * 18} fontSize={10} fill="hsl(var(--popover-foreground))">
                       {s.label}: {formatY(s.data[hovered])}
                     </text>
                   </g>
@@ -234,18 +234,18 @@ function BarChart({ data, labels, color, label, svgH = 160, formatY = fmtK }: Ba
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width="100%"
       onMouseLeave={() => setHovered(null)}
-      style={{ overflow: "visible", display: "block" }}>
+      style={{ overflow: "visible", display: "block", fontFamily: "inherit" }}>
       {ticks.map((t, ti) => (
         <g key={ti}>
           <line x1={PL} y1={y(t)} x2={PL + PW} y2={y(t)}
             stroke="hsl(var(--border))" strokeWidth={ti === 0 ? 1 : 0.5} />
-          <text x={PL - 5} y={y(t) + 4} textAnchor="end" fontSize={9} fill="hsl(var(--muted-foreground))">
+          <text x={PL - 5} y={y(t) + 4} textAnchor="end" fontSize={10} fill="hsl(var(--muted-foreground))">
             {formatY(t)}
           </text>
         </g>
       ))}
       {labels.map((l, i) => i % step === 0 && (
-        <text key={i} x={xAt(i, n)} y={PT + pH(H) + 26} textAnchor="middle" fontSize={9} fill="hsl(var(--muted-foreground))">
+        <text key={i} x={xAt(i, n)} y={PT + pH(H) + 26} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
           {fmtMonth(l)}
         </text>
       ))}
@@ -261,12 +261,12 @@ function BarChart({ data, labels, color, label, svgH = 160, formatY = fmtK }: Ba
         return (
           <g>
             <rect x={tipX} y={PT + 4} width={tipW} height={tipH} rx={4}
-              fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth={1} />
-            <text x={tipX + 8} y={PT + 17} fontSize={9} fontWeight="600" fill="hsl(var(--foreground))">
+              fill="hsl(var(--popover))" stroke="hsl(var(--border))" strokeWidth={1} />
+            <text x={tipX + 8} y={PT + 17} fontSize={11} fontWeight="600" fill="hsl(var(--popover-foreground))">
               {fmtMonth(labels[hovered])}
             </text>
             <rect x={tipX + 8}  y={PT + 24} width={8} height={8} rx={2} fill={color} />
-            <text x={tipX + 20} y={PT + 32} fontSize={9} fill="hsl(var(--foreground))">
+            <text x={tipX + 20} y={PT + 32} fontSize={10} fill="hsl(var(--popover-foreground))">
               {label}: {formatY(data[hovered])}
             </text>
           </g>
@@ -292,7 +292,7 @@ function StackedBarChart({ points, labels }: { points: GbpInsightPoint[]; labels
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width="100%"
       onMouseLeave={() => setHovered(null)}
-      style={{ overflow: "visible", display: "block" }}>
+      style={{ overflow: "visible", display: "block", fontFamily: "inherit" }}>
       <line x1={PL} y1={PT} x2={PL + PW} y2={PT} stroke="hsl(var(--border))" strokeWidth={0.5} />
       <line x1={PL} y1={by} x2={PL + PW} y2={by} stroke="hsl(var(--border))" strokeWidth={1} />
       {[0, 25, 50, 75, 100].map(pct => {
@@ -300,12 +300,12 @@ function StackedBarChart({ points, labels }: { points: GbpInsightPoint[]; labels
         return (
           <g key={pct}>
             {pct > 0 && pct < 100 && <line x1={PL} y1={yy} x2={PL + PW} y2={yy} stroke="hsl(var(--border))" strokeWidth={0.4} />}
-            <text x={PL - 5} y={yy + 4} textAnchor="end" fontSize={9} fill="hsl(var(--muted-foreground))">{pct}%</text>
+            <text x={PL - 5} y={yy + 4} textAnchor="end" fontSize={10} fill="hsl(var(--muted-foreground))">{pct}%</text>
           </g>
         )
       })}
       {labels.map((l, i) => i % step === 0 && (
-        <text key={i} x={xAt(i, n)} y={by + 26} textAnchor="middle" fontSize={9} fill="hsl(var(--muted-foreground))">
+        <text key={i} x={xAt(i, n)} y={by + 26} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
           {fmtMonth(l)}
         </text>
       ))}
@@ -339,14 +339,14 @@ function StackedBarChart({ points, labels }: { points: GbpInsightPoint[]; labels
         return (
           <g>
             <rect x={tipX} y={PT + 4} width={tipW} height={tipH} rx={4}
-              fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth={1} />
-            <text x={tipX + 8} y={PT + 18} fontSize={9} fontWeight="600" fill="hsl(var(--foreground))">
+              fill="hsl(var(--popover))" stroke="hsl(var(--border))" strokeWidth={1} />
+            <text x={tipX + 8} y={PT + 18} fontSize={11} fontWeight="600" fill="hsl(var(--popover-foreground))">
               {fmtMonth(labels[hovered])}
             </text>
             {[4,3,2,1,0].map((si, ri) => (
               <g key={si}>
                 <rect x={tipX + 8} y={PT + 26 + ri * 18} width={8} height={8} rx={2} fill={STAR_COLORS[si]} />
-                <text x={tipX + 20} y={PT + 34 + ri * 18} fontSize={9} fill="hsl(var(--foreground))">
+                <text x={tipX + 20} y={PT + 34 + ri * 18} fontSize={10} fill="hsl(var(--popover-foreground))">
                   {STAR_LABELS[si]}: {vals[si]} ({Math.round(vals[si] / total * 100)}%)
                 </text>
               </g>
@@ -460,12 +460,12 @@ function KpiCard({ icon: Icon, label, value, diff, sub }: {
         ) : positive ? (
           <TrendingUp className="size-3 text-[hsl(var(--success))]" />
         ) : negative ? (
-          <TrendingDown className="size-3 text-[hsl(var(--destructive))]" />
+          <TrendingDown className="size-3 text-destructive" />
         ) : (
           <Minus className="size-3 text-muted-foreground" />
         )}
         <span className={cn("font-medium",
-          positive ? "text-[hsl(var(--success))]" : negative ? "text-[hsl(var(--destructive))]" : "text-muted-foreground")}>
+          positive ? "text-[hsl(var(--success))]" : negative ? "text-destructive" : "text-muted-foreground")}>
           {diff == null ? "—" : `${diff > 0 ? "+" : ""}${diff}%`}
         </span>
         <span className="text-muted-foreground">{sub}</span>
