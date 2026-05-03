@@ -204,8 +204,15 @@ export function GbpLocationsPage() {
       {/* ── Split: table + resize handle + detail panel ── */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* Table */}
-        <div className="flex-1 overflow-auto min-w-0">
+        {/* Table — overflow-auto here so the horizontal scrollbar sits at viewport bottom */}
+        <div className={cn(
+          "flex-1 overflow-auto min-w-0",
+          "[&::-webkit-scrollbar]:h-[5px]",
+          "[&::-webkit-scrollbar-track]:bg-transparent",
+          "[&::-webkit-scrollbar-thumb]:rounded-full",
+          "[&::-webkit-scrollbar-thumb]:bg-border",
+          "[&::-webkit-scrollbar-thumb:hover]:bg-muted-foreground/40",
+        )}>
           <LocationsTable
             locations={filtered}
             compact={false}

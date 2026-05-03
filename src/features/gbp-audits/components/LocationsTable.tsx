@@ -72,6 +72,10 @@ function aggLocs(locs: GbpLocation[]): AggData {
 const TH_BASE =
   "py-2 px-3 text-[10px] font-semibold text-muted-foreground bg-muted border-b border-r border-border last:border-r-0 whitespace-nowrap"
 
+// Classes added to the Location column only
+const TH_STICKY  = "sticky left-0 z-20 bg-muted hover:bg-accent shadow-[1px_0_0_0_hsl(var(--border))]"
+const TD_STICKY  = "sticky left-0 z-10 shadow-[1px_0_0_0_hsl(var(--border)/0.6)]"
+
 function SimpleTh({ children, center = false, className }: {
   children: React.ReactNode; center?: boolean; className?: string
 }) {
@@ -92,7 +96,7 @@ function SortTh({ label, sk, active, dir, onSort, center = false, className }: {
       onClick={() => onSort(sk)}
       className={cn(
         TH_BASE,
-        "cursor-pointer select-none group hover:bg-muted/70 transition-colors",
+        "cursor-pointer select-none group hover:bg-accent transition-colors",
         center && "text-center",
         className,
       )}
@@ -137,7 +141,7 @@ function GroupHeaderRow({ label, agg, groupBy, compact, status }: {
   return (
     <tr className="bg-muted/40">
       {/* Location */}
-      <td className="py-2 pl-4 pr-3 border-y border-r border-border/60">
+      <td className={cn("py-2 pl-4 pr-3 border-y border-r border-border/60 bg-muted", TD_STICKY)}>
         <div className="flex items-center gap-2">
           {status && (
             <HealthBadge status={status} className="text-[10px] h-4 px-1.5 shrink-0" />
@@ -263,15 +267,15 @@ export function LocationsTable({
   })()
 
   return (
-    <div className={cn("overflow-x-auto", className)}>
+    <div className={cn("min-w-0", className)}>
       <table
         className="w-full text-sm border-separate border-spacing-0"
         style={{ minWidth: compact ? 600 : 1120 }}
       >
         {/* ── Headers ── */}
-        <thead className="sticky top-0 z-10">
+        <thead className="sticky top-0 z-30">
           <tr>
-            <SortTh label="Location"   {...s("location")} className="pl-4" />
+            <SortTh label="Location"   {...s("location")} className={cn("pl-4", TH_STICKY)} />
             <SortTh label="City"       {...s("city")}     />
             <SortTh label="Score"      {...s("score")}    />
             {/* Non-sortable boolean field columns */}
@@ -319,7 +323,7 @@ export function LocationsTable({
                 key={loc.id}
                 onClick={() => onSelect?.(loc)}
                 className={cn(
-                  "transition-colors",
+                  "group transition-colors",
                   onSelect && "cursor-pointer",
                   isSelected
                     ? "bg-accent"
@@ -328,8 +332,14 @@ export function LocationsTable({
                       : "hover:bg-accent/30",
                 )}
               >
-                {/* Location name */}
-                <td className="py-2.5 pl-4 pr-3 border-b border-border/60">
+                {/* Location name — sticky */}
+                <td className={cn(
+                  "py-2.5 pl-4 pr-3 border-b border-r border-border/60",
+                  TD_STICKY,
+                  isSelected
+                    ? "bg-accent"
+                    : "bg-card group-hover:bg-accent",
+                )}>
                   <div className="flex items-start gap-2">
                     <HealthBadge status={loc.status} className="shrink-0 text-[10px] h-4 px-1.5 mt-0.5" />
                     <div className="min-w-0">
