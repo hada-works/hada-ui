@@ -1,7 +1,9 @@
-import { useState, useMemo, useCallback } from "react"
-import { MousePointerClick, Phone, Navigation, Star, TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { useState, useMemo, useCallback, useRef, useEffect } from "react"
+import { MousePointerClick, Phone, Navigation, Star, TrendingUp, TrendingDown, Minus, ChevronDown, Check, Search } from "lucide-react"
 import { Header } from "@/components/layout/Header"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/store/app-store"
 import { GBP_LOCATIONS, GBP_INSIGHTS } from "../mock-data"
@@ -356,6 +358,88 @@ function StackedBarChart({ points, labels }: { points: GbpInsightPoint[]; labels
   )
 }
 
+// ─── SearchableSelect ─────────────────────────────────────────────────────────
+
+interface SearchableOption { value: string; label: string; sub?: string }
+
+function SearchableSelect({
+  value, onValueChange, options, placeholder = "Select…", width = "w-56",
+}: {
+  value:          string
+  onValueChange:  (v: string) => void
+  options:        SearchableOption[]
+  placeholder?:   string
+  width?:         string
+}) {
+  const [open,   setOpen]   = useState(false)
+  const [query,  setQuery]  = useState("")
+  const inputRef            = useRef<HTMLInputElement>(null)
+
+  // Focus search input when popover opens
+  useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 50) }, [open])
+  // Clear query on close
+  useEffect(() => { if (!open) setQuery("") }, [open])
+
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase()
+    return q ? options.filter(o =>
+      o.label.toLowerCase().includes(q) || o.sub?.toLowerCase().includes(q)
+    ) : options
+  }, [options, query])
+
+  const selected = options.find(o => o.value === value)
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button className={cn(
+          "flex h-8 items-center justify-between gap-1.5 rounded-md border bg-background px-3 text-xs",
+          "hover:bg-accent transition-colors", width,
+        )}>
+          <span className={cn("truncate", !selected && "text-muted-foreground")}>
+            {selected ? selected.label : placeholder}
+          </span>
+          <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className={cn("p-0", width)} style={{ minWidth: "var(--radix-popover-trigger-width)" }}>
+        {/* Search */}
+        <div className="flex items-center gap-1.5 border-b px-2.5 py-2">
+          <Search className="size-3.5 shrink-0 text-muted-foreground" />
+          <Input
+            ref={inputRef}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Search…"
+            className="h-6 border-0 p-0 text-xs shadow-none focus-visible:ring-0 bg-transparent"
+          />
+        </div>
+        {/* Options list */}
+        <div className="max-h-56 overflow-y-auto py-1">
+          {filtered.length === 0 ? (
+            <div className="px-3 py-4 text-center text-xs text-muted-foreground">No results</div>
+          ) : (
+            filtered.map(o => (
+              <button key={o.value}
+                onClick={() => { onValueChange(o.value); setOpen(false) }}
+                className={cn(
+                  "flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs hover:bg-accent transition-colors",
+                  value === o.value && "bg-accent",
+                )}>
+                <Check className={cn("size-3 shrink-0", value === o.value ? "opacity-100" : "opacity-0")} />
+                <span className="flex-1 min-w-0">
+                  <span className="block truncate">{o.label}</span>
+                  {o.sub && <span className="block truncate text-muted-foreground">{o.sub}</span>}
+                </span>
+              </button>
+            ))
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 // ─── KpiCard ──────────────────────────────────────────────────────────────────
 
 function KpiCard({ icon: Icon, label, value, diff, sub }: {
@@ -418,6 +502,7 @@ function LegendDot({ color, label }: { color: string; label: string }) {
 export function GbpInsightsPage() {
   const { currentTenant } = useApp()
   const [range,  setRange]  = useState<RangeKey>("1Y")
+  const [city,   setCity]   = useState("all")
   const [locId,  setLocId]  = useState("all")
 
   const locs = useMemo(
@@ -425,13 +510,27 @@ export function GbpInsightsPage() {
     [currentTenant.id],
   )
 
-  /** Full time-series for selected location (or aggregate). */
+  const allCities = useMemo(
+    () => [...new Set(locs.map(l => l.city))].sort(),
+    [locs],
+  )
+
+  /** Locations visible in the location dropdown (city-scoped). */
+  const cityLocs = useMemo(
+    () => city === "all" ? locs : locs.filter(l => l.city === city),
+    [locs, city],
+  )
+
+  /** Changing city resets the per-location selection. */
+  const handleCityChange = (c: string) => { setCity(c); setLocId("all") }
+
+  /** Full time-series for selected scope. */
   const fullSeries = useMemo<GbpInsightPoint[]>(() => {
     if (locId === "all") {
-      return aggregatePoints(locs.map(l => GBP_INSIGHTS[l.id]).filter(Boolean))
+      return aggregatePoints(cityLocs.map(l => GBP_INSIGHTS[l.id]).filter(Boolean))
     }
     return GBP_INSIGHTS[locId] ?? []
-  }, [locs, locId])
+  }, [cityLocs, locId])
 
   const n        = RANGE_N[range]
   const curr     = useMemo(() => sliceRange(fullSeries, n), [fullSeries, n])
@@ -477,14 +576,28 @@ export function GbpInsightsPage() {
           ))}
         </div>
 
-        {/* Location selector */}
-        <Select value={locId} onValueChange={setLocId}>
-          <SelectTrigger className="h-8 w-52 text-xs"><SelectValue /></SelectTrigger>
+        {/* City selector */}
+        <Select value={city} onValueChange={handleCityChange}>
+          <SelectTrigger className="h-8 w-40 text-xs"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All locations ({locs.length})</SelectItem>
-            {locs.map(l => <SelectItem key={l.id} value={l.id}>{l.name} — {l.city}</SelectItem>)}
+            <SelectItem value="all">All cities</SelectItem>
+            {allCities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
           </SelectContent>
         </Select>
+
+        {/* Location selector — searchable, scoped to selected city */}
+        <SearchableSelect
+          value={locId}
+          onValueChange={setLocId}
+          width="w-56"
+          options={[
+            {
+              value: "all",
+              label: `All locations (${cityLocs.length}${city !== "all" ? ` in ${city}` : ""})`,
+            },
+            ...cityLocs.map(l => ({ value: l.id, label: l.name, sub: l.city })),
+          ]}
+        />
 
         <div className="ml-auto text-[11px] text-muted-foreground">
           {curr.length} months · {curr[0] ? `${fmtMonth(curr[0].month)} → ${fmtMonth(curr[curr.length-1].month)}` : "—"}
