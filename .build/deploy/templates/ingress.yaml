@@ -5,13 +5,13 @@ metadata:
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: 2048m
-    nginx.ingress.kubernetes.io/proxy-max-temp-file-size: 2048m
-    nginx.ingress.kubernetes.io/client-body-buffer-size: 2048m
-    nginx.ingress.kubernetes.io/client-max-body-size: 2048m
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: '3600'
-    nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
-    nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
+    nginx.ingress.kubernetes.io/proxy-body-size: 1m
+    nginx.ingress.kubernetes.io/proxy-max-temp-file-size: 1m
+    nginx.ingress.kubernetes.io/client-body-buffer-size: 1m
+    nginx.ingress.kubernetes.io/client-max-body-size: 1m
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: '15'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '60'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '60'
     nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
   {{- if .Values.ingress.className }}
