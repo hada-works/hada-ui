@@ -1,0 +1,52 @@
+replicaCount: 1
+image:
+  repository: ""
+  tag: ""
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+imagePullSecrets:
+  - name: huytruong
+
+securityContext: {}
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+ingress:
+  className: nginx
+  tls: [{ host: 'ui.kfm.vn', secretName: 'kingfoodmart-com' }]
+  hosts: [
+    {
+      host: 'ui.kfm.vn',
+      paths: [{ path: '/', pathType: Prefix, servicePort: 80 }]
+    }
+  ]
