@@ -7,7 +7,7 @@ import {
   ChevronRight, Plus, PanelLeftClose, PanelLeftOpen, MoreHorizontal,
   ShoppingCart, ClipboardCheck, SlidersHorizontal,
   MapPin, Star, Cog, TrendingUp,
-  Package, BarChart2, ClipboardList, Layers,
+  Package, ClipboardList, Layers,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/store/app-store"
@@ -328,10 +328,10 @@ export function AppSidebar() {
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/products/performance"}>
-                          <Link to="/products/performance" className="flex items-center gap-1.5">
-                            <BarChart2 className="size-3 shrink-0" />
-                            Performance
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/products/assortments"}>
+                          <Link to="/products/assortments" className="flex items-center gap-1.5">
+                            <Layers className="size-3 shrink-0" />
+                            Assortments
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -340,14 +340,6 @@ export function AppSidebar() {
                           <Link to="/products/in-out" className="flex items-center gap-1.5">
                             <ClipboardList className="size-3 shrink-0" />
                             In-out approval
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/products/assortments"}>
-                          <Link to="/products/assortments" className="flex items-center gap-1.5">
-                            <Layers className="size-3 shrink-0" />
-                            Assortments
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
