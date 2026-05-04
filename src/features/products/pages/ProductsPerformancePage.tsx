@@ -39,24 +39,24 @@ function GroupRow({
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold truncate">{group.name}</span>
-          <Badge variant="outline" className="text-[9px] font-bold shrink-0">L{group.level}</Badge>
+          <span className="text-sm font-semibold truncate">{group.name}</span>
+          <Badge variant="outline" className="text-xs font-bold shrink-0">L{group.level}</Badge>
         </div>
-        <div className="text-[11px] text-muted-foreground">{group.skuCount} SKUs</div>
+        <div className="text-xs text-muted-foreground">{group.skuCount} SKUs</div>
       </div>
       <div className="text-right shrink-0">
-        <div className="text-xs font-semibold text-[hsl(var(--success))]">{fmtVnd(group.revenue30d)}</div>
+        <div className="text-sm font-semibold text-[hsl(var(--success))]">{fmtVnd(group.revenue30d)}</div>
         <div className={cn(
-          "flex items-center justify-end gap-0.5 text-[11px] font-semibold",
+          "flex items-center justify-end gap-0.5 text-xs font-semibold",
           isPositive ? "text-[hsl(var(--success))]" : "text-destructive",
         )}>
           {isPositive ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
           {Math.abs(group.trendPct)}%
         </div>
       </div>
-      <div className="text-right shrink-0 w-14">
-        <div className="text-xs font-semibold">{group.marginPct}%</div>
-        <div className="text-[11px] text-muted-foreground">margin</div>
+      <div className="text-right shrink-0 w-16">
+        <div className="text-sm font-semibold">{group.marginPct}%</div>
+        <div className="text-xs text-muted-foreground">margin</div>
       </div>
       <ChevronRight className="size-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
     </button>
@@ -76,27 +76,27 @@ function SkuRow({ sku }: { sku: Sku }) {
   }[sku.status]
 
   return (
-    <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border/40 last:border-0 hover:bg-muted/20 transition-colors">
+    <div className="flex items-center gap-3 px-4 py-3 border-b border-border/40 last:border-0 hover:bg-muted/20 transition-colors">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium truncate">{sku.name}</span>
-          <Badge variant={statusVariant} className="text-[9px] uppercase shrink-0">{sku.status}</Badge>
+          <span className="text-sm font-medium truncate">{sku.name}</span>
+          <Badge variant={statusVariant} className="uppercase shrink-0">{sku.status}</Badge>
         </div>
-        <div className="text-[11px] text-muted-foreground">{sku.code} · {sku.brand}</div>
+        <div className="text-xs text-muted-foreground">{sku.code} · {sku.brand}</div>
       </div>
       <div className="text-right shrink-0">
-        <div className={cn("text-xs font-semibold", statusColor)}>{fmtVnd(sku.revenue30d)}</div>
+        <div className={cn("text-sm font-semibold", statusColor)}>{fmtVnd(sku.revenue30d)}</div>
         <div className={cn(
-          "flex items-center justify-end gap-0.5 text-[11px] font-semibold",
+          "flex items-center justify-end gap-0.5 text-xs font-semibold",
           isPositive ? "text-[hsl(var(--success))]" : "text-destructive",
         )}>
           {isPositive ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
           {Math.abs(sku.trendPct)}%
         </div>
       </div>
-      <div className="text-right shrink-0 w-14">
-        <div className="text-xs font-semibold">{sku.marginPct}%</div>
-        <div className="text-[11px] text-muted-foreground">margin</div>
+      <div className="text-right shrink-0 w-16">
+        <div className="text-sm font-semibold">{sku.marginPct}%</div>
+        <div className="text-xs text-muted-foreground">margin</div>
       </div>
     </div>
   )
@@ -110,7 +110,7 @@ function Breadcrumbs({
     <div className="flex items-center gap-1 flex-wrap py-3 px-4 border-b bg-muted/20">
       <button
         onClick={() => onNavigate(-1)}
-        className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
       >
         Products
       </button>
@@ -120,7 +120,7 @@ function Breadcrumbs({
           <button
             onClick={() => onNavigate(i)}
             className={cn(
-              "text-[11px] hover:text-foreground transition-colors",
+              "text-xs hover:text-foreground transition-colors",
               i === trail.length - 1 ? "font-semibold text-foreground" : "text-muted-foreground",
             )}
           >
@@ -145,7 +145,7 @@ export function ProductsPerformancePage() {
   )
 
   const leafSkus = useMemo(() => {
-    if (children.length > 0) return [] // still has sub-groups
+    if (children.length > 0) return []
     if (currentId === null) return []
     const currentGroup = PRODUCT_GROUPS.find(g => g.id === currentId)
     if (!currentGroup) return []
@@ -181,7 +181,6 @@ export function ProductsPerformancePage() {
 
   const currentGroup = trail.length > 0 ? trail[trail.length - 1] : null
 
-  // Summary stats for current level
   const summaryRevenue = currentGroup?.revenue30d ?? PRODUCT_GROUPS.filter(g => g.level === 1).reduce((s, g) => s + g.revenue30d, 0)
   const summarySkus    = currentGroup?.skuCount   ?? PRODUCT_GROUPS.filter(g => g.level === 1).reduce((s, g) => s + g.skuCount, 0)
   const summaryMargin  = currentGroup?.marginPct  ?? parseFloat((PRODUCT_GROUPS.filter(g => g.level === 1).reduce((s, g) => s + g.marginPct, 0) / PRODUCT_GROUPS.filter(g => g.level === 1).length).toFixed(1))
@@ -209,11 +208,11 @@ export function ProductsPerformancePage() {
                 color: summaryTrend >= 0 ? "text-[hsl(var(--success))]" : "text-destructive",
               },
             ].map(({ label, value, icon: Icon, color }) => (
-              <div key={label} className="rounded-lg border bg-card px-3 py-2.5 flex items-center gap-2">
-                <Icon className={cn("size-4 shrink-0", color)} />
+              <div key={label} className="rounded-lg border bg-card px-3 py-2.5 flex items-center gap-2.5">
+                <Icon className={cn("size-5 shrink-0", color)} />
                 <div>
-                  <div className={cn("text-sm font-bold", color)}>{value}</div>
-                  <div className="text-[10px] text-muted-foreground">{label}</div>
+                  <div className={cn("text-base font-bold", color)}>{value}</div>
+                  <div className="text-xs text-muted-foreground">{label}</div>
                 </div>
               </div>
             ))}
@@ -225,14 +224,14 @@ export function ProductsPerformancePage() {
           <Breadcrumbs trail={trail} onNavigate={navigateTo} />
         )}
 
-        {/* ── Back button (if drilled in) ── */}
+        {/* ── Back button ── */}
         {trail.length > 0 && (
           <div className="flex items-center gap-2 px-4 pt-3 pb-1">
             <button
               onClick={() => navigateTo(trail.length - 2)}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              <ArrowLeft className="size-3.5" />
+              <ArrowLeft className="size-4" />
               Quay lại
             </button>
           </div>
@@ -241,12 +240,12 @@ export function ProductsPerformancePage() {
         {/* ── Search ── */}
         <div className="px-4 py-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
             <Input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={leafSkus.length > 0 ? "Tìm SKU…" : "Tìm nhóm sản phẩm…"}
-              className="pl-8 text-sm"
+              className="pl-9 text-sm"
             />
           </div>
         </div>
@@ -258,7 +257,7 @@ export function ProductsPerformancePage() {
               <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Nhóm sản phẩm · Level {(currentGroup?.level ?? 0) + 1}
               </h3>
-              <Badge variant="secondary" className="text-[10px]">{children.length} nhóm</Badge>
+              <Badge variant="secondary">{children.length} nhóm</Badge>
             </div>
             {children
               .filter(g => !search || g.name.toLowerCase().includes(search.toLowerCase()))
@@ -275,15 +274,15 @@ export function ProductsPerformancePage() {
               <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Danh sách SKU
               </h3>
-              <Badge variant="secondary" className="text-[10px]">
+              <Badge variant="secondary">
                 {(filteredSkus.length || allSkusSearch.length)} SKU
               </Badge>
             </div>
             {/* table header */}
-            <div className="flex items-center gap-3 px-4 py-2 border-b bg-muted/10 text-[10px] text-muted-foreground font-semibold uppercase tracking-wide">
+            <div className="flex items-center gap-3 px-4 py-2 border-b bg-muted/10 text-xs text-muted-foreground font-semibold uppercase tracking-wide">
               <div className="flex-1">Sản phẩm</div>
-              <div className="w-20 text-right">Revenue 30d</div>
-              <div className="w-14 text-right">Margin</div>
+              <div className="w-24 text-right">Revenue 30d</div>
+              <div className="w-16 text-right">Margin</div>
             </div>
             {(filteredSkus.length > 0 ? filteredSkus : allSkusSearch).map(sku => (
               <SkuRow key={sku.id} sku={sku} />

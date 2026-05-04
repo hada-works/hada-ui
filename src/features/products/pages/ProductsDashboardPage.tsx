@@ -47,15 +47,17 @@ function KpiCard({
   return (
     <div className={cn("rounded-lg border bg-card px-4 py-3.5 border-t-2 hover:shadow-sm transition-shadow", border)}>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
-        <Icon className={cn("size-3.5 shrink-0", color)} />
+        {/* KPI label — xs uppercase tracking */}
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
+        <Icon className={cn("size-4 shrink-0", color)} />
       </div>
-      <div className={cn("text-2xl font-bold leading-none mb-1", color)}>{value}</div>
+      <div className={cn("text-2xl font-bold leading-none mb-1.5", color)}>{value}</div>
       <div className="flex items-center gap-1.5">
-        <p className="text-[11px] text-muted-foreground">{sub}</p>
+        {/* sub — xs readable */}
+        <p className="text-xs text-muted-foreground">{sub}</p>
         {trend !== undefined && (
           <span className={cn(
-            "flex items-center gap-0.5 text-[11px] font-semibold ml-auto",
+            "flex items-center gap-0.5 text-xs font-semibold ml-auto",
             trend >= 0 ? "text-[hsl(var(--success))]" : "text-destructive",
           )}>
             {trend >= 0 ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
@@ -78,14 +80,14 @@ function StatusBar({ status, count, total }: { status: SkuStatus; count: number;
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex items-center gap-1.5 w-24 shrink-0">
-        <Icon className={cn("size-3.5 shrink-0", color)} />
-        <span className={cn("text-xs font-medium", color)}>{label}</span>
+      <div className="flex items-center gap-1.5 w-28 shrink-0">
+        <Icon className={cn("size-4 shrink-0", color)} />
+        <span className={cn("text-sm font-medium", color)}>{label}</span>
       </div>
       <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
         <div className={cn("h-full rounded-full transition-all duration-700", barColor)} style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-xs text-muted-foreground tabular-nums w-20 text-right shrink-0">
+      <span className="text-sm text-muted-foreground tabular-nums w-22 text-right shrink-0">
         {count} SKU · {pct}%
       </span>
     </div>
@@ -122,18 +124,18 @@ export function ProductsDashboardPage() {
 
           {/* ── KPI Strip ── */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <KpiCard label="Tổng SKU"       value={PRODUCT_STATS.totalSkus}                          sub="đang quản lý"            icon={Package}      accent="default"     />
-            <KpiCard label="Active"          value={PRODUCT_STATS.active}                             sub="đang kinh doanh"          icon={CheckCircle2} accent="success"     />
-            <KpiCard label="Suspended"       value={PRODUCT_STATS.suspended}                          sub="đang tạm khóa"            icon={PauseCircle}  accent="warning"     />
-            <KpiCard label="Closed"          value={PRODUCT_STATS.closed}                             sub="đã đóng mã"               icon={XCircle}      accent="default"     />
-            <KpiCard label="Pending Duyệt"   value={PRODUCT_STATS.pending}                            sub="chờ xét duyệt"            icon={Clock}        accent="info"        />
-            <KpiCard label="Cần xem xét"     value={PRODUCT_STATS.pendingApprovals}                   sub="approval đang chờ"        icon={AlertTriangle} accent="warning"    />
+            <KpiCard label="Tổng SKU"       value={PRODUCT_STATS.totalSkus}              sub="đang quản lý"            icon={Package}       accent="default"  />
+            <KpiCard label="Active"          value={PRODUCT_STATS.active}                 sub="đang kinh doanh"          icon={CheckCircle2}  accent="success"  />
+            <KpiCard label="Suspended"       value={PRODUCT_STATS.suspended}              sub="đang tạm khóa"            icon={PauseCircle}   accent="warning"  />
+            <KpiCard label="Closed"          value={PRODUCT_STATS.closed}                 sub="đã đóng mã"               icon={XCircle}       accent="default"  />
+            <KpiCard label="Pending Duyệt"   value={PRODUCT_STATS.pending}                sub="chờ xét duyệt"            icon={Clock}         accent="info"     />
+            <KpiCard label="Cần xem xét"     value={PRODUCT_STATS.pendingApprovals}       sub="approval đang chờ"        icon={AlertTriangle} accent="warning"  />
           </div>
 
           {/* ── Revenue & Margin KPI ── */}
           <div className="grid grid-cols-2 gap-3">
-            <KpiCard label="Revenue 30 ngày"  value={fmtVnd(PRODUCT_STATS.totalRevenue30d)} sub="tổng SKU active" icon={DollarSign}  accent="success" />
-            <KpiCard label="Avg Margin"        value={`${PRODUCT_STATS.avgMarginPct}%`}       sub="biên lợi nhuận trung bình" icon={BarChart3} accent="default" />
+            <KpiCard label="Revenue 30 ngày"  value={fmtVnd(PRODUCT_STATS.totalRevenue30d)} sub="tổng SKU active"          icon={DollarSign}  accent="success" />
+            <KpiCard label="Avg Margin"        value={`${PRODUCT_STATS.avgMarginPct}%`}       sub="biên lợi nhuận trung bình" icon={BarChart3}   accent="default" />
           </div>
 
           {/* ── Middle Section ── */}
@@ -141,8 +143,8 @@ export function ProductsDashboardPage() {
 
             {/* Status Distribution */}
             <div className="lg:col-span-1 rounded-lg border bg-card p-4">
-              <h2 className="text-sm font-semibold mb-4">Phân bố trạng thái SKU</h2>
-              <div className="space-y-3">
+              <h2 className="text-base font-semibold mb-4">Phân bố trạng thái SKU</h2>
+              <div className="space-y-3.5">
                 {(["active", "suspended", "pending", "closed"] as SkuStatus[]).map(s => (
                   <StatusBar
                     key={s}
@@ -156,19 +158,19 @@ export function ProductsDashboardPage() {
 
             {/* Top Revenue SKUs */}
             <div className="lg:col-span-2 rounded-lg border bg-card p-4">
-              <h2 className="text-sm font-semibold mb-4">Top SKU Revenue 30 ngày</h2>
-              <div className="space-y-2">
+              <h2 className="text-base font-semibold mb-4">Top SKU Revenue 30 ngày</h2>
+              <div className="space-y-2.5">
                 {topRevenue.map((sku, idx) => (
                   <div key={sku.id} className="flex items-center gap-3 py-1.5">
-                    <span className="text-[11px] font-bold text-muted-foreground w-5 shrink-0">#{idx + 1}</span>
+                    <span className="text-xs font-bold text-muted-foreground w-6 shrink-0">#{idx + 1}</span>
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium truncate">{sku.name}</div>
-                      <div className="text-[11px] text-muted-foreground">{sku.code} · {sku.brand}</div>
+                      <div className="text-sm font-medium truncate">{sku.name}</div>
+                      <div className="text-xs text-muted-foreground">{sku.code} · {sku.brand}</div>
                     </div>
                     <div className="text-right shrink-0">
-                      <div className="text-xs font-semibold text-[hsl(var(--success))]">{fmtVnd(sku.revenue30d)}</div>
+                      <div className="text-sm font-semibold text-[hsl(var(--success))]">{fmtVnd(sku.revenue30d)}</div>
                       <div className={cn(
-                        "flex items-center justify-end gap-0.5 text-[11px]",
+                        "flex items-center justify-end gap-0.5 text-xs",
                         sku.trendPct >= 0 ? "text-[hsl(var(--success))]" : "text-destructive",
                       )}>
                         {sku.trendPct >= 0 ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
@@ -194,24 +196,24 @@ export function ProductsDashboardPage() {
             <div className="rounded-lg border bg-card p-4 border-t-2 border-t-[hsl(var(--warning))]">
               <div className="flex items-center gap-2 mb-3">
                 <AlertTriangle className="size-4 text-[hsl(var(--warning))]" />
-                <h2 className="text-sm font-semibold">SKU Performance Yếu (Active)</h2>
-                <Badge variant="warning" className="text-[10px] ml-auto">{weakSkus.length} SKU</Badge>
+                <h2 className="text-base font-semibold">SKU Performance Yếu (Active)</h2>
+                <Badge variant="warning" className="ml-auto">{weakSkus.length} SKU</Badge>
               </div>
               <div className="space-y-2">
                 {weakSkus.map(sku => (
-                  <div key={sku.id} className="flex items-center gap-2 py-1.5 border-b border-border/40 last:border-0">
+                  <div key={sku.id} className="flex items-center gap-2 py-2 border-b border-border/40 last:border-0">
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium truncate">{sku.name}</div>
-                      <div className="text-[11px] text-muted-foreground">{sku.code}</div>
+                      <div className="text-sm font-medium truncate">{sku.name}</div>
+                      <div className="text-xs text-muted-foreground">{sku.code}</div>
                     </div>
-                    <div className="flex items-center gap-0.5 text-xs font-bold text-destructive shrink-0">
-                      <TrendingDown className="size-3" />
+                    <div className="flex items-center gap-0.5 text-sm font-bold text-destructive shrink-0">
+                      <TrendingDown className="size-3.5" />
                       {Math.abs(sku.trendPct)}%
                     </div>
                   </div>
                 ))}
                 {weakSkus.length === 0 && (
-                  <p className="text-xs text-muted-foreground text-center py-4">Không có SKU nào yếu hiện tại</p>
+                  <p className="text-sm text-muted-foreground text-center py-4">Không có SKU nào yếu hiện tại</p>
                 )}
               </div>
             </div>
@@ -220,26 +222,26 @@ export function ProductsDashboardPage() {
             <div className="rounded-lg border bg-card p-4 border-t-2 border-t-[hsl(var(--info))]">
               <div className="flex items-center gap-2 mb-3">
                 <Clock className="size-4 text-[hsl(var(--info))]" />
-                <h2 className="text-sm font-semibold">Approval Đang Chờ Xử Lý</h2>
-                <Badge variant="secondary" className="text-[10px] ml-auto">{pendingApprovals.length} yêu cầu</Badge>
+                <h2 className="text-base font-semibold">Approval Đang Chờ Xử Lý</h2>
+                <Badge variant="secondary" className="ml-auto">{pendingApprovals.length} yêu cầu</Badge>
               </div>
               <div className="space-y-2">
                 {pendingApprovals.map(req => (
-                  <div key={req.id} className="flex items-start gap-2 py-1.5 border-b border-border/40 last:border-0">
+                  <div key={req.id} className="flex items-start gap-2 py-2 border-b border-border/40 last:border-0">
                     <Badge
                       variant={req.type === "out" ? "warning" : "secondary"}
-                      className="text-[9px] font-bold uppercase mt-0.5 shrink-0"
+                      className="font-bold uppercase mt-0.5 shrink-0"
                     >
                       {req.type === "out" ? "OUT" : "IN"}
                     </Badge>
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium truncate">{req.skuName}</div>
-                      <div className="text-[11px] text-muted-foreground truncate">{req.reason.slice(0, 60)}…</div>
+                      <div className="text-sm font-medium truncate">{req.skuName}</div>
+                      <div className="text-xs text-muted-foreground truncate">{req.reason.slice(0, 60)}…</div>
                     </div>
                   </div>
                 ))}
                 {pendingApprovals.length === 0 && (
-                  <p className="text-xs text-muted-foreground text-center py-4">Không có yêu cầu nào đang chờ</p>
+                  <p className="text-sm text-muted-foreground text-center py-4">Không có yêu cầu nào đang chờ</p>
                 )}
               </div>
             </div>
@@ -248,19 +250,19 @@ export function ProductsDashboardPage() {
           {/* ── Recent Activity ── */}
           <div className="rounded-lg border bg-card overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b">
-              <h2 className="text-sm font-semibold">SKU cập nhật gần đây</h2>
-              <Badge variant="secondary" className="text-[10px]">{recentSkus.length} SKU</Badge>
+              <h2 className="text-base font-semibold">SKU cập nhật gần đây</h2>
+              <Badge variant="secondary">{recentSkus.length} SKU</Badge>
             </div>
             <div className="divide-y">
               {recentSkus.map(sku => {
                 const meta = STATUS_META[sku.status]
                 const StatusIcon = meta.icon
                 return (
-                  <div key={sku.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/30 transition-colors">
-                    <StatusIcon className={cn("size-3.5 shrink-0", meta.color)} />
+                  <div key={sku.id} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">
+                    <StatusIcon className={cn("size-4 shrink-0", meta.color)} />
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium truncate">{sku.name}</div>
-                      <div className="text-[11px] text-muted-foreground">{sku.code} · {sku.brand}</div>
+                      <div className="text-sm font-medium truncate">{sku.name}</div>
+                      <div className="text-xs text-muted-foreground">{sku.code} · {sku.brand}</div>
                     </div>
                     <Badge
                       variant={
@@ -268,11 +270,11 @@ export function ProductsDashboardPage() {
                         sku.status === "suspended" ? "warning" :
                         sku.status === "pending" ? "secondary" : "outline"
                       }
-                      className="text-[9px] font-bold uppercase shrink-0"
+                      className="font-bold uppercase shrink-0"
                     >
                       {meta.label}
                     </Badge>
-                    <div className="text-[11px] text-muted-foreground tabular-nums shrink-0">
+                    <div className="text-xs text-muted-foreground tabular-nums shrink-0">
                       {new Date(sku.lastUpdated).toLocaleDateString("vi-VN")}
                     </div>
                   </div>

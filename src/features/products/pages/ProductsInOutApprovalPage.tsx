@@ -67,24 +67,24 @@ function RequestCard({
       {/* Header */}
       <div className="flex items-start gap-2">
         <div className={cn(
-          "flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase shrink-0",
+          "flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-bold uppercase shrink-0",
           isOut ? "bg-[hsl(var(--warning-subtle))] text-[hsl(var(--warning-subtle-foreground))]" : "bg-[hsl(var(--info-subtle))] text-[hsl(var(--info-subtle-foreground))]",
         )}>
-          <TypeIcon className="size-3" />
+          <TypeIcon className="size-3.5" />
           {typeLabel}
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold truncate">{req.skuName}</div>
-          <div className="text-[11px] text-muted-foreground">{req.skuCode} · {req.brand}</div>
+          <div className="text-xs text-muted-foreground">{req.skuCode} · {req.brand}</div>
         </div>
-        <Badge variant={statusVariant} className="text-[9px] uppercase shrink-0">{statusLabel}</Badge>
+        <Badge variant={statusVariant} className="uppercase shrink-0">{statusLabel}</Badge>
       </div>
 
       {/* Performance insight */}
       {req.revenue30d !== undefined && isOut && (
         <div className="flex items-center gap-2 bg-destructive/5 border border-destructive/20 rounded px-3 py-2">
-          <AlertTriangle className="size-3.5 text-destructive shrink-0" />
-          <div className="text-[11px]">
+          <AlertTriangle className="size-4 text-destructive shrink-0" />
+          <div className="text-xs">
             <span className="font-semibold text-destructive">Revenue 30d: </span>
             <span className="text-muted-foreground">{fmtVnd(req.revenue30d)}</span>
             {req.trendPct !== undefined && (
@@ -98,20 +98,20 @@ function RequestCard({
 
       {/* Reason */}
       <div className="space-y-1">
-        <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Lý do đề xuất</div>
-        <p className="text-xs text-muted-foreground leading-relaxed">{req.reason}</p>
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Lý do đề xuất</div>
+        <p className="text-sm text-muted-foreground leading-relaxed">{req.reason}</p>
       </div>
 
       {/* Meta */}
-      <div className="text-[11px] text-muted-foreground border-t pt-2.5 space-y-0.5">
+      <div className="text-xs text-muted-foreground border-t pt-2.5 space-y-0.5">
         <div>Yêu cầu bởi: <span className="font-medium text-foreground">{req.requestedBy}</span> · {fmtDate(req.requestedAt)}</div>
         {req.reviewedBy && (
           <div>Xử lý bởi: <span className="font-medium text-foreground">{req.reviewedBy}</span> · {fmtDate(req.reviewedAt!)}</div>
         )}
         {req.reviewNote && (
           <div className="flex items-start gap-1.5 mt-1.5 bg-muted/50 rounded px-2.5 py-1.5">
-            <MessageSquare className="size-3 shrink-0 mt-0.5 text-muted-foreground" />
-            <span className="italic">{req.reviewNote}</span>
+            <MessageSquare className="size-3.5 shrink-0 mt-0.5 text-muted-foreground" />
+            <span className="italic text-xs">{req.reviewNote}</span>
           </div>
         )}
       </div>
@@ -126,24 +126,24 @@ function RequestCard({
                 onChange={e => setNote(e.target.value)}
                 placeholder="Ghi chú phê duyệt / từ chối (tuỳ chọn)…"
                 rows={2}
-                className="text-xs resize-none"
+                className="text-sm resize-none"
               />
               <div className="flex gap-2">
                 <button
                   onClick={() => { onApprove(req.id); setShowNote(false) }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[hsl(var(--success-subtle))] text-[hsl(var(--success-subtle-foreground))] hover:opacity-80 transition-opacity text-xs font-medium"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[hsl(var(--success-subtle))] text-[hsl(var(--success-subtle-foreground))] hover:opacity-80 transition-opacity text-sm font-medium"
                 >
-                  <CheckCircle2 className="size-3.5" /> Phê duyệt
+                  <CheckCircle2 className="size-4" /> Phê duyệt
                 </button>
                 <button
                   onClick={() => { onReject(req.id); setShowNote(false) }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors text-xs font-medium"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors text-sm font-medium"
                 >
-                  <XCircle className="size-3.5" /> Từ chối
+                  <XCircle className="size-4" /> Từ chối
                 </button>
                 <button
                   onClick={() => setShowNote(false)}
-                  className="ml-auto px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  className="ml-auto px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Huỷ
                 </button>
@@ -153,15 +153,15 @@ function RequestCard({
             <div className="flex gap-2">
               <button
                 onClick={() => setShowNote(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[hsl(var(--success-subtle))] text-[hsl(var(--success-subtle-foreground))] hover:opacity-80 transition-opacity text-xs font-medium"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[hsl(var(--success-subtle))] text-[hsl(var(--success-subtle-foreground))] hover:opacity-80 transition-opacity text-sm font-medium"
               >
-                <CheckCircle2 className="size-3.5" /> Phê duyệt
+                <CheckCircle2 className="size-4" /> Phê duyệt
               </button>
               <button
                 onClick={() => setShowNote(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors text-xs font-medium"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors text-sm font-medium"
               >
-                <XCircle className="size-3.5" /> Từ chối
+                <XCircle className="size-4" /> Từ chối
               </button>
             </div>
           )}
@@ -215,38 +215,38 @@ export function ProductsInOutApprovalPage() {
           <div className="grid grid-cols-3 gap-3">
             <div className="rounded-lg border bg-card px-4 py-3 border-t-2 border-t-[hsl(var(--warning))]">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Đang chờ duyệt</span>
-                <Clock className="size-3.5 text-[hsl(var(--warning))]" />
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Đang chờ duyệt</span>
+                <Clock className="size-4 text-[hsl(var(--warning))]" />
               </div>
               <div className="text-2xl font-bold text-[hsl(var(--warning))]">{pending}</div>
-              <p className="text-[11px] text-muted-foreground">yêu cầu cần xử lý</p>
+              <p className="text-xs text-muted-foreground">yêu cầu cần xử lý</p>
             </div>
             <div className="rounded-lg border bg-card px-4 py-3 border-t-2 border-t-[hsl(var(--info))]">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Mở mã (IN)</span>
-                <LogIn className="size-3.5 text-[hsl(var(--info))]" />
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Mở mã (IN)</span>
+                <LogIn className="size-4 text-[hsl(var(--info))]" />
               </div>
               <div className="text-2xl font-bold text-[hsl(var(--info))]">{inCount}</div>
-              <p className="text-[11px] text-muted-foreground">sản phẩm mới đăng ký</p>
+              <p className="text-xs text-muted-foreground">sản phẩm mới đăng ký</p>
             </div>
             <div className="rounded-lg border bg-card px-4 py-3 border-t-2 border-t-[hsl(var(--warning))]">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Khóa mã (OUT)</span>
-                <LogOut className="size-3.5 text-[hsl(var(--warning))]" />
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Khóa mã (OUT)</span>
+                <LogOut className="size-4 text-[hsl(var(--warning))]" />
               </div>
               <div className="text-2xl font-bold text-[hsl(var(--warning))]">{outCount}</div>
-              <p className="text-[11px] text-muted-foreground">sản phẩm performance yếu</p>
+              <p className="text-xs text-muted-foreground">sản phẩm performance yếu</p>
             </div>
           </div>
 
           {/* ── Process Info ── */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="rounded-lg border bg-card p-4 border-l-4 border-l-[hsl(var(--info))]">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3">
                 <LogIn className="size-4 text-[hsl(var(--info))]" />
-                <h3 className="text-xs font-semibold">Quy trình Mở mã (IN)</h3>
+                <h3 className="text-sm font-semibold">Quy trình Mở mã (IN)</h3>
               </div>
-              <ol className="space-y-1.5 text-[11px] text-muted-foreground">
+              <ol className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2"><span className="font-bold text-[hsl(var(--info))] shrink-0">1.</span> Supplier / Category Manager đề xuất sản phẩm mới</li>
                 <li className="flex items-start gap-2"><span className="font-bold text-[hsl(var(--info))] shrink-0">2.</span> Điền đầy đủ thông tin: giá nhập, margin dự kiến, nhóm danh mục</li>
                 <li className="flex items-start gap-2"><span className="font-bold text-[hsl(var(--info))] shrink-0">3.</span> Category Head review & phê duyệt / từ chối</li>
@@ -254,11 +254,11 @@ export function ProductsInOutApprovalPage() {
               </ol>
             </div>
             <div className="rounded-lg border bg-card p-4 border-l-4 border-l-[hsl(var(--warning))]">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3">
                 <LogOut className="size-4 text-[hsl(var(--warning))]" />
-                <h3 className="text-xs font-semibold">Quy trình Khóa mã (OUT)</h3>
+                <h3 className="text-sm font-semibold">Quy trình Khóa mã (OUT)</h3>
               </div>
-              <ol className="space-y-1.5 text-[11px] text-muted-foreground">
+              <ol className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2"><span className="font-bold text-[hsl(var(--warning))] shrink-0">1.</span> Hệ thống cảnh báo SKU có revenue giảm &gt;30% liên tiếp 30 ngày</li>
                 <li className="flex items-start gap-2"><span className="font-bold text-[hsl(var(--warning))] shrink-0">2.</span> Category Manager xem xét & gửi đề xuất khóa mã</li>
                 <li className="flex items-start gap-2"><span className="font-bold text-[hsl(var(--warning))] shrink-0">3.</span> Category Head phê duyệt / từ chối với ghi chú</li>
