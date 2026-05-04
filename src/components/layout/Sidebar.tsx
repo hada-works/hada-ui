@@ -179,126 +179,6 @@ export function AppSidebar() {
           )}
         </SidebarGroup>
 
-        {/* ── Purchases (2-level collapsible) ── */}
-        <SidebarGroup>
-          <Collapsible open={open ? purchasesOpen : false} onOpenChange={setPurchasesOpen}>
-            <div className="flex items-center">
-              <SidebarGroupLabel asChild>
-                <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
-                  <ShoppingCart className="size-4 shrink-0" />
-                  Purchases
-                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
-                </CollapsibleTrigger>
-              </SidebarGroupLabel>
-            </div>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {!open && (
-                  <NavItem href="/purchases/bulk-buy" icon={ShoppingCart} label="Purchases" />
-                )}
-                {open && (
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/insights"}>
-                          <Link to="/purchases/insights" className="flex items-center gap-1.5">
-                            <LayoutDashboard className="size-3 shrink-0" />
-                            Insights
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/bulk-buy"}>
-                          <Link to="/purchases/bulk-buy" className="flex items-center gap-1.5">
-                            <ClipboardCheck className="size-3 shrink-0" />
-                            Bulkbuy approval
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/settings"}>
-                          <Link to="/purchases/settings" className="flex items-center gap-1.5">
-                            <SlidersHorizontal className="size-3 shrink-0" />
-                            Bulkbuy settings
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                )}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* ── GBP Audits (2-level collapsible) ── */}
-        <SidebarGroup>
-          <Collapsible open={open ? gbpOpen : false} onOpenChange={setGbpOpen}>
-            <div className="flex items-center">
-              <SidebarGroupLabel asChild>
-                <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
-                  <MapPin className="size-4 shrink-0" />
-                  GBP Audits
-                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
-                </CollapsibleTrigger>
-              </SidebarGroupLabel>
-            </div>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {!open && (
-                  <NavItem href="/gbp/dashboard" icon={MapPin} label="GBP Audits" />
-                )}
-                {open && (
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/dashboard"}>
-                          <Link to="/gbp/dashboard" className="flex items-center gap-1.5">
-                            <LayoutDashboard className="size-3 shrink-0" />
-                            Dashboard
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/insights"}>
-                          <Link to="/gbp/insights" className="flex items-center gap-1.5">
-                            <TrendingUp className="size-3 shrink-0" />
-                            Insights
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/locations"}>
-                          <Link to="/gbp/locations" className="flex items-center gap-1.5">
-                            <MapPin className="size-3 shrink-0" />
-                            Locations
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/reviews"}>
-                          <Link to="/gbp/reviews" className="flex items-center gap-1.5">
-                            <Star className="size-3 shrink-0" />
-                            Reviews
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/settings"}>
-                          <Link to="/gbp/settings" className="flex items-center gap-1.5">
-                            <Cog className="size-3 shrink-0" />
-                            Settings
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                )}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </Collapsible>
-        </SidebarGroup>
-
         {/* ── Products (2-level collapsible) ── */}
         <SidebarGroup>
           <Collapsible open={open ? productsOpen : false} onOpenChange={setProductsOpen}>
@@ -340,6 +220,58 @@ export function AppSidebar() {
                           <Link to="/products/in-out" className="flex items-center gap-1.5">
                             <ClipboardList className="size-3 shrink-0" />
                             In-out approval
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </Collapsible>
+        </SidebarGroup>
+
+        {/* ── Purchases (2-level collapsible) ── */}
+        <SidebarGroup>
+          <Collapsible open={open ? purchasesOpen : false} onOpenChange={setPurchasesOpen}>
+            <div className="flex items-center">
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
+                  <ShoppingCart className="size-4 shrink-0" />
+                  Purchases
+                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+            </div>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {!open && (
+                  <NavItem href="/purchases/bulk-buy" icon={ShoppingCart} label="Purchases" />
+                )}
+                {open && (
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/insights"}>
+                          <Link to="/purchases/insights" className="flex items-center gap-1.5">
+                            <LayoutDashboard className="size-3 shrink-0" />
+                            Insights
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/bulk-buy"}>
+                          <Link to="/purchases/bulk-buy" className="flex items-center gap-1.5">
+                            <ClipboardCheck className="size-3 shrink-0" />
+                            Bulkbuy approval
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/purchases/settings"}>
+                          <Link to="/purchases/settings" className="flex items-center gap-1.5">
+                            <SlidersHorizontal className="size-3 shrink-0" />
+                            Bulkbuy settings
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -473,6 +405,74 @@ export function AppSidebar() {
                             <Plus className="size-3" />
                             New board
                           </button>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </Collapsible>
+        </SidebarGroup>
+
+        {/* ── GBP Audits (2-level collapsible) ── */}
+        <SidebarGroup>
+          <Collapsible open={open ? gbpOpen : false} onOpenChange={setGbpOpen}>
+            <div className="flex items-center">
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
+                  <MapPin className="size-4 shrink-0" />
+                  GBP Audits
+                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+            </div>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {!open && (
+                  <NavItem href="/gbp/dashboard" icon={MapPin} label="GBP Audits" />
+                )}
+                {open && (
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/dashboard"}>
+                          <Link to="/gbp/dashboard" className="flex items-center gap-1.5">
+                            <LayoutDashboard className="size-3 shrink-0" />
+                            Dashboard
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/insights"}>
+                          <Link to="/gbp/insights" className="flex items-center gap-1.5">
+                            <TrendingUp className="size-3 shrink-0" />
+                            Insights
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/locations"}>
+                          <Link to="/gbp/locations" className="flex items-center gap-1.5">
+                            <MapPin className="size-3 shrink-0" />
+                            Locations
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/reviews"}>
+                          <Link to="/gbp/reviews" className="flex items-center gap-1.5">
+                            <Star className="size-3 shrink-0" />
+                            Reviews
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/gbp/settings"}>
+                          <Link to="/gbp/settings" className="flex items-center gap-1.5">
+                            <Cog className="size-3 shrink-0" />
+                            Settings
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
