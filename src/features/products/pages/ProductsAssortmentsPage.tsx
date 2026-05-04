@@ -6,6 +6,7 @@ import {
 } from "lucide-react"
 import { Header } from "@/components/layout/Header"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { SKUS, PRODUCT_GROUPS } from "../mock-data"
 import type { SkuStatus, Sku, ProductGroup } from "../mock-data"
@@ -269,12 +270,12 @@ export function ProductsAssortmentsPage() {
           {/* Toolbar */}
           <div className="flex items-center gap-2 px-4 py-2.5 border-b">
             <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
-              <input
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
+              <Input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Tìm SKU, mã, thương hiệu…"
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-muted/50 border border-border/50 rounded focus:outline-none focus:border-primary focus:bg-background transition-all"
+                className="pl-8 text-xs h-8"
               />
             </div>
             <div className="flex items-center gap-1">

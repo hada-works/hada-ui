@@ -5,6 +5,7 @@ import {
 } from "lucide-react"
 import { Header } from "@/components/layout/Header"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { PRODUCT_GROUPS, SKUS } from "../mock-data"
 import type { ProductGroup, Sku } from "../mock-data"
@@ -240,12 +241,12 @@ export function ProductsPerformancePage() {
         {/* ── Search ── */}
         <div className="px-4 py-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
-            <input
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
+            <Input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={leafSkus.length > 0 ? "Tìm SKU…" : "Tìm nhóm sản phẩm…"}
-              className="w-full pl-8 pr-3 py-2 text-sm bg-muted/50 border border-border/50 rounded-md focus:outline-none focus:border-primary focus:bg-background transition-all"
+              className="pl-8 text-sm"
             />
           </div>
         </div>

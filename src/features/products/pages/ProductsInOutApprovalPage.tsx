@@ -5,6 +5,7 @@ import {
 } from "lucide-react"
 import { Header } from "@/components/layout/Header"
 import { Badge } from "@/components/ui/badge"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { APPROVAL_REQUESTS } from "../mock-data"
 import type { ApprovalRequest, ApprovalStatus } from "../mock-data"
@@ -67,7 +68,7 @@ function RequestCard({
       <div className="flex items-start gap-2">
         <div className={cn(
           "flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase shrink-0",
-          isOut ? "bg-[hsl(var(--warning))]/15 text-[hsl(var(--warning))]" : "bg-[hsl(var(--info))]/15 text-[hsl(var(--info))]",
+          isOut ? "bg-[hsl(var(--warning-subtle))] text-[hsl(var(--warning-subtle-foreground))]" : "bg-[hsl(var(--info-subtle))] text-[hsl(var(--info-subtle-foreground))]",
         )}>
           <TypeIcon className="size-3" />
           {typeLabel}
@@ -120,17 +121,17 @@ function RequestCard({
         <div className="border-t pt-3 space-y-2">
           {showNote ? (
             <>
-              <textarea
+              <Textarea
                 value={note}
                 onChange={e => setNote(e.target.value)}
                 placeholder="Ghi chú phê duyệt / từ chối (tuỳ chọn)…"
                 rows={2}
-                className="w-full text-xs bg-muted/50 border border-border rounded px-2.5 py-1.5 focus:outline-none focus:border-primary resize-none"
+                className="text-xs resize-none"
               />
               <div className="flex gap-2">
                 <button
                   onClick={() => { onApprove(req.id); setShowNote(false) }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[hsl(var(--success))]/15 text-[hsl(var(--success))] hover:bg-[hsl(var(--success))]/25 transition-colors text-xs font-medium"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[hsl(var(--success-subtle))] text-[hsl(var(--success-subtle-foreground))] hover:opacity-80 transition-opacity text-xs font-medium"
                 >
                   <CheckCircle2 className="size-3.5" /> Phê duyệt
                 </button>
@@ -152,7 +153,7 @@ function RequestCard({
             <div className="flex gap-2">
               <button
                 onClick={() => setShowNote(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[hsl(var(--success))]/15 text-[hsl(var(--success))] hover:bg-[hsl(var(--success))]/25 transition-colors text-xs font-medium"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[hsl(var(--success-subtle))] text-[hsl(var(--success-subtle-foreground))] hover:opacity-80 transition-opacity text-xs font-medium"
               >
                 <CheckCircle2 className="size-3.5" /> Phê duyệt
               </button>
