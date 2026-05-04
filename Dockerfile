@@ -5,14 +5,14 @@ FROM node:22.22.2-alpine3.22 AS builder
 
 WORKDIR /app
 
-ENV CI=true \
-    NODE_ENV=production
+ENV CI=true
 
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 
 COPY . .
 
+ENV NODE_ENV=production
 RUN npm run build
 
 # ---------- Runtime stage (unprivileged) ----------
