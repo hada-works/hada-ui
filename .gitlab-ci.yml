@@ -1,0 +1,58 @@
+stages:
+  - build
+  - deploy
+
+.build:
+  image: registry.kfm.vn/library/docker:20.10.12-git
+  stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  tags:
+    - dind
+.build-script-before: &build-script-before
+  - echo "$REGISTRY_TOKEN" | docker login --username $REGISTRY_USERNAME $REGISTRY_ENDPOINT --password-stdin
+  - echo "Authentication Success with Registry"
+.build-script: &build-script
+  - docker build -t $REGISTRY_ENDPOINT/$REGISTRY_BUCKET/${CI_PROJECT_NAME}:${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA} -f Dockerfile .
+  - echo "Building Image ...."
+  - docker push $REGISTRY_ENDPOINT/$REGISTRY_BUCKET/${CI_PROJECT_NAME}:${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
+
+.deploy:
+  image: alpine/helm:4.0.1
+  stage: deploy
+  script:
+    - echo "Deploy Code ...."
+    - |
+      helm upgrade --install ${CI_PROJECT_NAME} ./.build/deploy \
+        --namespace $K8S_NS -f ./.build/deploy/values.$CI_COMMIT_BRANCH.yaml \
+        --set image.repository=$REGISTRY_ENDPOINT/$REGISTRY_BUCKET/${CI_PROJECT_NAME} \
+        --set image.tag=${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA} \
+        --set nameOverride=${CI_PROJECT_NAME}
+
+build:
+  extends: .build
+  only:
+    - master
+  variables:
+    REGISTRY_TOKEN: ${REGISTRY_KFM_TOKEN_PROD}
+    REGISTRY_USERNAME: ${REGISTRY_KFM_USERNAME_PROD}
+    REGISTRY_ENDPOINT: ${REGISTRY_KFM_ENDPOINT_PROD}
+    REGISTRY_BUCKET: ${REGISTRY_KFM_BUCKET_PROD}
+  before_script:
+    - echo "Starting to build production environment"
+    - apk upgrade --no-cache --quiet
+    - *build-script-before
+  script:
+    - *build-script
+
+deploy:
+  extends: .deploy
+  needs: ["build"]
+  tags:
+    - kingfoodmart-fpt
+  only:
+    - master
+  variables:
+    K8S_NS: kfz-production
+    REGISTRY_ENDPOINT: ${REGISTRY_KFM_ENDPOINT_PROD}
+    REGISTRY_BUCKET: ${REGISTRY_KFM_BUCKET_PROD}

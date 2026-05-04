@@ -1,0 +1,4 @@
+apiVersion: v2
+name: hada-ui
+version: 0.1.0
+description: A Helm chart for Hada UI (Kingfood Mart admin frontend)
