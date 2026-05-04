@@ -7,6 +7,7 @@ import {
   ChevronRight, Plus, PanelLeftClose, PanelLeftOpen, MoreHorizontal,
   ShoppingCart, ClipboardCheck, SlidersHorizontal,
   MapPin, Star, Cog, TrendingUp,
+  Package, BarChart2, ClipboardList, Layers,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/store/app-store"
@@ -83,6 +84,7 @@ export function AppSidebar() {
   const [projectsOpen,  setProjectsOpen]  = useState(true)
   const [purchasesOpen, setPurchasesOpen] = useState(true)
   const [gbpOpen,       setGbpOpen]       = useState(true)
+  const [productsOpen,  setProductsOpen]  = useState(true)
 
   const tenantBoards   = FEEDBACK_BOARDS.filter(b => b.tenantId === currentTenant.id)
   const tenantProjects = PROJECTS.filter(p => p.tenantId === currentTenant.id)
@@ -286,6 +288,66 @@ export function AppSidebar() {
                           <Link to="/gbp/settings" className="flex items-center gap-1.5">
                             <Cog className="size-3 shrink-0" />
                             Settings
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </Collapsible>
+        </SidebarGroup>
+
+        {/* ── Products (2-level collapsible) ── */}
+        <SidebarGroup>
+          <Collapsible open={open ? productsOpen : false} onOpenChange={setProductsOpen}>
+            <div className="flex items-center">
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
+                  <Package className="size-4 shrink-0" />
+                  Products
+                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+            </div>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {!open && (
+                  <NavItem href="/products/dashboard" icon={Package} label="Products" />
+                )}
+                {open && (
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/products/dashboard"}>
+                          <Link to="/products/dashboard" className="flex items-center gap-1.5">
+                            <LayoutDashboard className="size-3 shrink-0" />
+                            Dashboard
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/products/performance"}>
+                          <Link to="/products/performance" className="flex items-center gap-1.5">
+                            <BarChart2 className="size-3 shrink-0" />
+                            Performance
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/products/in-out"}>
+                          <Link to="/products/in-out" className="flex items-center gap-1.5">
+                            <ClipboardList className="size-3 shrink-0" />
+                            In-out approval
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/products/assortments"}>
+                          <Link to="/products/assortments" className="flex items-center gap-1.5">
+                            <Layers className="size-3 shrink-0" />
+                            Assortments
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
