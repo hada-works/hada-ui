@@ -11,9 +11,7 @@ function fmtVnd(n: number) {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(0)} tr`
   return n.toLocaleString("vi-VN")
 }
-function fmtK(n: number) {
-  return n >= 1_000 ? `${(n / 1_000).toFixed(0)}K` : String(n)
-}
+function fmtK(n: number) { return n >= 1_000 ? `${(n / 1_000).toFixed(0)}K` : String(n) }
 
 const STATUS_META: Record<SkuStatus, { label: string; color: string; border: string; icon: React.ElementType }> = {
   active:    { label: "Active",    color: "text-[hsl(var(--success))]", border: "border-t-[hsl(var(--success))]", icon: CheckCircle2 },
@@ -22,7 +20,7 @@ const STATUS_META: Record<SkuStatus, { label: string; color: string; border: str
   pending:   { label: "Pending",   color: "text-[hsl(var(--info))]",    border: "border-t-[hsl(var(--info))]",    icon: Clock        },
 }
 
-// ─── Mini KPI card ────────────────────────────────────────────────────────────
+// ─── KPI Card ─────────────────────────────────────────────────────────────────
 function KpiCard({ label, value, sub, icon: Icon, accent, trend }: {
   label: string; value: string | number; sub: string
   icon: React.ElementType; accent: "default"|"success"|"warning"|"destructive"|"info"; trend?: number
@@ -48,45 +46,40 @@ function KpiCard({ label, value, sub, icon: Icon, accent, trend }: {
   )
 }
 
-// ─── Horizontal bar row ───────────────────────────────────────────────────────
-function HBar({ label, value, max, color, suffix = "%" }: { label: string; value: number; max: number; color: string; suffix?: string }) {
-  const pct = Math.round((value / max) * 100)
+// ─── Horizontal bar ───────────────────────────────────────────────────────────
+function HBar({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
   return (
     <div className="flex items-center gap-2">
       <span className="text-xs text-muted-foreground w-36 shrink-0 truncate">{label}</span>
       <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-        <div className={cn("h-full rounded-full transition-all duration-700", color)} style={{ width: `${pct}%` }} />
+        <div className={cn("h-full rounded-full transition-all duration-700", color)} style={{ width: `${(value / max) * 100}%` }} />
       </div>
-      <span className="text-xs font-semibold tabular-nums w-12 text-right shrink-0">{value}{suffix}</span>
+      <span className="text-xs font-semibold tabular-nums w-12 text-right shrink-0">{value}%</span>
     </div>
   )
 }
 
-// ─── Trend sparkline (CSS only) ───────────────────────────────────────────────
-function Sparkline({ data, field }: { data: { availability: number; availabilityExVendor: number; date: string }[]; field: "availability" | "availabilityExVendor" }) {
+// ─── Sparkline SVG ────────────────────────────────────────────────────────────
+function Sparkline({ data, field }: { data: { availability: number; availabilityExVendor: number }[]; field: "availability" | "availabilityExVendor" }) {
   const vals = data.map(d => d[field])
   const min = Math.min(...vals) - 1
-  const max = Math.max(...vals) + 1
-  const range = max - min
+  const range = Math.max(...vals) + 1 - min
   const w = 100 / (vals.length - 1)
-  const points = vals.map((v, i) => `${i * w},${100 - ((v - min) / range) * 100}`).join(" ")
+  const pts = vals.map((v, i) => `${i * w},${100 - ((v - min) / range) * 100}`).join(" ")
   return (
-    <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-12">
-      <polyline fill="none" stroke="currentColor" strokeWidth="2.5" points={points} strokeLinejoin="round" strokeLinecap="round" />
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-14">
+      <polyline fill="none" stroke="currentColor" strokeWidth="2.5" points={pts} strokeLinejoin="round" strokeLinecap="round" />
     </svg>
   )
 }
 
 // ─── OOS stacked bar ─────────────────────────────────────────────────────────
-function OosBar({ newOos, remainOos, solved, maxTotal }: { newOos: number; remainOos: number; solved: number; maxTotal: number }) {
-  const total = newOos + remainOos
+function OosBar({ newOos, remainOos, maxTotal }: { newOos: number; remainOos: number; maxTotal: number }) {
+  const H = 56
   return (
-    <div className="flex flex-col gap-0.5 items-center">
-      <div className="w-5 flex flex-col justify-end" style={{ height: 56 }}>
-        <div className="w-full rounded-t" style={{ height: `${(newOos / maxTotal) * 56}px`, background: "hsl(var(--info))" }} />
-        <div className="w-full" style={{ height: `${(remainOos / maxTotal) * 56}px`, background: "hsl(var(--warning))" }} />
-      </div>
-      <div className="w-full h-1 rounded" style={{ background: "hsl(var(--success))", opacity: solved / maxTotal }} />
+    <div className="flex-1 flex flex-col justify-end" style={{ height: H }}>
+      <div className="w-full rounded-t-sm" style={{ height: `${(newOos / maxTotal) * H}px`, background: "hsl(var(--info))" }} />
+      <div className="w-full" style={{ height: `${(remainOos / maxTotal) * H}px`, background: "hsl(var(--warning))" }} />
     </div>
   )
 }
@@ -111,37 +104,37 @@ export function ProductsDashboardPage() {
 
           {/* ── Row 1: SKU Status KPIs ── */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <KpiCard label="Tổng SKU"     value={PRODUCT_STATS.totalSkus}           sub="đang quản lý"     icon={Package}       accent="default"  />
-            <KpiCard label="Active"        value={PRODUCT_STATS.active}              sub="đang kinh doanh"  icon={CheckCircle2}  accent="success"  />
-            <KpiCard label="Suspended"     value={PRODUCT_STATS.suspended}           sub="tạm khóa"         icon={PauseCircle}   accent="warning"  />
-            <KpiCard label="Closed"        value={PRODUCT_STATS.closed}              sub="đã đóng mã"       icon={XCircle}       accent="default"  />
-            <KpiCard label="Pending"       value={PRODUCT_STATS.pending}             sub="chờ duyệt"        icon={Clock}         accent="info"     />
-            <KpiCard label="Cần xem xét"  value={PRODUCT_STATS.pendingApprovals}    sub="approval chờ"     icon={AlertTriangle} accent="warning"  />
+            <KpiCard label="Tổng SKU"    value={PRODUCT_STATS.totalSkus}         sub="đang quản lý"    icon={Package}       accent="default"  />
+            <KpiCard label="Active"       value={PRODUCT_STATS.active}            sub="đang kinh doanh" icon={CheckCircle2}  accent="success"  />
+            <KpiCard label="Suspended"    value={PRODUCT_STATS.suspended}         sub="tạm khóa"        icon={PauseCircle}   accent="warning"  />
+            <KpiCard label="Closed"       value={PRODUCT_STATS.closed}            sub="đã đóng mã"      icon={XCircle}       accent="default"  />
+            <KpiCard label="Pending"      value={PRODUCT_STATS.pending}           sub="chờ duyệt"       icon={Clock}         accent="info"     />
+            <KpiCard label="Cần xem xét" value={PRODUCT_STATS.pendingApprovals}  sub="approval chờ"    icon={AlertTriangle} accent="warning"  />
           </div>
 
           {/* ── Row 2: Revenue + Availability KPIs ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <KpiCard label="Revenue 30d"       value={fmtVnd(PRODUCT_STATS.totalRevenue30d)} sub="tổng active SKU"        icon={DollarSign} accent="success" />
-            <KpiCard label="Avg Margin"         value={`${PRODUCT_STATS.avgMarginPct}%`}       sub="biên lợi nhuận tb"     icon={BarChart3}  accent="default" />
-            <KpiCard label="Fill Rate"          value={`${PRODUCT_STATS.avgAvailability}%`}    sub="availability hiện tại" icon={Activity}   accent="success" trend={1.8} />
-            <KpiCard label="OOS Rate"           value={`${PRODUCT_STATS.oosRate}%`}            sub={`${fmtK(PRODUCT_STATS.oosLines)} dòng OOS`} icon={ShoppingCart} accent="warning" trend={-0.9} />
+            <KpiCard label="Revenue 30d"  value={fmtVnd(PRODUCT_STATS.totalRevenue30d)} sub="tổng active SKU"        icon={DollarSign}   accent="success" />
+            <KpiCard label="Avg Margin"   value={`${PRODUCT_STATS.avgMarginPct}%`}       sub="biên lợi nhuận tb"     icon={BarChart3}    accent="default" />
+            <KpiCard label="Fill Rate"    value={`${PRODUCT_STATS.avgAvailability}%`}    sub="availability hiện tại" icon={Activity}     accent="success" trend={1.8} />
+            <KpiCard label="OOS Rate"     value={`${PRODUCT_STATS.oosRate}%`}            sub={`${fmtK(PRODUCT_STATS.oosLines)} dòng OOS`} icon={ShoppingCart} accent="warning" trend={-0.9} />
           </div>
 
-          {/* ── Row 3: Inventory Status + Availability Trend ── */}
+          {/* ── Row 3: Inventory Status + Availability/OOS Trend ── */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-            {/* Inventory Status Donut-style */}
+            {/* Left: Inventory Status */}
             <div className="rounded-lg border bg-card p-4">
               <h2 className="text-base font-semibold mb-4">Inventory Status</h2>
               <div className="space-y-2.5">
-                {[
-                  { label: "In Stock",      value: INVENTORY_STATUS.inStock,     color: "bg-[hsl(var(--success))]" },
-                  { label: "Below Min",     value: INVENTORY_STATUS.belowMin,    color: "bg-[hsl(var(--warning))]" },
-                  { label: "Above Max",     value: INVENTORY_STATUS.aboveMax,    color: "bg-[hsl(var(--info))]"    },
-                  { label: "OOS",           value: INVENTORY_STATUS.oos,         color: "bg-destructive"           },
-                  { label: "OOS Vendor",    value: INVENTORY_STATUS.oosVendor,   color: "bg-[hsl(var(--epic-rose))]" },
-                  { label: "OOS Shipped",   value: INVENTORY_STATUS.oosShipped,  color: "bg-muted-foreground"      },
-                ].map(row => (
+                {([
+                  { label: "In Stock",    value: INVENTORY_STATUS.inStock,    color: "bg-[hsl(var(--success))]" },
+                  { label: "Below Min",   value: INVENTORY_STATUS.belowMin,   color: "bg-[hsl(var(--warning))]" },
+                  { label: "Above Max",   value: INVENTORY_STATUS.aboveMax,   color: "bg-[hsl(var(--info))]"    },
+                  { label: "OOS",         value: INVENTORY_STATUS.oos,        color: "bg-destructive"           },
+                  { label: "OOS Vendor",  value: INVENTORY_STATUS.oosVendor,  color: "bg-destructive/60"        },
+                  { label: "OOS Shipped", value: INVENTORY_STATUS.oosShipped, color: "bg-muted-foreground"      },
+                ] as { label: string; value: number; color: string }[]).map(row => (
                   <div key={row.label} className="flex items-center gap-3">
                     <div className={cn("size-3 rounded-sm shrink-0", row.color)} />
                     <span className="text-sm flex-1">{row.label}</span>
@@ -159,44 +152,56 @@ export function ProductsDashboardPage() {
               </div>
             </div>
 
-            {/* Availability Trend */}
+            {/* Right: Availability Trend — 2 charts stacked vertically, each with own x-axis */}
             <div className="lg:col-span-2 rounded-lg border bg-card p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <h2 className="text-base font-semibold">% Availability by Date</h2>
-                  <p className="text-xs text-muted-foreground">8 tuần gần nhất · {latest.date}: <span className="font-semibold">{latest.availability}%</span> | OOS Lines: <span className="font-semibold">{fmtK(latest.oosLines)}</span></p>
+                  <p className="text-xs text-muted-foreground">
+                    8 tuần gần nhất · {latest.date}:
+                    <span className="font-semibold"> {latest.availability}%</span>
+                    {" "}| OOS Lines: <span className="font-semibold">{fmtK(latest.oosLines)}</span>
+                  </p>
                 </div>
-                <button onClick={() => setShowExVendor(v => !v)} className={cn("px-2 py-1 text-xs rounded border transition-colors", showExVendor ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted")}>
+                <button
+                  onClick={() => setShowExVendor(v => !v)}
+                  className={cn("px-2 py-1 text-xs rounded border transition-colors",
+                    showExVendor ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+                  )}
+                >
                   Ex-Vendor
                 </button>
               </div>
-              {/* Sparkline */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><span className="size-2 rounded-full bg-[hsl(var(--success))] inline-block" /> Fill Rate</p>
-                  <div className={cn("text-[hsl(var(--success))]")}><Sparkline data={AVAILABILITY_TREND} field="availability" /></div>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><span className="size-2 rounded-full bg-[hsl(var(--info))] inline-block" /> OOS Trend (nghìn dòng)</p>
-                  {/* OOS bars */}
-                  <div className="flex items-end gap-1 h-12">
-                    {OOS_TREND.map(d => (
-                      <OosBar key={d.date} newOos={d.newOos} remainOos={d.remainOos} solved={d.solved} maxTotal={maxOos} />
-                    ))}
-                  </div>
-                </div>
+
+              {/* Chart ①: Fill Rate sparkline */}
+              <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1.5">
+                <span className="size-2 rounded-full bg-[hsl(var(--success))] inline-block" />
+                Fill Rate {showExVendor ? "(Excl. Vendor)" : "(Tổng)"}
+              </p>
+              <div className="text-[hsl(var(--success))]">
+                <Sparkline data={AVAILABILITY_TREND} field={showExVendor ? "availabilityExVendor" : "availability"} />
               </div>
-              {/* Date labels */}
-              <div className="flex justify-between">
+              <div className="flex justify-between mb-4">
                 {AVAILABILITY_TREND.map(d => (
                   <span key={d.date} className="text-[10px] text-muted-foreground">{d.date}</span>
                 ))}
               </div>
-              {/* OOS legend */}
-              <div className="flex gap-3 mt-2">
-                <span className="flex items-center gap-1 text-xs text-muted-foreground"><span className="size-2 rounded-sm bg-[hsl(var(--info))] inline-block"/>New</span>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground"><span className="size-2 rounded-sm bg-[hsl(var(--warning))] inline-block"/>Remain</span>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground"><span className="size-2 rounded-sm bg-[hsl(var(--success))] inline-block"/>Solved</span>
+
+              {/* Chart ②: OOS stacked bars */}
+              <p className="text-xs text-muted-foreground mb-2 flex items-center gap-3">
+                <span className="flex items-center gap-1"><span className="size-2 rounded-sm bg-[hsl(var(--info))] inline-block"/>New</span>
+                <span className="flex items-center gap-1"><span className="size-2 rounded-sm bg-[hsl(var(--warning))] inline-block"/>Remain</span>
+                <span className="text-muted-foreground/60">· nghìn dòng OOS</span>
+              </p>
+              <div className="flex items-end gap-1 w-full" style={{ height: 56 }}>
+                {OOS_TREND.map(d => (
+                  <OosBar key={d.date} newOos={d.newOos} remainOos={d.remainOos} maxTotal={maxOos} />
+                ))}
+              </div>
+              <div className="flex justify-between mt-1">
+                {OOS_TREND.map(d => (
+                  <span key={d.date} className="text-[10px] text-muted-foreground flex-1 text-center">{d.date}</span>
+                ))}
               </div>
             </div>
           </div>
@@ -220,10 +225,10 @@ export function ProductsDashboardPage() {
                     </div>
                     <div className="flex gap-1 h-2">
                       <div className="flex-1 rounded-full bg-muted overflow-hidden">
-                        <div className="h-full rounded-full bg-[hsl(var(--success))] transition-all" style={{ width: `${((r.availability - 75) / 25) * 100}%` }} />
+                        <div className="h-full rounded-full bg-[hsl(var(--success))]" style={{ width: `${((r.availability - 75) / 25) * 100}%` }} />
                       </div>
                       <div className="flex-1 rounded-full bg-muted overflow-hidden">
-                        <div className="h-full rounded-full bg-[hsl(var(--info))] transition-all" style={{ width: `${((r.availabilityExVendor - 75) / 25) * 100}%` }} />
+                        <div className="h-full rounded-full bg-[hsl(var(--info))]" style={{ width: `${((r.availabilityExVendor - 75) / 25) * 100}%` }} />
                       </div>
                     </div>
                   </div>
@@ -252,7 +257,9 @@ export function ProductsDashboardPage() {
               </div>
               <div className="space-y-2.5">
                 {[...VENDOR_AVAILABILITY].sort((a, b) => b.oosRate - a.oosRate).map(v => (
-                  <HBar key={v.vendor} label={v.vendor} value={v.oosRate} max={30} color={v.oosRate > 10 ? "bg-destructive" : v.oosRate > 5 ? "bg-[hsl(var(--warning))]" : "bg-[hsl(var(--success))]"} />
+                  <HBar key={v.vendor} label={v.vendor} value={v.oosRate} max={30}
+                    color={v.oosRate > 10 ? "bg-destructive" : v.oosRate > 5 ? "bg-[hsl(var(--warning))]" : "bg-[hsl(var(--success))]"}
+                  />
                 ))}
               </div>
             </div>
@@ -295,7 +302,7 @@ export function ProductsDashboardPage() {
                         <div className="text-xs text-muted-foreground">{sku.code}</div>
                       </div>
                       <span className="text-sm font-bold text-destructive shrink-0 flex items-center gap-0.5">
-                        <TrendingDown className="size-3.5" />{Math.abs(sku.trendPct)}%
+                        <TrendingDown className="size-3.5"/>{Math.abs(sku.trendPct)}%
                       </span>
                     </div>
                   ))}
@@ -305,7 +312,7 @@ export function ProductsDashboardPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <Clock className="size-4 text-[hsl(var(--info))]" />
                   <h2 className="text-sm font-semibold">Approval Chờ Xử Lý</h2>
-                  <Badge variant="info" className="ml-auto">{pendingApprovals.length}</Badge>
+                  <Badge variant="secondary" className="ml-auto">{pendingApprovals.length}</Badge>
                 </div>
                 <div className="space-y-2">
                   {pendingApprovals.map(req => (
@@ -339,7 +346,9 @@ export function ProductsDashboardPage() {
                       <div className="text-sm font-medium truncate">{sku.name}</div>
                       <div className="text-xs text-muted-foreground">{sku.code} · {sku.brand}</div>
                     </div>
-                    <Badge variant={sku.status === "active" ? "success" : sku.status === "suspended" ? "warning" : sku.status === "pending" ? "secondary" : "outline"} className="uppercase shrink-0">{meta.label}</Badge>
+                    <Badge variant={sku.status === "active" ? "success" : sku.status === "suspended" ? "warning" : sku.status === "pending" ? "secondary" : "outline"} className="uppercase shrink-0">
+                      {meta.label}
+                    </Badge>
                     <div className="text-xs text-muted-foreground tabular-nums shrink-0">{new Date(sku.lastUpdated).toLocaleDateString("vi-VN")}</div>
                   </div>
                 )
