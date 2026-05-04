@@ -8,6 +8,7 @@ import { IssuesPage, IssueDetailPage } from "@/features/issues"
 import { ProjectsPage, NewProjectPage } from "@/features/projects"
 import { BulkBuyApprovalPage, PurchasesDashboardPage, PurchasesSettingsPage } from "@/features/purchases"
 import { GbpDashboardPage, GbpInsightsPage, GbpLocationsPage, GbpReviewsPage, GbpSettingsPage } from "@/features/gbp-audits"
+import { ProductsDashboardPage, ProductsPerformancePage, ProductsInOutApprovalPage, ProductsAssortmentsPage } from "@/features/products"
 
 export default function App() {
   return (
@@ -50,6 +51,12 @@ export default function App() {
             <Route path="/gbp/locations"  element={<GbpLocationsPage />} />
             <Route path="/gbp/reviews"    element={<GbpReviewsPage />} />
             <Route path="/gbp/settings"   element={<GbpSettingsPage />} />
+
+            {/* Products */}
+            <Route path="/products/dashboard"   element={<ProductsDashboardPage />} />
+            <Route path="/products/performance" element={<ProductsPerformancePage />} />
+            <Route path="/products/in-out"       element={<ProductsInOutApprovalPage />} />
+            <Route path="/products/assortments" element={<ProductsAssortmentsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
