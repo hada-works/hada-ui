@@ -119,7 +119,7 @@ export function FinanceView({ d, onDrill, activeDrill }: Props) {
                 { label: "Cash position",      value: fmtVnd(d.cashOnHand),    status: "neutral" },
                 { label: "AP overdue",         value: fmtVnd(d.apOverdue),     status: apStatus },
                 { label: "CCC target (≤14d)",  value: "14 ngày",               status: "good" },
-                { label: "Runway estimate",    value: `${Math.round(d.cashOnHand / (d.cashOnHand / 30))} ngày`, status: "neutral" },
+                { label: "Runway estimate",    value: `${Math.round(d.cashOnHand / d.dailyCashBurn)} ngày`, status: (d.cashOnHand / d.dailyCashBurn >= 20 ? "good" : d.cashOnHand / d.dailyCashBurn >= 14 ? "warn" : "bad") as Status },
               ],
             })}
           />
@@ -139,7 +139,7 @@ export function FinanceView({ d, onDrill, activeDrill }: Props) {
                 { label: "Cash position",     value: fmtVnd(d.cashOnHand),  status: "neutral" },
                 { label: "AP overdue",        value: fmtVnd(d.apOverdue),   status: apStatus },
                 { label: "CCC target (≤14d)", value: "14 ngày",             status: "good" },
-                { label: "Runway estimate",   value: "~30 ngày",            status: "neutral" },
+                { label: "Runway estimate",   value: `~${Math.round(d.cashOnHand / d.dailyCashBurn)} ngày`, status: (d.cashOnHand / d.dailyCashBurn >= 20 ? "good" : "warn") as Status },
               ],
               note: "AP overdue >5 tỷ cần escalation lên CFO.",
             })}

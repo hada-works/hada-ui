@@ -2,7 +2,7 @@
 
 export type Trend  = "up" | "down" | "flat"
 export type Status = "good" | "warn" | "bad" | "neutral"
-export type TabId  = "executive" | "operations" | "commercial" | "supply" | "regional" | "technology" | "finance"
+export type TabId  = "executive" | "operations" | "commercial" | "supply" | "regional" | "technology" | "finance" | "foodsafety" | "expansion" | "store"
 
 export interface KPI {
   label: string
@@ -46,8 +46,22 @@ export interface PeriodData {
   revPerSqmVsLY: number
   cashOnHand: number
   apOverdue: number
+  /** Daily cash burn rate (VND/ngày) — dùng để tính runway */
+  dailyCashBurn: number
   /** Electronic / cashless payment mix % */
   electronicPaymentPct: number
+  /** Rental cost as % of revenue */
+  rentalCostPct: number
+  /** Utilities cost as % of revenue */
+  utilitiesPct: number
+  /** D&A (depreciation & amortization) as % of revenue */
+  dAndAPct: number
+  /** Online/delivery revenue as % of total */
+  onlineRevPct: number
+  /** Headcount breakdown by function */
+  headcountBreakdown: { store: number; dc: number; hq: number }
+  /** Turnover rate % per month */
+  turnoverRatePct: number
 
   // Operations
   storesOp: number
@@ -180,6 +194,62 @@ export interface PeriodData {
     leaseCostSqm: number
   }[]
   storeBands: { p0: number; p20: number; p40: number; p60: number; p80: number }
+
+  // Expansion & Real Estate (Tier 3c)
+  /** Average time from lease signing to store opening (days) */
+  timeToOpenDays: number
+  /** Target time-to-open (days) */
+  timeToOpenTarget: number
+  /** Site approval rate % (approved vs submitted) */
+  siteApprovalRate: number
+  /** Average payback period for new stores (months) */
+  paybackPeriodMonths: number
+  /** Individual expansion projects */
+  expansionProjects: {
+    id: string
+    name: string
+    region: string
+    cluster: string
+    status: "signed" | "construction" | "permit" | "opening"
+    startDate: string
+    targetOpenDate: string
+    leaseCostSqm: number
+    capEx: number
+    milestone: string
+    daysDelayed: number
+  }[]
+
+  // Store Daily Operations (Tier 5)
+  /** Today's revenue target for the "sample" store view */
+  storeDailyTarget: number
+  /** Today's revenue actual */
+  storeDailyActual: number
+  /** Hourly revenue data for today */
+  hourlyRevenue: { hour: number; actual: number; target: number }[]
+  /** Current staff on floor */
+  staffOnFloor: number
+  /** Scheduled staff for this shift */
+  staffScheduled: number
+  /** Low stock alerts (SKU level) */
+  lowStockAlerts: { sku: string; currentQty: number; minQty: number; urgency: "critical" | "warn" }[]
+  /** Today's task checklist */
+  taskChecklist: { task: string; status: "done" | "pending" | "overdue"; owner: string }[]
+  /** Customer complaints today */
+  customerComplaints: { category: string; count: number; status: "new" | "resolved" }[]
+
+  // Food Safety standalone (Tier 4b)
+  /** Per-store audit history sample */
+  auditHistory: {
+    storeId: string
+    storeName: string
+    lastAuditDate: string
+    score: number
+    status: "pass" | "fail" | "pending"
+    findings: string[]
+    correctiveActions: { action: string; dueDate: string; owner: string; status: "open" | "closed" }[]
+  }[]
+  /** Near-miss incident log */
+  nearMissLog: { storeId: string; storeName: string; description: string; time: string; category: string; status: "open" | "closed" }[]
 
   // Alerts
   alerts: { level: "critical" | "warn" | "info"; msg: string; time: string; tag: string }[]

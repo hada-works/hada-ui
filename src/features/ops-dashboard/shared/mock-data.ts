@@ -96,7 +96,12 @@ export const MOCK: Record<string, PeriodData> = {
     headcount: 4_820, headcountVsPlan: -1.4,
     revPerSqm: 8_240_000, revPerSqmVsLY: 5.2,
     cashOnHand: 42_000_000_000, apOverdue: 3_800_000_000,
+    dailyCashBurn: 2_300_000_000,
     electronicPaymentPct: 61.2,
+    rentalCostPct: 8.2, utilitiesPct: 1.8, dAndAPct: 2.1,
+    onlineRevPct: 18.5,
+    headcountBreakdown: { store: 4_140, dc: 420, hq: 260 },
+    turnoverRatePct: 3.8,
 
     // ─── Operations ─────────────────────────────────────────────────────────
     storesOp: 316, storesTotal: 318,
@@ -198,6 +203,103 @@ export const MOCK: Record<string, PeriodData> = {
     ],
     storeBands: { p0: 8, p20: 14, p40: 32, p60: 28, p80: 18 },
 
+    // ─── Expansion & Real Estate ─────────────────────────────────────────────
+    timeToOpenDays: 74, timeToOpenTarget: 60,
+    siteApprovalRate: 68,
+    paybackPeriodMonths: 18,
+    expansionProjects: [
+      { id: "EXP-HCM-018", name: "Gò Vấp – Quang Trung",     region: "HCM",        cluster: "Chung cư",   status: "construction", startDate: "2026-02-10", targetOpenDate: "2026-06-01", leaseCostSqm: 440_000, capEx: 1_820_000_000, milestone: "Thi công nội thất",  daysDelayed: 0  },
+      { id: "EXP-HN-022",  name: "Nam Từ Liêm – Mỹ Đình",    region: "Hà Nội",     cluster: "VP/Office",  status: "permit",       startDate: "2026-01-15", targetOpenDate: "2026-05-20", leaseCostSqm: 390_000, capEx: 1_750_000_000, milestone: "Chờ phòng cháy",     daysDelayed: 18 },
+      { id: "EXP-MB-014",  name: "Hải Dương – TP trung tâm", region: "Miền Bắc",   cluster: "Phố",        status: "signed",       startDate: "2026-03-01", targetOpenDate: "2026-07-15", leaseCostSqm: 220_000, capEx: 1_680_000_000, milestone: "Bàn giao mặt bằng",  daysDelayed: 0  },
+      { id: "EXP-MT-009",  name: "Cần Thơ – Ninh Kiều",      region: "Miền Tây",   cluster: "Phố",        status: "construction", startDate: "2026-02-20", targetOpenDate: "2026-05-30", leaseCostSqm: 165_000, capEx: 1_600_000_000, milestone: "Lắp đặt thiết bị",   daysDelayed: 5  },
+      { id: "EXP-HCM-019", name: "Bình Dương – Thủ Dầu Một", region: "HCM",        cluster: "KCN",        status: "opening",      startDate: "2025-12-01", targetOpenDate: "2026-05-10", leaseCostSqm: 310_000, capEx: 1_720_000_000, milestone: "Grand opening T+3",   daysDelayed: 0  },
+      { id: "EXP-HN-023",  name: "Long Biên – Nguyễn Văn Cừ",region: "Hà Nội",     cluster: "Chung cư",   status: "permit",       startDate: "2026-01-08", targetOpenDate: "2026-05-08", leaseCostSqm: 370_000, capEx: 1_780_000_000, milestone: "Chờ PCCC & VSATTP",  daysDelayed: 24 },
+    ],
+
+    // ─── Store Daily Operations (sample: HCM-001) ────────────────────────────
+    storeDailyTarget: 42_000_000,
+    storeDailyActual: 42_800_000,
+    hourlyRevenue: [
+      { hour:  7, actual:  1_200_000, target:  1_000_000 },
+      { hour:  8, actual:  2_800_000, target:  2_500_000 },
+      { hour:  9, actual:  3_400_000, target:  3_200_000 },
+      { hour: 10, actual:  3_100_000, target:  3_000_000 },
+      { hour: 11, actual:  4_800_000, target:  4_500_000 },
+      { hour: 12, actual:  5_200_000, target:  4_800_000 },
+      { hour: 13, actual:  4_100_000, target:  4_000_000 },
+      { hour: 14, actual:  2_900_000, target:  3_000_000 },
+      { hour: 15, actual:  2_600_000, target:  2_800_000 },
+      { hour: 16, actual:  3_200_000, target:  3_200_000 },
+      { hour: 17, actual:  4_600_000, target:  4_400_000 },
+      { hour: 18, actual:  5_100_000, target:  4_600_000 },
+      { hour: 19, actual:  3_900_000, target:  4_000_000 },
+      { hour: 20, actual:  3_600_000, target:  3_500_000 },
+      { hour: 21, actual:    800_000, target:  1_000_000 },
+    ],
+    staffOnFloor: 7, staffScheduled: 8,
+    lowStockAlerts: [
+      { sku: "TH True Milk 1L",       currentQty:  4, minQty: 24, urgency: "critical" },
+      { sku: "Sữa Vinamilk 180ml x4", currentQty:  8, minQty: 24, urgency: "critical" },
+      { sku: "Mì Hảo Hảo tôm",        currentQty: 18, minQty: 48, urgency: "warn"     },
+      { sku: "Sting Energy 330ml",     currentQty: 12, minQty: 24, urgency: "warn"     },
+    ],
+    taskChecklist: [
+      { task: "Kiểm tra nhiệt độ tủ đông (06:00)",   status: "done",    owner: "Nguyễn A" },
+      { task: "Nhận hàng DC – xác nhận GRN",          status: "done",    owner: "Trần B"   },
+      { task: "Đặt hàng bổ sung TH Milk (khẩn)",      status: "pending", owner: "Trần B"   },
+      { task: "Mystery shop review – tháng 5",         status: "pending", owner: "Store GM" },
+      { task: "Báo cáo near-miss sự cố tủ lạnh",      status: "overdue", owner: "Store GM" },
+      { task: "Training nhân viên mới (module 2)",     status: "pending", owner: "Lê C"     },
+    ],
+    customerComplaints: [
+      { category: "Thiếu hàng (OOS)",        count: 3, status: "new"      },
+      { category: "Thanh toán chờ lâu",       count: 1, status: "resolved" },
+      { category: "Sản phẩm cận HSD",         count: 1, status: "new"      },
+    ],
+
+    // ─── Food Safety audit history ────────────────────────────────────────────
+    auditHistory: [
+      {
+        storeId: "MB-007", storeName: "Hải Phòng – Lê Lợi",
+        lastAuditDate: "2026-04-28", score: 71, status: "fail",
+        findings: ["Nhiệt độ tủ đông vượt ngưỡng +2°C", "Thiếu nhãn HSD trên 6 sản phẩm", "Nhân viên không đeo găng tay khi xử lý thực phẩm tươi"],
+        correctiveActions: [
+          { action: "Hiệu chỉnh tủ đông — gọi kỹ thuật",        dueDate: "2026-05-08", owner: "Store GM",   status: "open"   },
+          { action: "Dán lại nhãn HSD toàn bộ SKU thực phẩm",   dueDate: "2026-05-06", owner: "Nguyễn A",   status: "open"   },
+          { action: "Re-training vệ sinh ATTP toàn store",       dueDate: "2026-05-10", owner: "Area Mgr",   status: "open"   },
+        ],
+      },
+      {
+        storeId: "HN-011", storeName: "Hoàng Mai – Trương Định",
+        lastAuditDate: "2026-05-01", score: 84, status: "pass",
+        findings: ["Khu vực bày hàng đông lạnh cần vệ sinh thêm"],
+        correctiveActions: [
+          { action: "Vệ sinh tủ đông — lịch tuần",              dueDate: "2026-05-09", owner: "Shift lead", status: "open"   },
+        ],
+      },
+      {
+        storeId: "HCM-001", storeName: "Quận 1 – Nguyễn Huệ",
+        lastAuditDate: "2026-05-02", score: 96, status: "pass",
+        findings: [],
+        correctiveActions: [],
+      },
+      {
+        storeId: "MT-003", storeName: "Cần Thơ – Ninh Kiều",
+        lastAuditDate: "2026-04-20", score: 78, status: "pass",
+        findings: ["Temp log thiếu 2 ngày trong tuần", "Khu vực rác cần cải thiện"],
+        correctiveActions: [
+          { action: "Thiết lập lịch nhắc nhở temp log daily",   dueDate: "2026-05-07", owner: "Store GM",   status: "closed" },
+          { action: "Tổ chức dọn dẹp khu vực rác",              dueDate: "2026-05-05", owner: "Trần B",     status: "closed" },
+        ],
+      },
+    ],
+    nearMissLog: [
+      { storeId: "HCM-012", storeName: "Bình Thạnh – Xô Viết",  description: "Khách trơn ngã tại khu vực tủ đông, không chấn thương", time: "09:24", category: "An toàn cửa hàng", status: "open"   },
+      { storeId: "MB-007",  storeName: "Hải Phòng – Lê Lợi",    description: "Phát hiện 3 sản phẩm hết HSD trước khi bày lên kệ",   time: "07:40", category: "An toàn thực phẩm", status: "closed" },
+      { storeId: "HN-004",  storeName: "Cầu Giấy – Xuân Thủy",  description: "Điện chập cháy nhỏ tại quầy POS — đã xử lý ngay",     time: "06:55", category: "An toàn điện",      status: "closed" },
+      { storeId: "MB-013",  storeName: "Bắc Ninh – Tiên Sơn",   description: "Nhân viên tiếp xúc hóa chất tẩy rửa không đeo găng",  time: "08:10", category: "An toàn lao động",  status: "open"   },
+    ],
+
     alerts: [
       { level: "critical", msg: "OOS TH True Milk 1L: 48 stores — fill rate supplier chỉ 71%",        time: "08:14", tag: "Commercial" },
       { level: "critical", msg: "5 PO nhà cung cấp trễ hạn >2 ngày — cần escalation ngay",            time: "07:30", tag: "Supply Chain" },
@@ -221,7 +323,12 @@ export const MOCK: Record<string, PeriodData> = {
     nps: 40, npsVsPrev: -1, headcount: 4_820, headcountVsPlan: -1.4,
     revPerSqm: 7_920_000, revPerSqmVsLY: 3.8,
     cashOnHand: 41_500_000_000, apOverdue: 3_200_000_000,
+    dailyCashBurn: 2_300_000_000,
     electronicPaymentPct: 60.4,
+    rentalCostPct: 8.0, utilitiesPct: 1.9, dAndAPct: 2.1,
+    onlineRevPct: 17.8,
+    headcountBreakdown: { store: 4_140, dc: 420, hq: 260 },
+    turnoverRatePct: 3.6,
 
     storesOp: 318, storesTotal: 318,
     storeHealthGreen: 65, storeHealthYellow: 25, storeHealthRed: 10,
@@ -306,6 +413,17 @@ export const MOCK: Record<string, PeriodData> = {
     ],
     storeBands: { p0: 9, p20: 15, p40: 30, p60: 29, p80: 17 },
 
+    timeToOpenDays: 72, timeToOpenTarget: 60, siteApprovalRate: 70, paybackPeriodMonths: 18,
+    expansionProjects: [],
+    storeDailyTarget: 42_000_000, storeDailyActual: 40_100_000,
+    hourlyRevenue: [],
+    staffOnFloor: 8, staffScheduled: 8,
+    lowStockAlerts: [],
+    taskChecklist: [],
+    customerComplaints: [],
+    auditHistory: [],
+    nearMissLog: [],
+
     alerts: [
       { level: "warn", msg: "Tỷ lệ hủy đơn online 2.8% — tăng nhẹ vs ngưỡng 2%", time: "20:00", tag: "Operations" },
       { level: "warn", msg: "29 SKU sắp hết HSD — cần kế hoạch markdown",         time: "06:00", tag: "Commercial" },
@@ -322,7 +440,12 @@ export const MOCK: Record<string, PeriodData> = {
     nps: 40, npsVsPrev: 0, headcount: 4_820, headcountVsPlan: -1.4,
     revPerSqm: 54_200_000, revPerSqmVsLY: 4.6,
     cashOnHand: 42_000_000_000, apOverdue: 3_800_000_000,
+    dailyCashBurn: 2_300_000_000,
     electronicPaymentPct: 60.8,
+    rentalCostPct: 8.3, utilitiesPct: 1.8, dAndAPct: 2.1,
+    onlineRevPct: 18.2,
+    headcountBreakdown: { store: 4_140, dc: 420, hq: 260 },
+    turnoverRatePct: 4.1,
 
     storesOp: 316, storesTotal: 318,
     storeHealthGreen: 60, storeHealthYellow: 27, storeHealthRed: 13,
@@ -410,6 +533,17 @@ export const MOCK: Record<string, PeriodData> = {
     ],
     storeBands: { p0: 10, p20: 16, p40: 31, p60: 27, p80: 16 },
 
+    timeToOpenDays: 76, timeToOpenTarget: 60, siteApprovalRate: 66, paybackPeriodMonths: 18,
+    expansionProjects: [],
+    storeDailyTarget: 42_000_000, storeDailyActual: 38_000_000,
+    hourlyRevenue: [],
+    staffOnFloor: 7, staffScheduled: 8,
+    lowStockAlerts: [],
+    taskChecklist: [],
+    customerComplaints: [],
+    auditHistory: [],
+    nearMissLog: [],
+
     alerts: [
       { level: "critical", msg: "22 SKU hàng A OOS — lost revenue ước 1.8 tỷ/ngày",                  time: "–", tag: "Commercial" },
       { level: "critical", msg: "8 PO trễ hạn — Miền Bắc bị ảnh hưởng nặng nhất",                   time: "–", tag: "Supply Chain" },
@@ -428,7 +562,12 @@ export const MOCK: Record<string, PeriodData> = {
     nps: 39, npsVsPrev: -1, headcount: 4_820, headcountVsPlan: -1.4,
     revPerSqm: 218_400_000, revPerSqmVsLY: 6.1,
     cashOnHand: 42_000_000_000, apOverdue: 3_800_000_000,
+    dailyCashBurn: 2_300_000_000,
     electronicPaymentPct: 61.8,
+    rentalCostPct: 8.1, utilitiesPct: 1.8, dAndAPct: 2.0,
+    onlineRevPct: 19.1,
+    headcountBreakdown: { store: 4_140, dc: 420, hq: 260 },
+    turnoverRatePct: 3.9,
 
     storesOp: 316, storesTotal: 318,
     storeHealthGreen: 58, storeHealthYellow: 28, storeHealthRed: 14,
@@ -513,6 +652,17 @@ export const MOCK: Record<string, PeriodData> = {
       { name: "Miền Tây",   stores:  26, revVsPlan:  3.1, revPerStore: 15_800_000, sss: 6.2, oosRate: 4.1, healthGreen: 60, newStores: 0, laborPct: 13.9, shrinkage: 0.49, pipeline:  8, leaseCostSqm: 160_000 },
     ],
     storeBands: { p0: 11, p20: 17, p40: 29, p60: 27, p80: 16 },
+
+    timeToOpenDays: 78, timeToOpenTarget: 60, siteApprovalRate: 64, paybackPeriodMonths: 19,
+    expansionProjects: [],
+    storeDailyTarget: 42_000_000, storeDailyActual: 43_800_000,
+    hourlyRevenue: [],
+    staffOnFloor: 7, staffScheduled: 8,
+    lowStockAlerts: [],
+    taskChecklist: [],
+    customerComplaints: [],
+    auditHistory: [],
+    nearMissLog: [],
 
     alerts: [
       { level: "critical", msg: "Supplier fill rate 92.8% — dưới ngưỡng 95% cả tháng",       time: "–", tag: "Supply Chain" },

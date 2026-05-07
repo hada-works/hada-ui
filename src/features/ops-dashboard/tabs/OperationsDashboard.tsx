@@ -31,7 +31,7 @@ export function OperationsView({ d, onDrill, activeDrill }: Props) {
           { label: "Vi phạm ATTP",          value: "1 store", status: "bad" as Status, sub: "Đang re-audit" },
           { label: "Bảo trì định kỳ",       value: "0 store", status: "good" as Status },
           { label: "POS uptime fleet",      value: `${d.posUptime}%`, sub: "target >99.5%", status: (d.posUptime >= 99.5 ? "good" : "warn") as Status },
-          { label: "CCTV coverage",         value: "97.4%", sub: "16 camera offline", status: "warn" as Status },
+          { label: "CCTV coverage",         value: `${d.cctvCoverage}%`, sub: `${Math.round((100 - d.cctvCoverage) / 100 * d.storeCount * 4)} camera offline`, status: (d.cctvCoverage >= 98 ? "good" : "warn") as Status },
           { label: "Avg uptime rolling 30d", value: "99.3%", sub: "SLA target 99%", status: "good" as Status },
         ] as DrillRow[],
         note: "Tại 1,000 stores: mỗi 1% uptime loss = ~10 stores không vận hành = ~130tr/ngày lost rev.",
@@ -191,6 +191,41 @@ export function OperationsView({ d, onDrill, activeDrill }: Props) {
             status: (r.laborPct <= 14.0 ? "good" : r.laborPct <= 14.5 ? "warn" : "bad") as Status,
             sub: r.laborPct > 14.5 ? "Above target — cần review" : undefined,
           })),
+        }],
+      },
+    },
+    {
+      kpi: {
+        label: "Staffing Coverage", value: `${d.staffingCoverage}%`,
+        trend: (d.staffingCoverage >= 96 ? "up" : "down") as Trend,
+        trendLabel: `Target ≥96%`,
+        status: (d.staffingCoverage >= 96 ? "good" : d.staffingCoverage >= 92 ? "warn" : "bad") as Status,
+      },
+      content: {
+        title: "Staffing Coverage", value: `${d.staffingCoverage}%`,
+        status: (d.staffingCoverage >= 96 ? "good" : d.staffingCoverage >= 92 ? "warn" : "bad") as Status,
+        rows: [
+          { label: "Coverage hiện tại", value: `${d.staffingCoverage}%`, status: (d.staffingCoverage >= 96 ? "good" : d.staffingCoverage >= 92 ? "warn" : "bad") as Status },
+          { label: "Target", value: "≥96%", status: "good" as Status },
+          { label: "Stores thiếu staff", value: `${Math.round((100 - d.staffingCoverage) / 100 * d.storesOp)} stores`, status: (d.staffingCoverage >= 96 ? "good" : d.staffingCoverage >= 92 ? "warn" : "bad") as Status },
+          { label: "Tác động est.", value: `~${Math.round((100 - d.staffingCoverage) / 100 * d.storesOp * 2)}tr lost rev`, status: "warn" as Status },
+        ] as DrillRow[],
+        sections: [{
+          label: "Staffing gaps by region",
+          rows: d.regions.map(r => ({
+            label: r.name,
+            value: `${r.stores} stores`,
+            sub: r.laborPct > 14.0 ? `Labor ${r.laborPct}% — over target` : `Labor ${r.laborPct}% — OK`,
+            status: (r.laborPct <= 14.0 ? "good" : r.laborPct <= 14.5 ? "warn" : "bad") as Status,
+          })),
+        }, {
+          label: "Hành động",
+          rows: d.staffingCoverage < 96 ? [
+            { label: "Priority", value: "Review shift schedule ngay hôm nay", status: "warn" as Status },
+            { label: "Escalate", value: "Notify Area Manager về stores thiếu staff", status: "warn" as Status },
+          ] : [
+            { label: "Trạng thái", value: "Coverage đạt target — tiếp tục theo dõi", status: "good" as Status },
+          ],
         }],
       },
     },

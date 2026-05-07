@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Target, Activity, BarChart3, Truck, Globe, Monitor, Wallet } from "lucide-react"
+import { Target, Activity, BarChart3, Truck, Globe, Monitor, Wallet, ShieldCheck, MapPin, Store } from "lucide-react"
 import { Header } from "@/components/layout/Header"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -16,6 +16,9 @@ import { SupplyChainView } from "./tabs/SupplyChainDashboard"
 import { RegionalView }    from "./tabs/RegionalDashboard"
 import { TechnologyView }  from "./tabs/TechnologyDashboard"
 import { FinanceView }     from "./tabs/FinanceDashboard"
+import { FoodSafetyView } from "./tabs/FoodSafetyDashboard"
+import { ExpansionView }  from "./tabs/ExpansionDashboard"
+import { StoreView }      from "./tabs/StoreDashboard"
 
 const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: "executive",  label: "Executive",    icon: Target    },
@@ -25,6 +28,9 @@ const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: "regional",    label: "Regional",     icon: Globe     },
   { id: "technology",  label: "Technology",   icon: Monitor   },
   { id: "finance",     label: "Finance",      icon: Wallet    },
+  { id: "foodsafety", label: "Food Safety",  icon: ShieldCheck },
+  { id: "expansion",  label: "Expansion",    icon: MapPin    },
+  { id: "store",      label: "Store View",   icon: Store     },
 ]
 
 export function DashboardPage() {
@@ -43,6 +49,9 @@ export function DashboardPage() {
     regional:    d.alerts.filter(a => a.tag === "Regional"    && a.level !== "info").length,
     technology:  d.alerts.filter(a => a.tag === "Technology"  && a.level !== "info").length,
     finance:     d.alerts.filter(a => a.tag === "Finance"     && a.level !== "info").length,
+    foodsafety:  d.alerts.filter(a => (a.tag === "Operations" && a.msg.toLowerCase().includes("attp")) && a.level !== "info").length,
+    expansion:   d.alerts.filter(a => a.msg.toLowerCase().includes("permit") && a.level !== "info").length,
+    store:       0,
   }
   const critCount = alertsByTab["executive"]
 
@@ -156,6 +165,27 @@ export function DashboardPage() {
           )}
           {tab === "finance" && (
             <FinanceView
+              d={d}
+              onDrill={setDrillContent}
+              activeDrill={activeDrill}
+            />
+          )}
+          {tab === "foodsafety" && (
+            <FoodSafetyView
+              d={d}
+              onDrill={setDrillContent}
+              activeDrill={activeDrill}
+            />
+          )}
+          {tab === "expansion" && (
+            <ExpansionView
+              d={d}
+              onDrill={setDrillContent}
+              activeDrill={activeDrill}
+            />
+          )}
+          {tab === "store" && (
+            <StoreView
               d={d}
               onDrill={setDrillContent}
               activeDrill={activeDrill}
