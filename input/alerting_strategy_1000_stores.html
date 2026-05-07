@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: transparent; color: #1a1a1a; padding: 16px; }
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+.title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #666; margin-bottom: 18px; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.section-title { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+.alert-tier {
+  border-radius: 8px;
+  border: 1.5px solid;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.alert-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+.alert-body {
+  padding: 8px 12px;
+  font-size: 12.5px;
+  color: #444;
+  line-height: 1.5;
+  background: #fff;
+}
+
+.alert-meta { font-size: 12px; color: #888; margin-top: 4px; }
+
+/* Severity colors */
+.sev1 { border-color: #dc2626; }
+.sev1 .alert-header { background: #fef2f2; color: #991b1b; }
+.sev1 .alert-dot { background: #dc2626; }
+
+.sev2 { border-color: #d97706; }
+.sev2 .alert-header { background: #fffbeb; color: #92400e; }
+.sev2 .alert-dot { background: #d97706; }
+
+.sev3 { border-color: #2563eb; }
+.sev3 .alert-header { background: #eff6ff; color: #1e40af; }
+.sev3 .alert-dot { background: #2563eb; }
+
+.sev4 { border-color: #16a34a; }
+.sev4 .alert-header { background: #f0fdf4; color: #166534; }
+.sev4 .alert-dot { background: #16a34a; }
+
+/* Smart aggregation */
+.agg-box {
+  background: #f8f9fa;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.agg-title { font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px; }
+
+.pattern-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 7px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #e9ecef;
+}
+.pattern-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.pattern-icon { font-size: 14px; flex-shrink: 0; }
+.pattern-name { font-size: 13px; font-weight: 600; color: #1e293b; }
+.pattern-desc { font-size: 12px; color: #64748b; line-height: 1.4; }
+
+.vs-badge {
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-left: 6px;
+}
+.good-badge {
+  background: #dcfce7;
+  color: #166534;
+}
+.bad-badge {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.channel-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 10px; }
+.channel-card {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px;
+  text-align: center;
+}
+.channel-icon { font-size: 20px; display: block; margin-bottom: 3px; }
+.channel-name { font-size: 12px; font-weight: 700; color: #334155; }
+.channel-who { font-size: 11px; color: #94a3b8; }
+</style>
+</head>
+<body>
+<h2 class="sr-only">Alerting strategy cho chuỗi 1000 stores: phân cấp severity, smart aggregation pattern, và routing theo tầng lãnh đạo</h2>
+
+<div class="title">Alerting Strategy — 1,000 Stores</div>
+<div class="subtitle">Từ raw alert flood sang intelligent signal routing</div>
+
+<div class="two-col">
+  <div>
+    <div class="section-title">Phân Cấp Alert (4 Severity Levels)</div>
+
+    <div class="alert-tier sev1">
+      <div class="alert-header">
+        <div class="alert-dot"></div>
+        SEV-1: Critical — Immediate Action
+      </div>
+      <div class="alert-body">
+        POS toàn cửa hàng sập · Fire/theft incident · Food safety critical breach · Store cannot operate
+        <div class="alert-meta">→ Gửi ngay: COO, Area Manager, Store hotline. Max 10 alerts/day lên C-level.</div>
+      </div>
+    </div>
+
+    <div class="alert-tier sev2">
+      <div class="alert-header">
+        <div class="alert-dot"></div>
+        SEV-2: High — Action Today
+      </div>
+      <div class="alert-body">
+        Revenue &lt;60% target by noon · Out-of-stock rate &gt;15% · Shrinkage spike &gt;3x norm · Staffing &lt;50%
+        <div class="alert-meta">→ Gửi: Area Manager + Regional Director. Nhóm lại theo Region.</div>
+      </div>
+    </div>
+
+    <div class="alert-tier sev3">
+      <div class="alert-header">
+        <div class="alert-dot"></div>
+        SEV-3: Medium — Action This Week
+      </div>
+      <div class="alert-body">
+        Revenue miss 3 ngày liên tiếp · Planogram compliance &lt;70% · Mystery shop fail · Task overdue
+        <div class="alert-meta">→ Gửi: Area Manager daily digest. Nhóm lại theo store cluster.</div>
+      </div>
+    </div>
+
+    <div class="alert-tier sev4">
+      <div class="alert-header">
+        <div class="alert-dot"></div>
+        SEV-4: Low — Informational
+      </div>
+      <div class="alert-body">
+        Promo không đạt target · SKU sell-through thấp · Supplier delivery delay
+        <div class="alert-meta">→ Weekly digest. Không disturb. Chỉ hiện trong dashboard.</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:14px;">Alert Channels theo Tầng</div>
+    <div class="channel-grid">
+      <div class="channel-card">
+        <span class="channel-icon">📱</span>
+        <div class="channel-name">SMS / Call</div>
+        <div class="channel-who">SEV-1 only · COO, AM</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">💬</span>
+        <div class="channel-name">Zalo/Slack</div>
+        <div class="channel-who">SEV-2 · Area/Region</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">📊</span>
+        <div class="channel-name">Dashboard</div>
+        <div class="channel-who">SEV-3, 4 · Digest</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">📧</span>
+        <div class="channel-name">Email Digest</div>
+        <div class="channel-who">Weekly summary · All</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">🔔</span>
+        <div class="channel-name">In-app Push</div>
+        <div class="channel-who">SEV-2 · Store Mgr</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">📋</span>
+        <div class="channel-name">Task Queue</div>
+        <div class="channel-who">SEV-3 → auto task</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Smart Aggregation Patterns</div>
+
+    <div class="agg-box">
+      <div class="agg-title">Thay vì: "47 stores có vấn đề hôm nay"</div>
+
+      <div class="pattern-row">
+        <div class="pattern-icon">🗺️</div>
+        <div>
+          <div class="pattern-name">Geographic Clustering</div>
+          <div class="pattern-desc">"Khu vực Hà Nội có 12/80 stores miss target — cao bất thường. Xem heatmap." → 1 alert thay 12 alerts riêng lẻ.</div>
+        </div>
+      </div>
+
+      <div class="pattern-row">
+        <div class="pattern-icon">📈</div>
+        <div>
+          <div class="pattern-name">Trend Anomaly Detection</div>
+          <div class="pattern-desc">"Revenue toàn chuỗi hôm nay -8% vs same day LY — có thể do thời tiết/sự kiện." Chỉ alert khi deviation >2 sigma.</div>
+        </div>
+      </div>
+
+      <div class="pattern-row">
+        <div class="pattern-icon">🔗</div>
+        <div>
+          <div class="pattern-name">Root Cause Grouping</div>
+          <div class="pattern-desc">"23 stores OOS cùng SKU — likely supplier issue, không phải store issue." Auto-group theo common root cause.</div>
+        </div>
+      </div>
+
+      <div class="pattern-row">
+        <div class="pattern-icon">📊</div>
+        <div>
+          <div class="pattern-name">Percentile Banding</div>
+          <div class="pattern-desc">Thay vì list 200 stores dưới target: "Bottom 10% fleet (100 stores) có avg attainment 67% — cần intervention plan."</div>
+        </div>
+      </div>
+
+      <div class="pattern-row">
+        <div class="pattern-icon">⚡</div>
+        <div>
+          <div class="pattern-name">Velocity Alerts</div>
+          <div class="pattern-desc">Không chỉ "miss target hôm nay" mà "miss target 3 ngày liên tiếp và đang xấu đi" — tránh false positives từ single-day fluctuation.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="agg-box">
+      <div class="agg-title">Benchmark thực tiễn từ ngành</div>
+      <div class="pattern-row">
+        <div class="pattern-icon">🏪</div>
+        <div>
+          <div class="pattern-name">7-Eleven Japan</div>
+          <div class="pattern-desc">Dùng "Store Condition Score" tổng hợp 40+ signals thành 1 score. Chỉ escalate khi score drop &gt;15% trong 3 ngày. CEO nhận &lt;5 alerts/ngày cho 20,000+ stores Japan.</div>
+        </div>
+      </div>
+      <div class="pattern-row">
+        <div class="pattern-icon">🔄</div>
+        <div>
+          <div class="pattern-name">Circle K (Alimentation Couche-Tard)</div>
+          <div class="pattern-desc">Alert được routed qua "Alert Fatigue Score" — nếu 1 manager nhận &gt;20 alerts/ngày, system tự nâng threshold. Prioritizes human attention bandwidth.</div>
+        </div>
+      </div>
+      <div class="pattern-row">
+        <div class="pattern-icon">🇻🇳</div>
+        <div>
+          <div class="pattern-name">Bach Hoa Xanh (MWG)</div>
+          <div class="pattern-desc">Dùng Zalo bot + phân cấp alert theo ASM/RSM. Store Manager nhận alert về store mình; RSM nhận digest hàng giờ về khu vực. C-level chỉ nhận daily summary.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

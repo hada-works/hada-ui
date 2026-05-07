@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: transparent; color: #1a1a1a; padding: 16px; }
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+.title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #666; margin-bottom: 18px; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.col-header {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  margin-bottom: 0;
+}
+.col-box {
+  border-radius: 0 0 8px 8px;
+  border: 1.5px solid;
+  border-top: none;
+  overflow: hidden;
+}
+
+.bad-header { background: #fef2f2; color: #991b1b; border-bottom: 2px solid #f87171; }
+.bad-box { border-color: #fca5a5; }
+.good-header { background: #f0fdf4; color: #166534; border-bottom: 2px solid #4ade80; }
+.good-box { border-color: #86efac; }
+
+.metric-row {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  font-size: 13px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.metric-row:last-child { border-bottom: none; }
+
+.metric-name { font-weight: 600; color: #222; min-width: 130px; }
+.metric-why { color: #555; font-size: 12.5px; line-height: 1.4; }
+
+.icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+.scale-note {
+  margin-top: 14px;
+  background: #fffbeb;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #78350f;
+  line-height: 1.5;
+}
+.scale-note strong { display: block; font-size: 14px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<h2 class="sr-only">Bảng phân loại metrics: những gì trở nên vô nghĩa và những gì cần bổ sung khi scale từ 50 lên 1000 stores</h2>
+
+<div class="title">Metrics: Signal vs. Noise khi Scale 300 → 1,000 Stores</div>
+<div class="subtitle">Những metrics tốt ở 50 stores có thể gây nhiễu ở 1,000 stores</div>
+
+<div class="grid">
+  <div>
+    <div class="col-header bad-header">Vô nghĩa / Gây nhiễu ở quy mô lớn</div>
+    <div class="col-box bad-box">
+      <div class="metric-row">
+        <div class="icon">⚠️</div>
+        <div>
+          <div class="metric-name">"Cửa hàng dẫn đầu" (Top 1)</div>
+          <div class="metric-why">1000 stores → top 1 chỉ là 0.1% fleet. Cần Top 10% (cohort) và Bottom 10% (intervention). 7-Eleven dùng percentile bands, không absolute rank.</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">⚠️</div>
+        <div>
+          <div class="metric-name">Doanh thu tuyệt đối toàn chuỗi</div>
+          <div class="metric-why">Khi mở thêm stores, revenue tổng luôn tăng — không phản ánh hiệu quả thực. Cần SSS (Same-Store Sales) và Revenue per Store để loại effect of expansion.</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">⚠️</div>
+        <div>
+          <div class="metric-name">Tổng số incidents hôm nay</div>
+          <div class="metric-why">50 incidents / 1000 stores = 5% — có thể tốt hoặc tệ. Cần incident rate (%) và severity tiering, không phải absolute count.</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">⚠️</div>
+        <div>
+          <div class="metric-name">Revenue hôm nay (single number)</div>
+          <div class="metric-why">Không có context. Cần: vs same day last year, vs target, vs same-store cohort, vs region baseline.</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">⚠️</div>
+        <div>
+          <div class="metric-name">Alert list (raw list of problems)</div>
+          <div class="metric-why">1000 stores → có thể 200+ alerts cùng lúc. List = không dùng được. Cần alert aggregation + severity scoring + smart grouping (xem phần alerting).</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">⚠️</div>
+        <div>
+          <div class="metric-name">% stores đạt target (binary)</div>
+          <div class="metric-why">Chỉ pass/fail. Cần distribution histogram: bao nhiêu stores đạt 90%+, 80-90%, dưới 80%. Circle K dùng performance bands, không binary.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="col-header good-header">Metrics bổ sung thiết yếu ở quy mô 300-1000</div>
+    <div class="col-box good-box">
+      <div class="metric-row">
+        <div class="icon">✅</div>
+        <div>
+          <div class="metric-name">Store Maturity Cohorts</div>
+          <div class="metric-why">Phân nhóm: 0-3 tháng (ramp), 3-12 tháng (grow), 12+ tháng (mature). Vinmart, Circle K đều track riêng vì new stores naturally underperform — đừng pha lẫn.</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">✅</div>
+        <div>
+          <div class="metric-name">Geographic Heatmap</div>
+          <div class="metric-why">Revenue/sqm, SSS theo tỉnh/quận. Phát hiện regional patterns — không thể thấy được từ số tổng. FamilyMart Taiwan dùng lat/long heatmap real-time.</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">✅</div>
+        <div>
+          <div class="metric-name">Same-Store Sales (SSS) Growth</div>
+          <div class="metric-why">KPI số 1 của mọi retailer lớn. Tách biệt organic growth vs expansion growth. Wall Street đánh giá retailer bằng SSS, không phải total revenue.</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">✅</div>
+        <div>
+          <div class="metric-name">New Store Ramp Curve</div>
+          <div class="metric-why">% attainment of target trong tuần 1, 4, 8, 12 sau khai trương. So sánh với historical cohort. 7-Eleven có benchmark ramp curve rất chi tiết.</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">✅</div>
+        <div>
+          <div class="metric-name">Working Capital Metrics</div>
+          <div class="metric-why">DIO (Days Inventory Outstanding), Cash Conversion Cycle. Ở 1000 stores, 1 ngày DIO dư = hàng chục tỷ đồng bị lock. CFO cần thấy daily.</div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="icon">✅</div>
+        <div>
+          <div class="metric-name">Cluster Format Performance</div>
+          <div class="metric-why">Phân loại stores theo vị trí (chung cư, phố, KCN, trường học...). Track performance by cluster — basis cho site selection và assortment strategy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="scale-note">
+  <strong>Nguyên tắc Scale của 7-Eleven (80,000 stores):</strong>
+  "At scale, you manage distributions, not individual stores. A store that is in the bottom 10th percentile is a category to act on — not a store to call about."
+  — Hệ thống 7-Eleven Japan phân loại stores thành 5 performance quintiles và chỉ escalate khi một quintile có bất thường so với historical norm.
+</div>
+</body>
+</html>
