@@ -2,7 +2,8 @@
 
 export type Trend  = "up" | "down" | "flat"
 export type Status = "good" | "warn" | "bad" | "neutral"
-export type TabId  = "executive" | "operations" | "commercial" | "supply" | "regional" | "technology" | "finance" | "foodsafety" | "expansion" | "store"
+export type TabId     = "executive" | "operations" | "commercial" | "supply" | "technology" | "finance" | "foodsafety" | "expansion"
+export type OpsSubTab = "fleet" | "regional" | "store"
 
 export interface KPI {
   label: string
