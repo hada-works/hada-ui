@@ -121,14 +121,18 @@ const STORE_ALERTS = [
 function fmtK(n: number) { return n >= 1000 ? `${(n / 1000).toFixed(1)}K` : String(n) }
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
-function KpiCard({ label, value, sub, icon: Icon, accent, trend }: {
+function KpiCard({ label, value, sub, icon: Icon, accent, trend, onClick }: {
   label: string; value: string | number; sub: string
   icon: React.ElementType; accent: "default"|"success"|"warning"|"destructive"|"info"; trend?: number
+  onClick?: () => void
 }) {
   const c = { default:"text-primary", success:"text-[hsl(var(--success))]", warning:"text-[hsl(var(--warning))]", destructive:"text-destructive", info:"text-[hsl(var(--info))]" }[accent]
   const b = { default:"border-t-primary", success:"border-t-[hsl(var(--success))]", warning:"border-t-[hsl(var(--warning))]", destructive:"border-t-destructive", info:"border-t-[hsl(var(--info))]" }[accent]
   return (
-    <div className={cn("rounded-lg border bg-card px-4 py-3.5 border-t-2 hover:shadow-sm transition-shadow", b)}>
+    <div 
+      className={cn("rounded-lg border bg-card px-4 py-3.5 border-t-2 hover:shadow-sm transition-shadow", b, onClick && "cursor-pointer hover:bg-muted/30 active:scale-[0.98] transition-all")}
+      onClick={onClick}
+    >
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
         <Icon className={cn("size-4 shrink-0", c)} />
@@ -511,6 +515,7 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
 
 export function OsaDashboardPage() {
   const [selectedCell, setSelectedCell] = useState<CellDetail | null>(null)
+  const [selectedMetric, setSelectedMetric] = useState<{label: string, value: string|number} | null>(null)
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
@@ -525,11 +530,11 @@ export function OsaDashboardPage() {
 
           {/* ── KPI Row ── */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <KpiCard label="Tỷ lệ OSA" value={`${OSA_STATS.overallOsaPct}%`} sub="toàn hệ thống" icon={Activity} accent="success" trend={0.5} />
-            <KpiCard label="Tổng OOS Lines" value={fmtK(OSA_STATS.oosLinesCount)} sub="dòng thiếu hàng" icon={PackageX} accent="warning" trend={-1.2} />
-            <KpiCard label="Cảnh báo Khẩn cấp" value={OSA_STATS.urgentOos} sub="OOS kéo dài > 4h" icon={AlertTriangle} accent="destructive" />
-            <KpiCard label="Cửa hàng OOS cao" value={OSA_STATS.storesWithOos} sub={`/ ${OSA_STATS.totalStores} cửa hàng`} icon={Store} accent="warning" />
-            <KpiCard label="Thời gian OOS TB" value="1.5h" sub="thời gian xử lý trống kệ" icon={Clock} accent="info" trend={-5} />
+            <KpiCard onClick={() => setSelectedMetric({label: "Tỷ lệ OSA", value: `${OSA_STATS.overallOsaPct}%`})} label="Tỷ lệ OSA" value={`${OSA_STATS.overallOsaPct}%`} sub="toàn hệ thống" icon={Activity} accent="success" trend={0.5} />
+            <KpiCard onClick={() => setSelectedMetric({label: "Tổng OOS Lines", value: fmtK(OSA_STATS.oosLinesCount)})} label="Tổng OOS Lines" value={fmtK(OSA_STATS.oosLinesCount)} sub="dòng thiếu hàng" icon={PackageX} accent="warning" trend={-1.2} />
+            <KpiCard onClick={() => setSelectedMetric({label: "Cảnh báo Khẩn cấp", value: OSA_STATS.urgentOos})} label="Cảnh báo Khẩn cấp" value={OSA_STATS.urgentOos} sub="OOS kéo dài > 4h" icon={AlertTriangle} accent="destructive" />
+            <KpiCard onClick={() => setSelectedMetric({label: "Cửa hàng OOS cao", value: OSA_STATS.storesWithOos})} label="Cửa hàng OOS cao" value={OSA_STATS.storesWithOos} sub={`/ ${OSA_STATS.totalStores} cửa hàng`} icon={Store} accent="warning" />
+            <KpiCard onClick={() => setSelectedMetric({label: "Thời gian OOS TB", value: "1.5h"})} label="Thời gian OOS TB" value="1.5h" sub="thời gian xử lý trống kệ" icon={Clock} accent="info" trend={-5} />
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -689,6 +694,97 @@ export function OsaDashboardPage() {
       {selectedCell && (
         <OsaDetailModal cell={selectedCell} onClose={() => setSelectedCell(null)} />
       )}
+      {selectedMetric && (
+        <MetricDetailSidebar metric={selectedMetric} onClose={() => setSelectedMetric(null)} />
+      )}
+    </div>
+  )
+}
+
+// ─── Metric Detail Sidebar ─────────────────────────────────────────────────────────────
+function MetricDetailSidebar({ metric, onClose }: { metric: {label: string, value: string|number}, onClose: () => void }) {
+  const [sidebarWidth, setSidebarWidth] = useState(400)
+  const isResizing = useRef(false)
+  const isDragging = useRef(false)
+
+  useEffect(() => {
+    let animationFrameId: number;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing.current) return
+      cancelAnimationFrame(animationFrameId)
+      animationFrameId = requestAnimationFrame(() => {
+        const newWidth = window.innerWidth - e.clientX
+        if (newWidth >= 320 && newWidth <= 800) {
+          setSidebarWidth(newWidth)
+        }
+      })
+    }
+    const handleMouseUp = () => {
+      if (isResizing.current) {
+        isResizing.current = false
+        document.body.style.cursor = 'default'
+        setTimeout(() => {
+          isDragging.current = false
+        }, 100)
+      }
+    }
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+      cancelAnimationFrame(animationFrameId)
+    }
+  }, [])
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 bg-black/20 flex justify-end backdrop-blur-[2px]" 
+      onClick={() => {
+        if (!isDragging.current) onClose()
+      }}
+    >
+      <div 
+        className="bg-background shadow-2xl h-full overflow-hidden flex flex-col animate-in slide-in-from-right-full duration-300 border-l relative" 
+        style={{ width: sidebarWidth, maxWidth: '90vw', transition: 'none' }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div 
+          className="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-primary/50 active:bg-primary z-50 transition-colors"
+          onMouseDown={() => {
+            isResizing.current = true
+            isDragging.current = true
+            document.body.style.cursor = 'col-resize'
+          }}
+        />
+        
+        <div className="flex items-start justify-between px-5 py-4 border-b bg-card">
+          <div>
+            <h3 className="font-semibold text-lg text-foreground flex items-center gap-2">
+              <Activity className="size-5 text-[hsl(var(--info))]" />
+              Chi tiết {metric.label}
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Giá trị hiện tại: <span className="font-medium text-foreground">{metric.value}</span>
+            </p>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground hover:bg-muted p-1.5 rounded-md transition-colors">
+            <X className="size-5" />
+          </button>
+        </div>
+        
+        <div className="p-5 overflow-y-auto flex-1 bg-muted/10 space-y-4">
+          <div className="bg-card border rounded-lg p-4 shadow-sm text-center text-muted-foreground py-10">
+            Dữ liệu phân tích chuyên sâu cho <strong className="text-foreground">{metric.label}</strong> đang được cập nhật...
+          </div>
+          {Array.from({length: 8}).map((_, i) => (
+             <div key={i} className="bg-card border rounded-lg p-3 shadow-sm flex items-center justify-between hover:border-primary/50 transition-colors cursor-pointer">
+                <span className="text-sm font-medium">Chi nhánh / Phân khúc {i + 1}</span>
+                <Badge variant="secondary" className="bg-background">Khám phá</Badge>
+             </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
