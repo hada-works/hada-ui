@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard & Alerting Strategy — 1,000 Stores</title>
+<style>
+
+.page-section {
+  padding: 24px;
+  border-bottom: 2.5px solid #e2e8f0;
+  margin-bottom: 0;
+}
+.page-section:last-child { border-bottom: none; }
+
+/* ===== dashboard_tier_architecture.html ===== */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: transparent; color: #1a1a1a; padding: 16px; }
+
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+.title { font-size: 17px; font-weight: 700; color: #111; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #666; margin-bottom: 20px; }
+
+.tier-row { display: flex; align-items: stretch; margin-bottom: 10px; gap: 10px; }
+
+.tier-label {
+  width: 110px;
+  min-width: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tier-cards { display: flex; gap: 8px; flex: 1; }
+
+.card {
+  flex: 1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1.5px solid;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+.card-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.card-user { font-size: 12px; opacity: 0.7; margin-bottom: 6px; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+.tag {
+  font-size: 11px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.07);
+  font-weight: 600;
+}
+
+.connector {
+  height: 8px;
+  display: flex;
+  align-items: center;
+  padding-left: 165px;
+}
+.connector-line {
+  width: 2px;
+  height: 8px;
+  background: #ddd;
+  margin: 0 auto;
+  flex: 1;
+}
+
+/* TIER COLORS */
+.t1 { background: #1a1a2e; color: #fff; }
+.t1-card { border-color: #1a1a2e; background: #f0f0ff; }
+.t1-card .card-title { color: #1a1a2e; }
+
+.t2 { background: #16213e; color: #fff; }
+.t2-card { border-color: #2d5be3; background: #f0f4ff; }
+.t2-card .card-title { color: #1a3a9e; }
+
+.t3 { background: #0f7b6c; color: #fff; }
+.t3-card { border-color: #0f7b6c; background: #f0faf8; }
+.t3-card .card-title { color: #0a5a4e; }
+
+.t4 { background: #c4590a; color: #fff; }
+.t4-card { border-color: #c4590a; background: #fff4ee; }
+.t4-card .card-title { color: #7a3200; }
+
+.t5 { background: #555; color: #fff; }
+.t5-card { border-color: #888; background: #f8f8f8; }
+.t5-card .card-title { color: #333; }
+
+.refresh-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 11px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.08);
+  color: #555;
+  font-weight: 600;
+}
+
+.legend { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+.tooltip {
+  display: none;
+  position: fixed;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  max-width: 280px;
+  z-index: 100;
+  line-height: 1.5;
+  pointer-events: none;
+}
+.tooltip.visible { display: block; }
+.tooltip-title { font-weight: 700; margin-bottom: 5px; font-size: 14px; }
+.tooltip-section { margin-top: 6px; }
+.tooltip-section strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; color: #aaa; display: block; margin-bottom: 2px; }
+/* ===== alerting_strategy_1000_stores.html ===== */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: transparent; color: #1a1a1a; padding: 16px; }
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+.title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #666; margin-bottom: 18px; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.section-title { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+.alert-tier {
+  border-radius: 8px;
+  border: 1.5px solid;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.alert-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+.alert-body {
+  padding: 8px 12px;
+  font-size: 12.5px;
+  color: #444;
+  line-height: 1.5;
+  background: #fff;
+}
+
+.alert-meta { font-size: 12px; color: #888; margin-top: 4px; }
+
+/* Severity colors */
+.sev1 { border-color: #dc2626; }
+.sev1 .alert-header { background: #fef2f2; color: #991b1b; }
+.sev1 .alert-dot { background: #dc2626; }
+
+.sev2 { border-color: #d97706; }
+.sev2 .alert-header { background: #fffbeb; color: #92400e; }
+.sev2 .alert-dot { background: #d97706; }
+
+.sev3 { border-color: #2563eb; }
+.sev3 .alert-header { background: #eff6ff; color: #1e40af; }
+.sev3 .alert-dot { background: #2563eb; }
+
+.sev4 { border-color: #16a34a; }
+.sev4 .alert-header { background: #f0fdf4; color: #166534; }
+.sev4 .alert-dot { background: #16a34a; }
+
+/* Smart aggregation */
+.agg-box {
+  background: #f8f9fa;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.agg-title { font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px; }
+
+.pattern-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 7px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #e9ecef;
+}
+.pattern-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.pattern-icon { font-size: 14px; flex-shrink: 0; }
+.pattern-name { font-size: 13px; font-weight: 600; color: #1e293b; }
+.pattern-desc { font-size: 12px; color: #64748b; line-height: 1.4; }
+
+.vs-badge {
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-left: 6px;
+}
+.good-badge {
+  background: #dcfce7;
+  color: #166534;
+}
+.bad-badge {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.channel-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 10px; }
+.channel-card {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px;
+  text-align: center;
+}
+.channel-icon { font-size: 20px; display: block; margin-bottom: 3px; }
+.channel-name { font-size: 12px; font-weight: 700; color: #334155; }
+.channel-who { font-size: 11px; color: #94a3b8; }
+/* ===== metrics_signal_vs_noise.html ===== */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: transparent; color: #1a1a1a; padding: 16px; }
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+.title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #666; margin-bottom: 18px; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.col-header {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  margin-bottom: 0;
+}
+.col-box {
+  border-radius: 0 0 8px 8px;
+  border: 1.5px solid;
+  border-top: none;
+  overflow: hidden;
+}
+
+.bad-header { background: #fef2f2; color: #991b1b; border-bottom: 2px solid #f87171; }
+.bad-box { border-color: #fca5a5; }
+.good-header { background: #f0fdf4; color: #166534; border-bottom: 2px solid #4ade80; }
+.good-box { border-color: #86efac; }
+
+.metric-row {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  font-size: 13px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.metric-row:last-child { border-bottom: none; }
+
+.metric-name { font-weight: 600; color: #222; min-width: 130px; }
+.metric-why { color: #555; font-size: 12.5px; line-height: 1.4; }
+
+.icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+.scale-note {
+  margin-top: 14px;
+  background: #fffbeb;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #78350f;
+  line-height: 1.5;
+}
+.scale-note strong { display: block; font-size: 14px; margin-bottom: 4px; }
+
+</style>
+</head>
+<body>
+<section class="page-section">
+
+<h2 class="sr-only">Kiến trúc dashboard 5 tầng cho chuỗi 300-1000 cửa hàng minimart Việt Nam, từ CEO/BOD đến Store Manager</h2>
+<div class="title">Kiến trúc Dashboard Phân Tầng — Chuỗi 300–1,000 Stores</div>
+<div class="subtitle">Hover vào từng dashboard để xem chi tiết metrics &amp; refresh rate</div>
+<div class="tier-row">
+<div class="tier-label t1">Tier 1<br/>Strategic</div>
+<div class="tier-cards">
+<div class="card t1-card" data-drill="Links to Tier 2 dashboards" data-id="exec" data-kpis="Revenue vs target, EBITDA margin, Store count progress, NPS, Market share estimate" data-refresh="Daily / Weekly" data-title="Executive Command Center" data-user="CEO, BOD, CFO">
+<span class="refresh-badge">Daily</span>
+<div class="card-title">Executive Command Center</div>
+<div class="card-user">CEO · BOD · CFO</div>
+<div class="card-tags">
+<span class="tag">P&amp;L tổng</span>
+<span class="tag">Expansion progress</span>
+<span class="tag">NPS</span>
+<span class="tag">Market share</span>
+</div>
+</div>
+</div>
+</div>
+<div class="connector"><div class="connector-line"></div></div>
+<div class="tier-row">
+<div class="tier-label t2">Tier 2<br/>Operational</div>
+<div class="tier-cards">
+<div class="card t2-card" data-drill="Drill to Region → Area → Store" data-id="coo" data-kpis="SSS, Traffic, Conversion, Shrinkage, Labor efficiency, Store health score, Compliance rate" data-refresh="Hourly / Daily" data-title="Operations Performance Hub" data-user="COO, VP Operations">
+<span class="refresh-badge">Hourly</span>
+<div class="card-title">Operations Hub</div>
+<div class="card-user">COO · VP Ops</div>
+<div class="card-tags">
+<span class="tag">SSS</span>
+<span class="tag">Shrinkage</span>
+<span class="tag">Labor eff.</span>
+<span class="tag">Compliance</span>
+</div>
+</div>
+<div class="card t2-card" data-drill="Drill to Category → SKU → Region" data-id="cmo" data-kpis="Category sell-through, GM% by category, Promo ROI, OOS rate, Supplier fill rate, Planogram compliance" data-refresh="Daily" data-title="Commercial &amp; Category Dashboard" data-user="CPO, CMO, Category Heads">
+<span class="refresh-badge">Daily</span>
+<div class="card-title">Commercial &amp; Category</div>
+<div class="card-user">CPO · CMO</div>
+<div class="card-tags">
+<span class="tag">GM% category</span>
+<span class="tag">OOS rate</span>
+<span class="tag">Promo ROI</span>
+<span class="tag">Fill rate</span>
+</div>
+</div>
+<div class="card t2-card" data-drill="Drill to Region → Store P&amp;L" data-id="cfo" data-kpis="Cash position, DSO, DIO, AP aging, Store-level P&amp;L, CapEx vs budget" data-refresh="Daily" data-title="Finance &amp; Working Capital" data-user="CFO, Finance team">
+<span class="refresh-badge">Daily</span>
+<div class="card-title">Finance &amp; Working Capital</div>
+<div class="card-user">CFO · Finance</div>
+<div class="card-tags">
+<span class="tag">Cash flow</span>
+<span class="tag">DIO/DSO</span>
+<span class="tag">Store P&amp;L</span>
+<span class="tag">CapEx</span>
+</div>
+</div>
+</div>
+</div>
+<div class="connector"><div class="connector-line"></div></div>
+<div class="tier-row">
+<div class="tier-label t3">Tier 3<br/>Regional</div>
+<div class="tier-cards">
+<div class="card t3-card" data-drill="Drill to Area → Store" data-id="rd" data-kpis="Regional revenue, SSS vs region avg, Store health heatmap, Cluster performance, New store ramp, Competition proximity" data-refresh="Hourly / Real-time alerts" data-title="Regional Director Dashboard" data-user="Regional Director (50-100 stores each)">
+<span class="refresh-badge">Hourly</span>
+<div class="card-title">Regional Performance</div>
+<div class="card-user">Regional Director · 50–100 stores</div>
+<div class="card-tags">
+<span class="tag">Heatmap</span>
+<span class="tag">Cluster perf.</span>
+<span class="tag">New store ramp</span>
+<span class="tag">Comp. map</span>
+</div>
+</div>
+<div class="card t3-card" data-drill="Drill to System → Store → Incident" data-id="tech" data-kpis="POS uptime %, App availability, Payment success rate, CCTV coverage, Integration error rate, Mobile app DAU" data-refresh="Real-time" data-title="Technology &amp; Digital Operations" data-user="CTO, IT Ops, Digital team">
+<span class="refresh-badge">Real-time</span>
+<div class="card-title">Technology Operations</div>
+<div class="card-user">CTO · IT Ops</div>
+<div class="card-tags">
+<span class="tag">POS uptime</span>
+<span class="tag">App avail.</span>
+<span class="tag">Payment SR</span>
+<span class="tag">Incidents</span>
+</div>
+</div>
+<div class="card t3-card" data-drill="Drill to Project → Milestone" data-id="expansion" data-kpis="Pipeline stores, Time-to-open, Site approval rate, New store ramp curve, Lease cost/sqm, Payback period" data-refresh="Weekly" data-title="Expansion &amp; Real Estate" data-user="CEO, COO, Expansion team">
+<span class="refresh-badge">Weekly</span>
+<div class="card-title">Expansion &amp; Real Estate</div>
+<div class="card-user">CEO · COO · Expansion</div>
+<div class="card-tags">
+<span class="tag">Pipeline</span>
+<span class="tag">Time-to-open</span>
+<span class="tag">Ramp curve</span>
+<span class="tag">Payback</span>
+</div>
+</div>
+</div>
+</div>
+<div class="connector"><div class="connector-line"></div></div>
+<div class="tier-row">
+<div class="tier-label t4">Tier 4<br/>Area Ops</div>
+<div class="tier-cards">
+<div class="card t4-card" data-drill="Drill to Store → Shift → Transaction" data-id="am" data-kpis="Store-by-store revenue, Traffic vs target, Staffing gaps, Today's issues log, Task completion, Mystery shop scores" data-refresh="Real-time / Hourly" data-title="Area Manager Operational View" data-user="Area Manager (10-20 stores each)">
+<span class="refresh-badge">Real-time</span>
+<div class="card-title">Area Manager View</div>
+<div class="card-user">Area Manager · 10–20 stores</div>
+<div class="card-tags">
+<span class="tag">Store ranking</span>
+<span class="tag">Staffing</span>
+<span class="tag">Today issues</span>
+<span class="tag">Task mgmt</span>
+</div>
+</div>
+<div class="card t4-card" data-drill="Drill to Store → Audit → Corrective action" data-id="food" data-kpis="Audit pass rate, Expiry waste %, Temperature log compliance, Incident reports, Near-miss log" data-refresh="Daily" data-title="Food Safety &amp; Compliance" data-user="QA Manager, Compliance, Regional Ops">
+<span class="refresh-badge">Daily</span>
+<div class="card-title">Food Safety &amp; Compliance</div>
+<div class="card-user">QA · Compliance · Ops</div>
+<div class="card-tags">
+<span class="tag">Audit rate</span>
+<span class="tag">Expiry waste</span>
+<span class="tag">Temp log</span>
+<span class="tag">Incidents</span>
+</div>
+</div>
+</div>
+</div>
+<div class="connector"><div class="connector-line"></div></div>
+<div class="tier-row">
+<div class="tier-label t5">Tier 5<br/>Store Ops</div>
+<div class="tier-cards">
+<div class="card t5-card" data-drill="Single store view — no drill-down needed" data-id="store" data-kpis="Today revenue vs target, Hourly traffic, Current staff on floor, Low stock alerts, Task checklist, Customer complaints" data-refresh="Real-time" data-title="Store Manager Daily Operations" data-user="Store Manager, Shift Leader">
+<span class="refresh-badge">Real-time</span>
+<div class="card-title">Store Daily Operations</div>
+<div class="card-user">Store Manager · Shift Leader</div>
+<div class="card-tags">
+<span class="tag">Daily target</span>
+<span class="tag">Hourly traffic</span>
+<span class="tag">Low stock</span>
+<span class="tag">Tasks</span>
+</div>
+</div>
+</div>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:#1a1a2e"></div>Strategic (BOD)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#2d5be3"></div>Functional (C-suite)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#0f7b6c"></div>Regional/Cross-func</div>
+<div class="legend-item"><div class="legend-dot" style="background:#c4590a"></div>Area Operations</div>
+<div class="legend-item"><div class="legend-dot" style="background:#888"></div>Store Level</div>
+</div>
+<div class="tooltip" id="tooltip">
+<div class="tooltip-title" id="tt-title"></div>
+<div class="tooltip-section"><strong>Primary Users</strong><span id="tt-user"></span></div>
+<div class="tooltip-section"><strong>Refresh Rate</strong><span id="tt-refresh"></span></div>
+<div class="tooltip-section"><strong>Key Metrics</strong><span id="tt-kpis"></span></div>
+<div class="tooltip-section"><strong>Drill-down</strong><span id="tt-drill"></span></div>
+</div>
+<script>
+const tooltip = document.getElementById('tooltip');
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mouseenter', (e) => {
+    document.getElementById('tt-title').textContent = card.dataset.title;
+    document.getElementById('tt-user').textContent = card.dataset.user;
+    document.getElementById('tt-refresh').textContent = card.dataset.refresh;
+    document.getElementById('tt-kpis').textContent = card.dataset.kpis;
+    document.getElementById('tt-drill').textContent = card.dataset.drill;
+    tooltip.classList.add('visible');
+    moveTip(e);
+  });
+  card.addEventListener('mousemove', moveTip);
+  card.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+});
+function moveTip(e) {
+  let x = e.clientX + 14, y = e.clientY + 14;
+  if (x + 290 > window.innerWidth) x = e.clientX - 300;
+  if (y + 200 > window.innerHeight) y = e.clientY - 200;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+</script>
+
+</section><section class="page-section">
+
+<h2 class="sr-only">Alerting strategy cho chuỗi 1000 stores: phân cấp severity, smart aggregation pattern, và routing theo tầng lãnh đạo</h2>
+<div class="title">Alerting Strategy — 1,000 Stores</div>
+<div class="subtitle">Từ raw alert flood sang intelligent signal routing</div>
+<div class="two-col">
+<div>
+<div class="section-title">Phân Cấp Alert (4 Severity Levels)</div>
+<div class="alert-tier sev1">
+<div class="alert-header">
+<div class="alert-dot"></div>
+        SEV-1: Critical — Immediate Action
+      </div>
+<div class="alert-body">
+        POS toàn cửa hàng sập · Fire/theft incident · Food safety critical breach · Store cannot operate
+        <div class="alert-meta">→ Gửi ngay: COO, Area Manager, Store hotline. Max 10 alerts/day lên C-level.</div>
+</div>
+</div>
+<div class="alert-tier sev2">
+<div class="alert-header">
+<div class="alert-dot"></div>
+        SEV-2: High — Action Today
+      </div>
+<div class="alert-body">
+        Revenue &lt;60% target by noon · Out-of-stock rate &gt;15% · Shrinkage spike &gt;3x norm · Staffing &lt;50%
+        <div class="alert-meta">→ Gửi: Area Manager + Regional Director. Nhóm lại theo Region.</div>
+</div>
+</div>
+<div class="alert-tier sev3">
+<div class="alert-header">
+<div class="alert-dot"></div>
+        SEV-3: Medium — Action This Week
+      </div>
+<div class="alert-body">
+        Revenue miss 3 ngày liên tiếp · Planogram compliance &lt;70% · Mystery shop fail · Task overdue
+        <div class="alert-meta">→ Gửi: Area Manager daily digest. Nhóm lại theo store cluster.</div>
+</div>
+</div>
+<div class="alert-tier sev4">
+<div class="alert-header">
+<div class="alert-dot"></div>
+        SEV-4: Low — Informational
+      </div>
+<div class="alert-body">
+        Promo không đạt target · SKU sell-through thấp · Supplier delivery delay
+        <div class="alert-meta">→ Weekly digest. Không disturb. Chỉ hiện trong dashboard.</div>
+</div>
+</div>
+<div class="section-title" style="margin-top:14px;">Alert Channels theo Tầng</div>
+<div class="channel-grid">
+<div class="channel-card">
+<span class="channel-icon">📱</span>
+<div class="channel-name">SMS / Call</div>
+<div class="channel-who">SEV-1 only · COO, AM</div>
+</div>
+<div class="channel-card">
+<span class="channel-icon">💬</span>
+<div class="channel-name">Zalo/Slack</div>
+<div class="channel-who">SEV-2 · Area/Region</div>
+</div>
+<div class="channel-card">
+<span class="channel-icon">📊</span>
+<div class="channel-name">Dashboard</div>
+<div class="channel-who">SEV-3, 4 · Digest</div>
+</div>
+<div class="channel-card">
+<span class="channel-icon">📧</span>
+<div class="channel-name">Email Digest</div>
+<div class="channel-who">Weekly summary · All</div>
+</div>
+<div class="channel-card">
+<span class="channel-icon">🔔</span>
+<div class="channel-name">In-app Push</div>
+<div class="channel-who">SEV-2 · Store Mgr</div>
+</div>
+<div class="channel-card">
+<span class="channel-icon">📋</span>
+<div class="channel-name">Task Queue</div>
+<div class="channel-who">SEV-3 → auto task</div>
+</div>
+</div>
+</div>
+<div>
+<div class="section-title">Smart Aggregation Patterns</div>
+<div class="agg-box">
+<div class="agg-title">Thay vì: "47 stores có vấn đề hôm nay"</div>
+<div class="pattern-row">
+<div class="pattern-icon">🗺️</div>
+<div>
+<div class="pattern-name">Geographic Clustering</div>
+<div class="pattern-desc">"Khu vực Hà Nội có 12/80 stores miss target — cao bất thường. Xem heatmap." → 1 alert thay 12 alerts riêng lẻ.</div>
+</div>
+</div>
+<div class="pattern-row">
+<div class="pattern-icon">📈</div>
+<div>
+<div class="pattern-name">Trend Anomaly Detection</div>
+<div class="pattern-desc">"Revenue toàn chuỗi hôm nay -8% vs same day LY — có thể do thời tiết/sự kiện." Chỉ alert khi deviation &gt;2 sigma.</div>
+</div>
+</div>
+<div class="pattern-row">
+<div class="pattern-icon">🔗</div>
+<div>
+<div class="pattern-name">Root Cause Grouping</div>
+<div class="pattern-desc">"23 stores OOS cùng SKU — likely supplier issue, không phải store issue." Auto-group theo common root cause.</div>
+</div>
+</div>
+<div class="pattern-row">
+<div class="pattern-icon">📊</div>
+<div>
+<div class="pattern-name">Percentile Banding</div>
+<div class="pattern-desc">Thay vì list 200 stores dưới target: "Bottom 10% fleet (100 stores) có avg attainment 67% — cần intervention plan."</div>
+</div>
+</div>
+<div class="pattern-row">
+<div class="pattern-icon">⚡</div>
+<div>
+<div class="pattern-name">Velocity Alerts</div>
+<div class="pattern-desc">Không chỉ "miss target hôm nay" mà "miss target 3 ngày liên tiếp và đang xấu đi" — tránh false positives từ single-day fluctuation.</div>
+</div>
+</div>
+</div>
+<div class="agg-box">
+<div class="agg-title">Benchmark thực tiễn từ ngành</div>
+<div class="pattern-row">
+<div class="pattern-icon">🏪</div>
+<div>
+<div class="pattern-name">7-Eleven Japan</div>
+<div class="pattern-desc">Dùng "Store Condition Score" tổng hợp 40+ signals thành 1 score. Chỉ escalate khi score drop &gt;15% trong 3 ngày. CEO nhận &lt;5 alerts/ngày cho 20,000+ stores Japan.</div>
+</div>
+</div>
+<div class="pattern-row">
+<div class="pattern-icon">🔄</div>
+<div>
+<div class="pattern-name">Circle K (Alimentation Couche-Tard)</div>
+<div class="pattern-desc">Alert được routed qua "Alert Fatigue Score" — nếu 1 manager nhận &gt;20 alerts/ngày, system tự nâng threshold. Prioritizes human attention bandwidth.</div>
+</div>
+</div>
+<div class="pattern-row">
+<div class="pattern-icon">🇻🇳</div>
+<div>
+<div class="pattern-name">Bach Hoa Xanh (MWG)</div>
+<div class="pattern-desc">Dùng Zalo bot + phân cấp alert theo ASM/RSM. Store Manager nhận alert về store mình; RSM nhận digest hàng giờ về khu vực. C-level chỉ nhận daily summary.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</section><section class="page-section">
+
+<h2 class="sr-only">Bảng phân loại metrics: những gì trở nên vô nghĩa và những gì cần bổ sung khi scale từ 50 lên 1000 stores</h2>
+<div class="title">Metrics: Signal vs. Noise khi Scale 300 → 1,000 Stores</div>
+<div class="subtitle">Những metrics tốt ở 50 stores có thể gây nhiễu ở 1,000 stores</div>
+<div class="grid">
+<div>
+<div class="col-header bad-header">Vô nghĩa / Gây nhiễu ở quy mô lớn</div>
+<div class="col-box bad-box">
+<div class="metric-row">
+<div class="icon">⚠️</div>
+<div>
+<div class="metric-name">"Cửa hàng dẫn đầu" (Top 1)</div>
+<div class="metric-why">1000 stores → top 1 chỉ là 0.1% fleet. Cần Top 10% (cohort) và Bottom 10% (intervention). 7-Eleven dùng percentile bands, không absolute rank.</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">⚠️</div>
+<div>
+<div class="metric-name">Doanh thu tuyệt đối toàn chuỗi</div>
+<div class="metric-why">Khi mở thêm stores, revenue tổng luôn tăng — không phản ánh hiệu quả thực. Cần SSS (Same-Store Sales) và Revenue per Store để loại effect of expansion.</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">⚠️</div>
+<div>
+<div class="metric-name">Tổng số incidents hôm nay</div>
+<div class="metric-why">50 incidents / 1000 stores = 5% — có thể tốt hoặc tệ. Cần incident rate (%) và severity tiering, không phải absolute count.</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">⚠️</div>
+<div>
+<div class="metric-name">Revenue hôm nay (single number)</div>
+<div class="metric-why">Không có context. Cần: vs same day last year, vs target, vs same-store cohort, vs region baseline.</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">⚠️</div>
+<div>
+<div class="metric-name">Alert list (raw list of problems)</div>
+<div class="metric-why">1000 stores → có thể 200+ alerts cùng lúc. List = không dùng được. Cần alert aggregation + severity scoring + smart grouping (xem phần alerting).</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">⚠️</div>
+<div>
+<div class="metric-name">% stores đạt target (binary)</div>
+<div class="metric-why">Chỉ pass/fail. Cần distribution histogram: bao nhiêu stores đạt 90%+, 80-90%, dưới 80%. Circle K dùng performance bands, không binary.</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div class="col-header good-header">Metrics bổ sung thiết yếu ở quy mô 300-1000</div>
+<div class="col-box good-box">
+<div class="metric-row">
+<div class="icon">✅</div>
+<div>
+<div class="metric-name">Store Maturity Cohorts</div>
+<div class="metric-why">Phân nhóm: 0-3 tháng (ramp), 3-12 tháng (grow), 12+ tháng (mature). Vinmart, Circle K đều track riêng vì new stores naturally underperform — đừng pha lẫn.</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">✅</div>
+<div>
+<div class="metric-name">Geographic Heatmap</div>
+<div class="metric-why">Revenue/sqm, SSS theo tỉnh/quận. Phát hiện regional patterns — không thể thấy được từ số tổng. FamilyMart Taiwan dùng lat/long heatmap real-time.</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">✅</div>
+<div>
+<div class="metric-name">Same-Store Sales (SSS) Growth</div>
+<div class="metric-why">KPI số 1 của mọi retailer lớn. Tách biệt organic growth vs expansion growth. Wall Street đánh giá retailer bằng SSS, không phải total revenue.</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">✅</div>
+<div>
+<div class="metric-name">New Store Ramp Curve</div>
+<div class="metric-why">% attainment of target trong tuần 1, 4, 8, 12 sau khai trương. So sánh với historical cohort. 7-Eleven có benchmark ramp curve rất chi tiết.</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">✅</div>
+<div>
+<div class="metric-name">Working Capital Metrics</div>
+<div class="metric-why">DIO (Days Inventory Outstanding), Cash Conversion Cycle. Ở 1000 stores, 1 ngày DIO dư = hàng chục tỷ đồng bị lock. CFO cần thấy daily.</div>
+</div>
+</div>
+<div class="metric-row">
+<div class="icon">✅</div>
+<div>
+<div class="metric-name">Cluster Format Performance</div>
+<div class="metric-why">Phân loại stores theo vị trí (chung cư, phố, KCN, trường học...). Track performance by cluster — basis cho site selection và assortment strategy.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="scale-note">
+<strong>Nguyên tắc Scale của 7-Eleven (80,000 stores):</strong>
+  "At scale, you manage distributions, not individual stores. A store that is in the bottom 10th percentile is a category to act on — not a store to call about."
+  — Hệ thống 7-Eleven Japan phân loại stores thành 5 performance quintiles và chỉ escalate khi một quintile có bất thường so với historical norm.
+</div>
+
+</section>
+<script>
+
+const tooltip = document.getElementById('tooltip');
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mouseenter', (e) => {
+    document.getElementById('tt-title').textContent = card.dataset.title;
+    document.getElementById('tt-user').textContent = card.dataset.user;
+    document.getElementById('tt-refresh').textContent = card.dataset.refresh;
+    document.getElementById('tt-kpis').textContent = card.dataset.kpis;
+    document.getElementById('tt-drill').textContent = card.dataset.drill;
+    tooltip.classList.add('visible');
+    moveTip(e);
+  });
+  card.addEventListener('mousemove', moveTip);
+  card.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+});
+function moveTip(e) {
+  let x = e.clientX + 14, y = e.clientY + 14;
+  if (x + 290 > window.innerWidth) x = e.clientX - 300;
+  if (y + 200 > window.innerHeight) y = e.clientY - 200;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+</script>
+</body>
+</html>

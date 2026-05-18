@@ -7,7 +7,7 @@ import {
   ChevronRight, Plus, PanelLeftClose, PanelLeftOpen, MoreHorizontal,
   ShoppingCart, ClipboardCheck, SlidersHorizontal,
   MapPin, Star, Cog, TrendingUp,
-  Package, ClipboardList, Layers,
+  Package, ClipboardList, Layers, Store
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/store/app-store"
@@ -85,6 +85,7 @@ export function AppSidebar() {
   const [purchasesOpen, setPurchasesOpen] = useState(true)
   const [gbpOpen,       setGbpOpen]       = useState(true)
   const [productsOpen,  setProductsOpen]  = useState(true)
+  const [storeOpsOpen,  setStoreOpsOpen]  = useState(true)
 
   const tenantBoards   = FEEDBACK_BOARDS.filter(b => b.tenantId === currentTenant.id)
   const tenantProjects = PROJECTS.filter(p => p.tenantId === currentTenant.id)
@@ -220,6 +221,42 @@ export function AppSidebar() {
                           <Link to="/products/in-out" className="flex items-center gap-1.5">
                             <ClipboardList className="size-3 shrink-0" />
                             In-out approval
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </Collapsible>
+        </SidebarGroup>
+
+        {/* ── Store Ops (2-level collapsible) ── */}
+        <SidebarGroup>
+          <Collapsible open={open ? storeOpsOpen : false} onOpenChange={setStoreOpsOpen}>
+            <div className="flex items-center">
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger className="flex flex-1 items-center gap-1 hover:text-sidebar-foreground transition-colors [&[data-state=open]>svg.chevron]:rotate-90">
+                  <Store className="size-4 shrink-0" />
+                  Store Ops
+                  <ChevronRight className="chevron ml-auto size-4 transition-transform duration-200" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+            </div>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {!open && (
+                  <NavItem href="/store-ops/osa" icon={Store} label="Store Ops" />
+                )}
+                {open && (
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === "/store-ops/osa"}>
+                          <Link to="/store-ops/osa" className="flex items-center gap-1.5">
+                            <LayoutDashboard className="size-3 shrink-0" />
+                            OSA - On Shelf Availability
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: transparent; color: #1a1a1a; padding: 16px; }
+
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+.title { font-size: 17px; font-weight: 700; color: #111; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #666; margin-bottom: 20px; }
+
+.tier-row { display: flex; align-items: stretch; margin-bottom: 10px; gap: 10px; }
+
+.tier-label {
+  width: 110px;
+  min-width: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tier-cards { display: flex; gap: 8px; flex: 1; }
+
+.card {
+  flex: 1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1.5px solid;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+.card-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.card-user { font-size: 12px; opacity: 0.7; margin-bottom: 6px; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+.tag {
+  font-size: 11px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.07);
+  font-weight: 600;
+}
+
+.connector {
+  height: 8px;
+  display: flex;
+  align-items: center;
+  padding-left: 165px;
+}
+.connector-line {
+  width: 2px;
+  height: 8px;
+  background: #ddd;
+  margin: 0 auto;
+  flex: 1;
+}
+
+/* TIER COLORS */
+.t1 { background: #1a1a2e; color: #fff; }
+.t1-card { border-color: #1a1a2e; background: #f0f0ff; }
+.t1-card .card-title { color: #1a1a2e; }
+
+.t2 { background: #16213e; color: #fff; }
+.t2-card { border-color: #2d5be3; background: #f0f4ff; }
+.t2-card .card-title { color: #1a3a9e; }
+
+.t3 { background: #0f7b6c; color: #fff; }
+.t3-card { border-color: #0f7b6c; background: #f0faf8; }
+.t3-card .card-title { color: #0a5a4e; }
+
+.t4 { background: #c4590a; color: #fff; }
+.t4-card { border-color: #c4590a; background: #fff4ee; }
+.t4-card .card-title { color: #7a3200; }
+
+.t5 { background: #555; color: #fff; }
+.t5-card { border-color: #888; background: #f8f8f8; }
+.t5-card .card-title { color: #333; }
+
+.refresh-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 11px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.08);
+  color: #555;
+  font-weight: 600;
+}
+
+.legend { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+.tooltip {
+  display: none;
+  position: fixed;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  max-width: 280px;
+  z-index: 100;
+  line-height: 1.5;
+  pointer-events: none;
+}
+.tooltip.visible { display: block; }
+.tooltip-title { font-weight: 700; margin-bottom: 5px; font-size: 14px; }
+.tooltip-section { margin-top: 6px; }
+.tooltip-section strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; color: #aaa; display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+<h2 class="sr-only">Kiến trúc dashboard 5 tầng cho chuỗi 300-1000 cửa hàng minimart Việt Nam, từ CEO/BOD đến Store Manager</h2>
+
+<div class="title">Kiến trúc Dashboard Phân Tầng — Chuỗi 300–1,000 Stores</div>
+<div class="subtitle">Hover vào từng dashboard để xem chi tiết metrics & refresh rate</div>
+
+<div class="tier-row">
+  <div class="tier-label t1">Tier 1<br/>Strategic</div>
+  <div class="tier-cards">
+    <div class="card t1-card" data-id="exec"
+      data-title="Executive Command Center"
+      data-user="CEO, BOD, CFO"
+      data-refresh="Daily / Weekly"
+      data-kpis="Revenue vs target, EBITDA margin, Store count progress, NPS, Market share estimate"
+      data-drill="Links to Tier 2 dashboards">
+      <span class="refresh-badge">Daily</span>
+      <div class="card-title">Executive Command Center</div>
+      <div class="card-user">CEO · BOD · CFO</div>
+      <div class="card-tags">
+        <span class="tag">P&L tổng</span>
+        <span class="tag">Expansion progress</span>
+        <span class="tag">NPS</span>
+        <span class="tag">Market share</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector"><div class="connector-line"></div></div>
+
+<div class="tier-row">
+  <div class="tier-label t2">Tier 2<br/>Operational</div>
+  <div class="tier-cards">
+    <div class="card t2-card" data-id="coo"
+      data-title="Operations Performance Hub"
+      data-user="COO, VP Operations"
+      data-refresh="Hourly / Daily"
+      data-kpis="SSS, Traffic, Conversion, Shrinkage, Labor efficiency, Store health score, Compliance rate"
+      data-drill="Drill to Region → Area → Store">
+      <span class="refresh-badge">Hourly</span>
+      <div class="card-title">Operations Hub</div>
+      <div class="card-user">COO · VP Ops</div>
+      <div class="card-tags">
+        <span class="tag">SSS</span>
+        <span class="tag">Shrinkage</span>
+        <span class="tag">Labor eff.</span>
+        <span class="tag">Compliance</span>
+      </div>
+    </div>
+    <div class="card t2-card" data-id="cmo"
+      data-title="Commercial & Category Dashboard"
+      data-user="CPO, CMO, Category Heads"
+      data-refresh="Daily"
+      data-kpis="Category sell-through, GM% by category, Promo ROI, OOS rate, Supplier fill rate, Planogram compliance"
+      data-drill="Drill to Category → SKU → Region">
+      <span class="refresh-badge">Daily</span>
+      <div class="card-title">Commercial & Category</div>
+      <div class="card-user">CPO · CMO</div>
+      <div class="card-tags">
+        <span class="tag">GM% category</span>
+        <span class="tag">OOS rate</span>
+        <span class="tag">Promo ROI</span>
+        <span class="tag">Fill rate</span>
+      </div>
+    </div>
+    <div class="card t2-card" data-id="cfo"
+      data-title="Finance & Working Capital"
+      data-user="CFO, Finance team"
+      data-refresh="Daily"
+      data-kpis="Cash position, DSO, DIO, AP aging, Store-level P&L, CapEx vs budget"
+      data-drill="Drill to Region → Store P&L">
+      <span class="refresh-badge">Daily</span>
+      <div class="card-title">Finance & Working Capital</div>
+      <div class="card-user">CFO · Finance</div>
+      <div class="card-tags">
+        <span class="tag">Cash flow</span>
+        <span class="tag">DIO/DSO</span>
+        <span class="tag">Store P&L</span>
+        <span class="tag">CapEx</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector"><div class="connector-line"></div></div>
+
+<div class="tier-row">
+  <div class="tier-label t3">Tier 3<br/>Regional</div>
+  <div class="tier-cards">
+    <div class="card t3-card" data-id="rd"
+      data-title="Regional Director Dashboard"
+      data-user="Regional Director (50-100 stores each)"
+      data-refresh="Hourly / Real-time alerts"
+      data-kpis="Regional revenue, SSS vs region avg, Store health heatmap, Cluster performance, New store ramp, Competition proximity"
+      data-drill="Drill to Area → Store">
+      <span class="refresh-badge">Hourly</span>
+      <div class="card-title">Regional Performance</div>
+      <div class="card-user">Regional Director · 50–100 stores</div>
+      <div class="card-tags">
+        <span class="tag">Heatmap</span>
+        <span class="tag">Cluster perf.</span>
+        <span class="tag">New store ramp</span>
+        <span class="tag">Comp. map</span>
+      </div>
+    </div>
+    <div class="card t3-card" data-id="tech"
+      data-title="Technology & Digital Operations"
+      data-user="CTO, IT Ops, Digital team"
+      data-refresh="Real-time"
+      data-kpis="POS uptime %, App availability, Payment success rate, CCTV coverage, Integration error rate, Mobile app DAU"
+      data-drill="Drill to System → Store → Incident">
+      <span class="refresh-badge">Real-time</span>
+      <div class="card-title">Technology Operations</div>
+      <div class="card-user">CTO · IT Ops</div>
+      <div class="card-tags">
+        <span class="tag">POS uptime</span>
+        <span class="tag">App avail.</span>
+        <span class="tag">Payment SR</span>
+        <span class="tag">Incidents</span>
+      </div>
+    </div>
+    <div class="card t3-card" data-id="expansion"
+      data-title="Expansion & Real Estate"
+      data-user="CEO, COO, Expansion team"
+      data-refresh="Weekly"
+      data-kpis="Pipeline stores, Time-to-open, Site approval rate, New store ramp curve, Lease cost/sqm, Payback period"
+      data-drill="Drill to Project → Milestone">
+      <span class="refresh-badge">Weekly</span>
+      <div class="card-title">Expansion & Real Estate</div>
+      <div class="card-user">CEO · COO · Expansion</div>
+      <div class="card-tags">
+        <span class="tag">Pipeline</span>
+        <span class="tag">Time-to-open</span>
+        <span class="tag">Ramp curve</span>
+        <span class="tag">Payback</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector"><div class="connector-line"></div></div>
+
+<div class="tier-row">
+  <div class="tier-label t4">Tier 4<br/>Area Ops</div>
+  <div class="tier-cards">
+    <div class="card t4-card" data-id="am"
+      data-title="Area Manager Operational View"
+      data-user="Area Manager (10-20 stores each)"
+      data-refresh="Real-time / Hourly"
+      data-kpis="Store-by-store revenue, Traffic vs target, Staffing gaps, Today's issues log, Task completion, Mystery shop scores"
+      data-drill="Drill to Store → Shift → Transaction">
+      <span class="refresh-badge">Real-time</span>
+      <div class="card-title">Area Manager View</div>
+      <div class="card-user">Area Manager · 10–20 stores</div>
+      <div class="card-tags">
+        <span class="tag">Store ranking</span>
+        <span class="tag">Staffing</span>
+        <span class="tag">Today issues</span>
+        <span class="tag">Task mgmt</span>
+      </div>
+    </div>
+    <div class="card t4-card" data-id="food"
+      data-title="Food Safety & Compliance"
+      data-user="QA Manager, Compliance, Regional Ops"
+      data-refresh="Daily"
+      data-kpis="Audit pass rate, Expiry waste %, Temperature log compliance, Incident reports, Near-miss log"
+      data-drill="Drill to Store → Audit → Corrective action">
+      <span class="refresh-badge">Daily</span>
+      <div class="card-title">Food Safety & Compliance</div>
+      <div class="card-user">QA · Compliance · Ops</div>
+      <div class="card-tags">
+        <span class="tag">Audit rate</span>
+        <span class="tag">Expiry waste</span>
+        <span class="tag">Temp log</span>
+        <span class="tag">Incidents</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector"><div class="connector-line"></div></div>
+
+<div class="tier-row">
+  <div class="tier-label t5">Tier 5<br/>Store Ops</div>
+  <div class="tier-cards">
+    <div class="card t5-card" data-id="store"
+      data-title="Store Manager Daily Operations"
+      data-user="Store Manager, Shift Leader"
+      data-refresh="Real-time"
+      data-kpis="Today revenue vs target, Hourly traffic, Current staff on floor, Low stock alerts, Task checklist, Customer complaints"
+      data-drill="Single store view — no drill-down needed">
+      <span class="refresh-badge">Real-time</span>
+      <div class="card-title">Store Daily Operations</div>
+      <div class="card-user">Store Manager · Shift Leader</div>
+      <div class="card-tags">
+        <span class="tag">Daily target</span>
+        <span class="tag">Hourly traffic</span>
+        <span class="tag">Low stock</span>
+        <span class="tag">Tasks</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#1a1a2e"></div>Strategic (BOD)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#2d5be3"></div>Functional (C-suite)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0f7b6c"></div>Regional/Cross-func</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c4590a"></div>Area Operations</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#888"></div>Store Level</div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-title" id="tt-title"></div>
+  <div class="tooltip-section"><strong>Primary Users</strong><span id="tt-user"></span></div>
+  <div class="tooltip-section"><strong>Refresh Rate</strong><span id="tt-refresh"></span></div>
+  <div class="tooltip-section"><strong>Key Metrics</strong><span id="tt-kpis"></span></div>
+  <div class="tooltip-section"><strong>Drill-down</strong><span id="tt-drill"></span></div>
+</div>
+
+<script>
+const tooltip = document.getElementById('tooltip');
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mouseenter', (e) => {
+    document.getElementById('tt-title').textContent = card.dataset.title;
+    document.getElementById('tt-user').textContent = card.dataset.user;
+    document.getElementById('tt-refresh').textContent = card.dataset.refresh;
+    document.getElementById('tt-kpis').textContent = card.dataset.kpis;
+    document.getElementById('tt-drill').textContent = card.dataset.drill;
+    tooltip.classList.add('visible');
+    moveTip(e);
+  });
+  card.addEventListener('mousemove', moveTip);
+  card.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+});
+function moveTip(e) {
+  let x = e.clientX + 14, y = e.clientY + 14;
+  if (x + 290 > window.innerWidth) x = e.clientX - 300;
+  if (y + 200 > window.innerHeight) y = e.clientY - 200;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+</script>
+</body>
+</html>

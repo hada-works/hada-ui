@@ -9,6 +9,7 @@ import { ProjectsPage, NewProjectPage } from "@/features/projects"
 import { BulkBuyApprovalPage, PurchasesDashboardPage, PurchasesSettingsPage } from "@/features/purchases"
 import { GbpDashboardPage, GbpInsightsPage, GbpLocationsPage, GbpReviewsPage, GbpSettingsPage } from "@/features/gbp-audits"
 import { ProductsDashboardPage, ProductsAssortmentsPage, ProductsInOutApprovalPage } from "@/features/products"
+import { OsaDashboardPage } from "@/features/store-ops"
 
 export default function App() {
   return (
@@ -56,6 +57,9 @@ export default function App() {
             <Route path="/products/dashboard"   element={<ProductsDashboardPage />} />
             <Route path="/products/assortments" element={<ProductsAssortmentsPage />} />
             <Route path="/products/in-out"      element={<ProductsInOutApprovalPage />} />
+
+            {/* Store Ops */}
+            <Route path="/store-ops/osa"        element={<OsaDashboardPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
