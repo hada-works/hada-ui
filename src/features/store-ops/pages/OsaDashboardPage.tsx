@@ -326,24 +326,17 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
   const [zoomedImage, setZoomedImage] = useState<{src: string, label: string} | null>(null)
   
   // Mocking multiple records for the AI detection every 10 mins
-  const mockRecords = [
-    {
-      id: 1,
-      time: cell.colKey.includes('h') ? cell.colKey.replace('h', ':10') : "14:10",
-      category: cell.colKey.includes('h') ? "Sữa & Chế phẩm" : cell.colKey,
+  const mockRecords = Array.from({ length: 6 }).map((_, i) => {
+    const min = (i * 10).toString().padStart(2, '0')
+    return {
+      id: i + 1,
+      time: cell.colKey.includes('h') ? cell.colKey.replace('h', `:${min}`) : `14:${min}`,
+      category: cell.colKey.includes('h') ? (i % 2 === 0 ? "Sữa & Chế phẩm" : "Thịt Cá Tươi Sống") : cell.colKey,
       camera: "CAM-03",
-      oosLines: Math.floor(cell.value * 0.6) || 1,
-      image: "https://images.unsplash.com/photo-1588964895597-cfccd6e2dbf9?q=80&w=1000&auto=format&fit=crop"
-    },
-    {
-      id: 2,
-      time: cell.colKey.includes('h') ? cell.colKey.replace('h', ':30') : "14:30",
-      category: cell.colKey.includes('h') ? "Thịt Cá Tươi Sống" : cell.colKey,
-      camera: "CAM-03",
-      oosLines: Math.ceil(cell.value * 0.4) || 1,
-      image: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=1000&auto=format&fit=crop"
+      oosLines: Math.max(1, Math.floor(cell.value * (0.15 + (Math.random() * 0.1)))),
+      image: i % 2 === 0 ? "https://images.unsplash.com/photo-1588964895597-cfccd6e2dbf9?q=80&w=1000&auto=format&fit=crop" : "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=1000&auto=format&fit=crop"
     }
-  ]
+  })
 
   if (zoomedImage) {
     return (
@@ -392,43 +385,39 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
             <div className="space-y-4">
               {mockRecords.map(record => (
                 <div key={record.id} className="bg-card border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex flex-col sm:flex-row">
+                  <div className="flex p-3 gap-4">
                     
                     {/* Image Thumbnail */}
                     <div 
-                      className="relative w-full sm:w-2/5 aspect-video sm:aspect-auto bg-muted cursor-zoom-in group shrink-0"
+                      className="relative w-28 h-20 sm:w-36 sm:h-24 bg-muted cursor-zoom-in group shrink-0 rounded-md overflow-hidden border"
                       onClick={() => setZoomedImage({ src: record.image, label: `${record.time} - ${record.category}` })}
                     >
                       <img src={record.image} alt="Shelf" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                        <ZoomIn className="size-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-lg transition-opacity" />
-                      </div>
-                      <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded flex items-center gap-1">
-                        <Camera className="size-3" />
-                        {record.camera}
+                        <ZoomIn className="size-6 text-white opacity-0 group-hover:opacity-100 drop-shadow-lg transition-opacity" />
                       </div>
                     </div>
 
                     {/* Record Info */}
-                    <div className="p-4 flex-1 flex flex-col justify-center">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                          <Clock className="size-4 text-muted-foreground" />
-                          Hôm nay, {record.time}
+                    <div className="flex-1 flex flex-col justify-center min-w-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-1.5 text-sm font-bold text-foreground truncate">
+                          <Clock className="size-3.5 text-muted-foreground shrink-0" />
+                          <span className="truncate">Hôm nay, {record.time}</span>
                         </div>
-                        <div className="bg-destructive/10 text-destructive text-sm font-bold px-2.5 py-0.5 rounded-md border border-destructive/20">
+                        <div className="bg-destructive/10 text-destructive text-xs font-bold px-2 py-0.5 rounded border border-destructive/20 shrink-0">
                           {record.oosLines} OOS
                         </div>
                       </div>
                       
-                      <div className="space-y-2.5 text-sm">
-                        <div className="flex justify-between border-b border-dashed pb-1.5">
-                          <span className="text-muted-foreground">Kênh phân tích</span>
-                          <span className="font-medium text-foreground">{record.camera}</span>
+                      <div className="space-y-1 text-xs mt-1">
+                        <div className="flex justify-between border-b border-dashed pb-1">
+                          <span className="text-muted-foreground flex items-center gap-1"><Camera className="size-3" /> Kênh</span>
+                          <span className="font-medium text-foreground truncate pl-2">{record.camera}</span>
                         </div>
-                        <div className="flex justify-between pb-0.5">
+                        <div className="flex justify-between pt-1">
                           <span className="text-muted-foreground">Ngành hàng</span>
-                          <span className="font-medium text-foreground text-right">{record.category}</span>
+                          <span className="font-medium text-foreground text-right truncate pl-2">{record.category}</span>
                         </div>
                       </div>
                     </div>
