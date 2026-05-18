@@ -34,32 +34,32 @@ const HOURS = ["06h", "07h", "08h", "09h", "10h", "11h", "12h", "13h", "14h", "1
 const HEATMAP_DATA = [
   { 
     region: "Hồ Chí Minh", 
-    categories: { "Sữa & Chế phẩm": 92, "Thịt Cá Tươi Sống": 85, "Rau Củ Quả": 88, "Đồ Khô & Gia Vị": 97 },
+    categories: { "Sữa & Chế phẩm": 45, "Thịt Cá Tươi Sống": 120, "Rau Củ Quả": 80, "Đồ Khô & Gia Vị": 15 },
     stores: [
-      { name: "CH Quận 1 - Nguyễn Thị Minh Khai", categories: { "Sữa & Chế phẩm": 89, "Thịt Cá Tươi Sống": 75, "Rau Củ Quả": 82, "Đồ Khô & Gia Vị": 96 } },
-      { name: "CH Gò Vấp - Quang Trung", categories: { "Sữa & Chế phẩm": 94, "Thịt Cá Tươi Sống": 92, "Rau Củ Quả": 90, "Đồ Khô & Gia Vị": 98 } }
+      { name: "CH Quận 1 - Nguyễn Thị Minh Khai", categories: { "Sữa & Chế phẩm": 25, "Thịt Cá Tươi Sống": 70, "Rau Củ Quả": 45, "Đồ Khô & Gia Vị": 10 } },
+      { name: "CH Gò Vấp - Quang Trung", categories: { "Sữa & Chế phẩm": 20, "Thịt Cá Tươi Sống": 50, "Rau Củ Quả": 35, "Đồ Khô & Gia Vị": 5 } }
     ]
   },
   { 
     region: "Hà Nội", 
-    categories: { "Sữa & Chế phẩm": 94, "Thịt Cá Tươi Sống": 89, "Rau Củ Quả": 91, "Đồ Khô & Gia Vị": 98 },
+    categories: { "Sữa & Chế phẩm": 30, "Thịt Cá Tươi Sống": 85, "Rau Củ Quả": 55, "Đồ Khô & Gia Vị": 10 },
     stores: [
-      { name: "CH Cầu Giấy - Xuân Thủy", categories: { "Sữa & Chế phẩm": 95, "Thịt Cá Tươi Sống": 91, "Rau Củ Quả": 93, "Đồ Khô & Gia Vị": 99 } },
-      { name: "CH Đống Đa - Thái Hà", categories: { "Sữa & Chế phẩm": 92, "Thịt Cá Tươi Sống": 86, "Rau Củ Quả": 88, "Đồ Khô & Gia Vị": 97 } }
+      { name: "CH Cầu Giấy - Xuân Thủy", categories: { "Sữa & Chế phẩm": 18, "Thịt Cá Tươi Sống": 45, "Rau Củ Quả": 30, "Đồ Khô & Gia Vị": 6 } },
+      { name: "CH Đống Đa - Thái Hà", categories: { "Sữa & Chế phẩm": 12, "Thịt Cá Tươi Sống": 40, "Rau Củ Quả": 25, "Đồ Khô & Gia Vị": 4 } }
     ]
   },
   { 
     region: "Đà Nẵng", 
-    categories: { "Sữa & Chế phẩm": 90, "Thịt Cá Tươi Sống": 82, "Rau Củ Quả": 85, "Đồ Khô & Gia Vị": 95 },
+    categories: { "Sữa & Chế phẩm": 50, "Thịt Cá Tươi Sống": 140, "Rau Củ Quả": 95, "Đồ Khô & Gia Vị": 25 },
     stores: [
-      { name: "CH Hải Châu - Lê Duẩn", categories: { "Sữa & Chế phẩm": 88, "Thịt Cá Tươi Sống": 79, "Rau Củ Quả": 84, "Đồ Khô & Gia Vị": 92 } }
+      { name: "CH Hải Châu - Lê Duẩn", categories: { "Sữa & Chế phẩm": 50, "Thịt Cá Tươi Sống": 140, "Rau Củ Quả": 95, "Đồ Khô & Gia Vị": 25 } }
     ]
   },
   { 
     region: "Tỉnh Khác", 
-    categories: { "Sữa & Chế phẩm": 95, "Thịt Cá Tươi Sống": 91, "Rau Củ Quả": 93, "Đồ Khô & Gia Vị": 99 },
+    categories: { "Sữa & Chế phẩm": 25, "Thịt Cá Tươi Sống": 60, "Rau Củ Quả": 40, "Đồ Khô & Gia Vị": 8 },
     stores: [
-      { name: "CH Cần Thơ - Ninh Kiều", categories: { "Sữa & Chế phẩm": 96, "Thịt Cá Tươi Sống": 92, "Rau Củ Quả": 94, "Đồ Khô & Gia Vị": 100 } }
+      { name: "CH Cần Thơ - Ninh Kiều", categories: { "Sữa & Chế phẩm": 25, "Thịt Cá Tươi Sống": 60, "Rau Củ Quả": 40, "Đồ Khô & Gia Vị": 8 } }
     ]
   },
 ]
@@ -153,8 +153,9 @@ function OsaHeatmap({ data, cols }: { data: typeof HEATMAP_DATA, cols: string[] 
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   const getColor = (val: number) => {
-    if (val >= 95) return "bg-[hsl(var(--success))] text-white"
-    if (val >= 90) return "bg-[hsl(var(--warning))] text-white"
+    if (val === 0) return "bg-muted/30 text-muted-foreground"
+    if (val <= 15) return "bg-[hsl(var(--success))] text-white"
+    if (val <= 40) return "bg-[hsl(var(--warning))] text-white"
     return "bg-destructive text-white"
   }
   
@@ -190,7 +191,7 @@ function OsaHeatmap({ data, cols }: { data: typeof HEATMAP_DATA, cols: string[] 
                   return (
                     <div key={c} className="flex-1 p-1">
                       <div className={cn("h-8 w-full rounded flex items-center justify-center text-xs font-bold transition-all shadow-sm", getColor(val))}>
-                        {val}%
+                        {val}
                       </div>
                     </div>
                   )
@@ -211,7 +212,7 @@ function OsaHeatmap({ data, cols }: { data: typeof HEATMAP_DATA, cols: string[] 
                         return (
                           <div key={c} className="flex-1 p-1">
                             <div className={cn("h-7 w-full rounded flex items-center justify-center text-[11px] font-semibold opacity-90 hover:opacity-100 transition-opacity", getColor(val))}>
-                              {val}%
+                              {val}
                             </div>
                           </div>
                         )
@@ -332,15 +333,15 @@ export function OsaDashboardPage() {
             {/* ── Column 1: Heatmap (Span 2) ── */}
             <div className="xl:col-span-2 flex flex-col">
               <div className="rounded-lg border bg-card overflow-hidden flex flex-col shrink-0">
-                <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
+                <div className="flex items-center justify-between px-4 py-3 border-b shrink-0 bg-muted/10">
                   <div className="flex items-center gap-2">
                     <Grid className="size-4 text-primary" />
-                    <h2 className="text-base font-semibold">Bản đồ Nhiệt (Heatmap) Tình Hình OSA: Khu Vực x Nhóm Hàng</h2>
+                    <h2 className="text-base font-semibold">Bản đồ Nhiệt (Heatmap) Tình Hình Thiếu Hàng (OOS Lines)</h2>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-muted-foreground hidden sm:flex">
-                    <div className="flex items-center gap-1"><div className="size-3 rounded-sm bg-destructive" /> &lt; 90% (Kém)</div>
-                    <div className="flex items-center gap-1"><div className="size-3 rounded-sm bg-[hsl(var(--warning))]" /> 90-95% (Cảnh báo)</div>
-                    <div className="flex items-center gap-1"><div className="size-3 rounded-sm bg-[hsl(var(--success))]" /> &ge; 95% (Tốt)</div>
+                    <div className="flex items-center gap-1"><div className="size-3 rounded-sm bg-[hsl(var(--success))]" /> Tốt</div>
+                    <div className="flex items-center gap-1"><div className="size-3 rounded-sm bg-[hsl(var(--warning))]" /> Vừa</div>
+                    <div className="flex items-center gap-1"><div className="size-3 rounded-sm bg-destructive" /> Kém</div>
                   </div>
                 </div>
                 <div className="p-4 flex-1 overflow-auto">
