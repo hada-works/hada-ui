@@ -604,6 +604,26 @@ export function OsaDashboardPage() {
                 </div>
               </div>
 
+              {/* ── Top Siêu Thị Thiếu Hàng ── */}
+              <div className="rounded-lg border bg-card p-4 shrink-0">
+                <div className="flex items-center gap-2 mb-4">
+                  <Store className="size-4 text-destructive" />
+                  <h2 className="text-base font-semibold">Top Siêu Thị Thiếu Hàng</h2>
+                </div>
+                <div className="space-y-3">
+                  {[...STORE_ALERTS].sort((a,b) => a.osaPct - b.osaPct).slice(0, 5).map(store => (
+                    <HBar 
+                      key={store.id} 
+                      label={store.name} 
+                      value={store.osaPct} 
+                      max={100} 
+                      color={store.osaPct < 90 ? "bg-destructive" : "bg-[hsl(var(--warning))]"} 
+                      subValue={`${store.oosLines} lines`}
+                    />
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
