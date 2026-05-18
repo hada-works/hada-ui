@@ -774,15 +774,83 @@ function MetricDetailSidebar({ metric, onClose }: { metric: {label: string, valu
         </div>
         
         <div className="p-5 overflow-y-auto flex-1 bg-muted/10 space-y-4">
-          <div className="bg-card border rounded-lg p-4 shadow-sm text-center text-muted-foreground py-10">
-            Dữ liệu phân tích chuyên sâu cho <strong className="text-foreground">{metric.label}</strong> đang được cập nhật...
-          </div>
-          {Array.from({length: 8}).map((_, i) => (
-             <div key={i} className="bg-card border rounded-lg p-3 shadow-sm flex items-center justify-between hover:border-primary/50 transition-colors cursor-pointer">
-                <span className="text-sm font-medium">Chi nhánh / Phân khúc {i + 1}</span>
-                <Badge variant="secondary" className="bg-background">Khám phá</Badge>
-             </div>
-          ))}
+          
+          {metric.label === "Tỷ lệ OSA" && (
+            <div className="space-y-4">
+              <div className="bg-card border rounded-lg p-4 shadow-sm">
+                <h4 className="font-semibold mb-4 text-sm text-muted-foreground uppercase tracking-wide">Tỷ lệ OSA theo khu vực</h4>
+                <div className="space-y-3">
+                  {REGION_STATS.map(r => (
+                    <HBar key={r.region} label={r.region} value={r.osaPct} max={100} color={r.osaPct < 95 ? "bg-[hsl(var(--warning))]" : "bg-[hsl(var(--success))]"} subValue={`${r.stores} cửa hàng`} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {metric.label === "Tổng OOS Lines" && (
+            <div className="space-y-4">
+              <div className="bg-card border rounded-lg p-4 shadow-sm">
+                <h4 className="font-semibold mb-4 text-sm text-muted-foreground uppercase tracking-wide">Tổng OOS theo Ngành Hàng</h4>
+                <div className="space-y-3">
+                  {[...CATEGORY_STATS].sort((a,b) => b.oosLines - a.oosLines).map(c => (
+                    <HBar key={c.name} label={c.name} value={c.oosLines} max={1000} color="bg-[hsl(var(--warning))]" subValue={`${c.osaPct}% OSA`} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(metric.label === "Cảnh báo Khẩn cấp" || metric.label === "Cửa hàng OOS cao") && (
+            <div className="space-y-4">
+              <div className="bg-card border rounded-lg p-0 shadow-sm overflow-hidden">
+                <div className="p-4 border-b bg-muted/5">
+                  <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Danh sách Cửa Hàng Cần Xử Lý</h4>
+                </div>
+                <div className="divide-y">
+                  {[...STORE_ALERTS].sort((a,b) => metric.label === "Cảnh báo Khẩn cấp" ? b.urgent - a.urgent : a.osaPct - b.osaPct).map(store => (
+                    <div key={store.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors">
+                      <div className="min-w-0 pr-4">
+                        <div className="font-semibold text-sm truncate">{store.name}</div>
+                        <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5"><MapPin className="size-3" /> {store.region}</div>
+                      </div>
+                      <div className="text-right flex flex-col items-end shrink-0">
+                        <span className="font-bold text-sm text-destructive">{metric.label === "Cảnh báo Khẩn cấp" ? `${store.urgent} ca >4h` : `${store.osaPct}%`}</span>
+                        <span className="text-xs text-muted-foreground">{store.oosLines} lines OOS</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {metric.label === "Thời gian OOS TB" && (
+            <div className="space-y-4">
+              <div className="bg-card border rounded-lg p-4 shadow-sm">
+                <h4 className="font-semibold mb-4 text-sm text-muted-foreground uppercase tracking-wide">Thời gian xử lý trung bình</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50">
+                    <span className="text-sm font-medium">Hồ Chí Minh</span>
+                    <Badge variant="outline" className="bg-background">1.2h</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50">
+                    <span className="text-sm font-medium">Đà Nẵng</span>
+                    <Badge variant="outline" className="bg-background">1.4h</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50">
+                    <span className="text-sm font-medium">Hà Nội</span>
+                    <Badge variant="outline" className="text-destructive border-destructive/50 bg-destructive/10">2.1h</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50">
+                    <span className="text-sm font-medium">Tỉnh Khác</span>
+                    <Badge variant="outline" className="bg-background">1.6h</Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
         </div>
       </div>
     </div>
