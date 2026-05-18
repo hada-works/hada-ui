@@ -372,8 +372,8 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-background rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 bg-black/20 flex justify-end backdrop-blur-[2px]" onClick={onClose}>
+      <div className="bg-background shadow-2xl w-full max-w-md sm:max-w-lg h-full overflow-hidden flex flex-col animate-in slide-in-from-right-full duration-300 border-l" onClick={e => e.stopPropagation()}>
         
         {/* Modal Header */}
         <div className="flex items-start justify-between px-5 py-4 border-b bg-card">
