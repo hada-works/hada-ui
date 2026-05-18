@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Header } from "@/components/layout/Header"
 import { Store, AlertTriangle, CheckCircle2, TrendingUp, TrendingDown, Clock, PackageX, Activity, LayoutDashboard, MapPin, Grid, ChevronRight, ChevronDown, X, ZoomIn, ZoomOut, Camera } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -330,6 +330,30 @@ function OsaTimelineHeatmap({ data, hours, onCellClick }: { data: typeof TIMELIN
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
 function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => void }) {
   const [zoomedImage, setZoomedImage] = useState<{src: string, label: string} | null>(null)
+  const [sidebarWidth, setSidebarWidth] = useState(480)
+  const isResizing = useRef(false)
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing.current) return
+      const newWidth = window.innerWidth - e.clientX
+      if (newWidth >= 320 && newWidth <= 1200) {
+        setSidebarWidth(newWidth)
+      }
+    }
+    const handleMouseUp = () => {
+      if (isResizing.current) {
+        isResizing.current = false
+        document.body.style.cursor = 'default'
+      }
+    }
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [])
   
   // Mocking multiple records for the AI detection every 10 mins
   const mockRecords = Array.from({ length: 6 }).map((_, i) => {
@@ -373,7 +397,19 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
 
   return (
     <div className="fixed inset-0 z-50 bg-black/20 flex justify-end backdrop-blur-[2px]" onClick={onClose}>
-      <div className="bg-background shadow-2xl w-full max-w-md sm:max-w-lg h-full overflow-hidden flex flex-col animate-in slide-in-from-right-full duration-300 border-l" onClick={e => e.stopPropagation()}>
+      <div 
+        className="bg-background shadow-2xl h-full overflow-hidden flex flex-col animate-in slide-in-from-right-full duration-300 border-l relative" 
+        style={{ width: sidebarWidth, maxWidth: '90vw' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Drag Handle */}
+        <div 
+          className="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-primary/50 active:bg-primary z-50 transition-colors"
+          onMouseDown={() => {
+            isResizing.current = true
+            document.body.style.cursor = 'col-resize'
+          }}
+        />
         
         {/* Modal Header */}
         <div className="flex items-start justify-between px-5 py-4 border-b bg-card">
