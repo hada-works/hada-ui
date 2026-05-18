@@ -110,6 +110,12 @@ const STORE_ALERTS = [
   { id: "S045", name: "CH Gò Vấp - Quang Trung", region: "Hồ Chí Minh", oosLines: 98, urgent: 20, osaPct: 91.5 },
   { id: "S082", name: "CH Cầu Giấy - Xuân Thủy", region: "Hà Nội", oosLines: 85, urgent: 15, osaPct: 92.1 },
   { id: "S105", name: "CH Hải Châu - Lê Duẩn", region: "Đà Nẵng", oosLines: 110, urgent: 30, osaPct: 87.5 },
+  { id: "S032", name: "CH Bình Thạnh - Xô Viết Nghệ Tĩnh", region: "Hồ Chí Minh", oosLines: 105, urgent: 25, osaPct: 90.0 },
+  { id: "S112", name: "CH Hoàn Kiếm - Hai Bà Trưng", region: "Hà Nội", oosLines: 78, urgent: 12, osaPct: 93.4 },
+  { id: "S099", name: "CH Thủ Đức - Võ Văn Ngân", region: "Hồ Chí Minh", oosLines: 95, urgent: 18, osaPct: 90.8 },
+  { id: "S021", name: "CH Quận 7 - Nguyễn Thị Thập", region: "Hồ Chí Minh", oosLines: 88, urgent: 14, osaPct: 91.2 },
+  { id: "S133", name: "CH Thanh Khê - Điện Biên Phủ", region: "Đà Nẵng", oosLines: 72, urgent: 10, osaPct: 94.1 },
+  { id: "S067", name: "CH Cần Thơ - 30 Tháng 4", region: "Tỉnh Khác", oosLines: 82, urgent: 16, osaPct: 92.5 },
 ]
 
 function fmtK(n: number) { return n >= 1000 ? `${(n / 1000).toFixed(1)}K` : String(n) }
@@ -611,7 +617,7 @@ export function OsaDashboardPage() {
                   <h2 className="text-base font-semibold">Top Siêu Thị Thiếu Hàng</h2>
                 </div>
                 <div className="space-y-3">
-                  {[...STORE_ALERTS].sort((a,b) => a.osaPct - b.osaPct).slice(0, 5).map(store => (
+                  {[...STORE_ALERTS].sort((a,b) => a.osaPct - b.osaPct).slice(0, 10).map(store => (
                     <HBar 
                       key={store.id} 
                       label={store.name} 
