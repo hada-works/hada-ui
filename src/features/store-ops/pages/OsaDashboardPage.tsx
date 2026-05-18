@@ -332,19 +332,27 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
   const [zoomedImage, setZoomedImage] = useState<{src: string, label: string} | null>(null)
   const [sidebarWidth, setSidebarWidth] = useState(480)
   const isResizing = useRef(false)
+  const isDragging = useRef(false)
 
   useEffect(() => {
+    let animationFrameId: number;
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing.current) return
-      const newWidth = window.innerWidth - e.clientX
-      if (newWidth >= 320 && newWidth <= 1200) {
-        setSidebarWidth(newWidth)
-      }
+      cancelAnimationFrame(animationFrameId)
+      animationFrameId = requestAnimationFrame(() => {
+        const newWidth = window.innerWidth - e.clientX
+        if (newWidth >= 320 && newWidth <= 1200) {
+          setSidebarWidth(newWidth)
+        }
+      })
     }
     const handleMouseUp = () => {
       if (isResizing.current) {
         isResizing.current = false
         document.body.style.cursor = 'default'
+        setTimeout(() => {
+          isDragging.current = false
+        }, 100)
       }
     }
     document.addEventListener('mousemove', handleMouseMove)
@@ -352,6 +360,7 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
     return () => {
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
+      cancelAnimationFrame(animationFrameId)
     }
   }, [])
   
@@ -396,10 +405,15 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/20 flex justify-end backdrop-blur-[2px]" onClick={onClose}>
+    <div 
+      className="fixed inset-0 z-50 bg-black/20 flex justify-end backdrop-blur-[2px]" 
+      onClick={() => {
+        if (!isDragging.current) onClose()
+      }}
+    >
       <div 
         className="bg-background shadow-2xl h-full overflow-hidden flex flex-col animate-in slide-in-from-right-full duration-300 border-l relative" 
-        style={{ width: sidebarWidth, maxWidth: '90vw' }}
+        style={{ width: sidebarWidth, maxWidth: '90vw', transition: 'none' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Drag Handle */}
@@ -407,6 +421,7 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
           className="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-primary/50 active:bg-primary z-50 transition-colors"
           onMouseDown={() => {
             isResizing.current = true
+            isDragging.current = true
             document.body.style.cursor = 'col-resize'
           }}
         />
