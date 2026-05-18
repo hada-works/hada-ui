@@ -323,19 +323,39 @@ function OsaTimelineHeatmap({ data, hours, onCellClick }: { data: typeof TIMELIN
 
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
 function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => void }) {
-  const [isZoomed, setIsZoomed] = useState(false)
+  const [zoomedImage, setZoomedImage] = useState<{src: string, label: string} | null>(null)
   
-  const shelfImageUrl = "https://images.unsplash.com/photo-1588964895597-cfccd6e2dbf9?q=80&w=1000&auto=format&fit=crop"
+  // Mocking multiple records for the AI detection every 10 mins
+  const mockRecords = [
+    {
+      id: 1,
+      time: cell.colKey.includes('h') ? cell.colKey.replace('h', ':10') : "14:10",
+      category: cell.colKey.includes('h') ? "Sữa & Chế phẩm" : cell.colKey,
+      camera: "CAM-03",
+      oosLines: Math.floor(cell.value * 0.6) || 1,
+      image: "https://images.unsplash.com/photo-1588964895597-cfccd6e2dbf9?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+      id: 2,
+      time: cell.colKey.includes('h') ? cell.colKey.replace('h', ':30') : "14:30",
+      category: cell.colKey.includes('h') ? "Thịt Cá Tươi Sống" : cell.colKey,
+      camera: "CAM-03",
+      oosLines: Math.ceil(cell.value * 0.4) || 1,
+      image: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=1000&auto=format&fit=crop"
+    }
+  ]
 
-  if (isZoomed) {
+  if (zoomedImage) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-4">
-        <button onClick={() => setIsZoomed(false)} className="absolute top-4 right-4 text-white/70 hover:text-white p-2 bg-black/50 rounded-full">
+      <div className="fixed inset-0 z-[110] bg-black/95 flex flex-col items-center justify-center p-4 animate-in fade-in">
+        <button onClick={() => setZoomedImage(null)} className="absolute top-4 right-4 text-white/70 hover:text-white p-2 bg-black/50 rounded-full transition-colors">
           <ZoomOut className="size-6" />
         </button>
-        <img src={shelfImageUrl} alt="Fullsize Shelf" className="max-w-full max-h-full object-contain" />
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
-          {cell.store} • {cell.colKey}
+        <img src={zoomedImage.src} alt="Fullsize Shelf" className="max-w-full max-h-[90vh] object-contain rounded-md" />
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/70 text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg flex items-center gap-2">
+          <span>{cell.store}</span>
+          <span className="text-white/50">•</span>
+          <span>{zoomedImage.label}</span>
         </div>
       </div>
     )
@@ -343,65 +363,87 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-background rounded-lg shadow-xl w-full max-w-lg overflow-hidden flex flex-col animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h3 className="font-semibold text-lg">Chi tiết lỗ trống OOS</h3>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+      <div className="bg-background rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+        
+        {/* Modal Header */}
+        <div className="flex items-start justify-between px-5 py-4 border-b bg-card">
+          <div>
+            <h3 className="font-semibold text-lg text-foreground flex items-center gap-2">
+              <Camera className="size-5 text-[hsl(var(--info))]" />
+              Lịch sử ghi nhận AI (OOS)
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              {cell.store} • {cell.region} • <span className="font-medium text-foreground">{cell.colKey}</span>
+            </p>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground hover:bg-muted p-1.5 rounded-md transition-colors">
             <X className="size-5" />
           </button>
         </div>
         
-        <div className="p-4 space-y-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-muted-foreground mb-1 text-xs">Chi nhánh</p>
-              <p className="font-medium">{cell.store}</p>
+        {/* Modal Body */}
+        <div className="p-0 overflow-y-auto flex-1 bg-muted/10">
+          <div className="p-5 space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <Badge variant="destructive" className="px-3 py-1 text-sm shadow-sm">Tổng OOS: {cell.value}</Badge>
+              <Badge variant="outline" className="bg-background px-3 py-1 shadow-sm text-muted-foreground">Chu kỳ quét: 10 phút</Badge>
             </div>
-            <div>
-              <p className="text-muted-foreground mb-1 text-xs">Khu vực</p>
-              <p className="font-medium">{cell.region}</p>
+            
+            <div className="space-y-4">
+              {mockRecords.map(record => (
+                <div key={record.id} className="bg-card border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex flex-col sm:flex-row">
+                    
+                    {/* Image Thumbnail */}
+                    <div 
+                      className="relative w-full sm:w-2/5 aspect-video sm:aspect-auto bg-muted cursor-zoom-in group shrink-0"
+                      onClick={() => setZoomedImage({ src: record.image, label: `${record.time} - ${record.category}` })}
+                    >
+                      <img src={record.image} alt="Shelf" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                        <ZoomIn className="size-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-lg transition-opacity" />
+                      </div>
+                      <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded flex items-center gap-1">
+                        <Camera className="size-3" />
+                        {record.camera}
+                      </div>
+                    </div>
+
+                    {/* Record Info */}
+                    <div className="p-4 flex-1 flex flex-col justify-center">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                          <Clock className="size-4 text-muted-foreground" />
+                          Hôm nay, {record.time}
+                        </div>
+                        <div className="bg-destructive/10 text-destructive text-sm font-bold px-2.5 py-0.5 rounded-md border border-destructive/20">
+                          {record.oosLines} OOS
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2.5 text-sm">
+                        <div className="flex justify-between border-b border-dashed pb-1.5">
+                          <span className="text-muted-foreground">Kênh phân tích</span>
+                          <span className="font-medium text-foreground">{record.camera}</span>
+                        </div>
+                        <div className="flex justify-between pb-0.5">
+                          <span className="text-muted-foreground">Ngành hàng</span>
+                          <span className="font-medium text-foreground text-right">{record.category}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              ))}
             </div>
-            <div>
-              <p className="text-muted-foreground mb-1 text-xs">Phân loại (Ngành hàng / Giờ)</p>
-              <p className="font-medium">{cell.colKey}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground mb-1 text-xs">Thời gian ghi nhận</p>
-              <p className="font-medium">Hôm nay, {cell.colKey.includes('h') ? cell.colKey.replace('h', ':00') : '14:30'}</p>
-            </div>
+            
           </div>
-          
-          <div className="flex items-center gap-4 bg-muted/30 p-3 rounded-lg border">
-            <div className="flex items-center gap-3 flex-1">
-              <Camera className="size-8 text-[hsl(var(--info))]" />
-              <div>
-                <p className="text-xs text-muted-foreground">Kênh Camera AI</p>
-                <p className="font-semibold text-sm">CAM-03 - Quầy {cell.colKey.includes('h') ? 'Tổng hợp' : cell.colKey}</p>
-              </div>
-            </div>
-            <div className="text-right pl-4 border-l">
-              <p className="text-xs text-muted-foreground">Lỗ trống</p>
-              <p className="font-bold text-2xl text-destructive leading-none">{cell.value}</p>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Hình ảnh hiện trường (Click để phóng to)</p>
-            <div 
-              className="relative aspect-video bg-muted rounded-lg overflow-hidden cursor-zoom-in group border"
-              onClick={() => setIsZoomed(true)}
-            >
-              <img src={shelfImageUrl} alt="Shelf" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                <ZoomIn className="size-10 text-white opacity-0 group-hover:opacity-100 drop-shadow-lg transition-opacity" />
-              </div>
-            </div>
-          </div>
-          
         </div>
         
-        <div className="px-4 py-3 border-t bg-muted/20 flex justify-end">
-          <button onClick={onClose} className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md shadow hover:bg-primary/90">
+        {/* Modal Footer */}
+        <div className="px-5 py-3 border-t bg-muted/30 flex justify-end">
+          <button onClick={onClose} className="px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md shadow hover:bg-primary/90 transition-colors">
             Đóng
           </button>
         </div>
