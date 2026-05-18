@@ -340,12 +340,23 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
 
   if (zoomedImage) {
     return (
-      <div className="fixed inset-0 z-[110] bg-black/95 flex flex-col items-center justify-center p-4 animate-in fade-in">
+      <div 
+        className="fixed inset-0 z-[110] bg-black/95 flex flex-col items-center justify-center p-4 animate-in fade-in"
+        onClick={() => setZoomedImage(null)}
+      >
         <button onClick={() => setZoomedImage(null)} className="absolute top-4 right-4 text-white/70 hover:text-white p-2 bg-black/50 rounded-full transition-colors">
           <ZoomOut className="size-6" />
         </button>
-        <img src={zoomedImage.src} alt="Fullsize Shelf" className="max-w-full max-h-[90vh] object-contain rounded-md" />
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/70 text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg flex items-center gap-2">
+        <img 
+          src={zoomedImage.src} 
+          alt="Fullsize Shelf" 
+          className="max-w-full max-h-[90vh] object-contain rounded-md" 
+          onClick={(e) => e.stopPropagation()} 
+        />
+        <div 
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/70 text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg flex items-center gap-2"
+          onClick={(e) => e.stopPropagation()}
+        >
           <span>{cell.store}</span>
           <span className="text-white/50">•</span>
           <span>{zoomedImage.label}</span>
