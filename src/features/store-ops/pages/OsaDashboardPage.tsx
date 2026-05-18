@@ -1,8 +1,16 @@
 import { useState } from "react"
 import { Header } from "@/components/layout/Header"
-import { Store, AlertTriangle, CheckCircle2, TrendingUp, TrendingDown, Clock, PackageX, Activity, LayoutDashboard, MapPin, Grid, ChevronRight, ChevronDown } from "lucide-react"
+import { Store, AlertTriangle, CheckCircle2, TrendingUp, TrendingDown, Clock, PackageX, Activity, LayoutDashboard, MapPin, Grid, ChevronRight, ChevronDown, X, ZoomIn, ZoomOut, Camera } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+
+// ─── TYPES ─────────────────────────────────────────────────────────────────
+export type CellDetail = {
+  region: string;
+  store: string;
+  colKey: string;
+  value: number;
+}
 
 // ─── MOCK DATA ─────────────────────────────────────────────────────────────
 const OSA_STATS = {
@@ -149,7 +157,7 @@ function HBar({ label, value, max, color, subValue }: { label: string; value: nu
 }
 
 // ─── Heatmap ──────────────────────────────────────────────────────────────────
-function OsaHeatmap({ data, cols }: { data: typeof HEATMAP_DATA, cols: string[] }) {
+function OsaHeatmap({ data, cols, onCellClick }: { data: typeof HEATMAP_DATA, cols: string[], onCellClick: (c: CellDetail) => void }) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   const getColor = (val: number) => {
@@ -211,7 +219,10 @@ function OsaHeatmap({ data, cols }: { data: typeof HEATMAP_DATA, cols: string[] 
                         const val = store.categories[c as keyof typeof store.categories]
                         return (
                           <div key={c} className="flex-1 p-1">
-                            <div className={cn("h-7 w-full rounded flex items-center justify-center text-[11px] font-semibold opacity-90 hover:opacity-100 transition-opacity", getColor(val))}>
+                            <div 
+                              className={cn("h-7 w-full rounded flex items-center justify-center text-[11px] font-semibold opacity-90 hover:opacity-100 transition-opacity cursor-pointer", getColor(val))}
+                              onClick={() => onCellClick({ region: row.region, store: store.name, colKey: c, value: val })}
+                            >
                               {val}
                             </div>
                           </div>
@@ -231,7 +242,7 @@ function OsaHeatmap({ data, cols }: { data: typeof HEATMAP_DATA, cols: string[] 
 }
 
 // ─── Timeline Heatmap ─────────────────────────────────────────────────────────
-function OsaTimelineHeatmap({ data, hours }: { data: typeof TIMELINE_DATA, hours: string[] }) {
+function OsaTimelineHeatmap({ data, hours, onCellClick }: { data: typeof TIMELINE_DATA, hours: string[], onCellClick: (c: CellDetail) => void }) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   // Inverse logic: more OOS = red (bad), less OOS = green (good)
@@ -289,7 +300,10 @@ function OsaTimelineHeatmap({ data, hours }: { data: typeof TIMELINE_DATA, hours
                       </div>
                       {store.hours.map((val, idx) => (
                         <div key={idx} className="flex-1 p-0.5">
-                          <div className={cn("h-6 w-full rounded-sm flex items-center justify-center text-[10px] font-semibold opacity-90 hover:opacity-100 transition-opacity", getColor(val))}>
+                          <div 
+                            className={cn("h-6 w-full rounded-sm flex items-center justify-center text-[10px] font-semibold opacity-90 hover:opacity-100 transition-opacity cursor-pointer", getColor(val))}
+                            onClick={() => onCellClick({ region: row.region, store: store.name, colKey: hours[idx], value: val })}
+                          >
                             {val}
                           </div>
                         </div>
@@ -307,7 +321,98 @@ function OsaTimelineHeatmap({ data, hours }: { data: typeof TIMELINE_DATA, hours
   )
 }
 
+// ─── Detail Modal ─────────────────────────────────────────────────────────────
+function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => void }) {
+  const [isZoomed, setIsZoomed] = useState(false)
+  
+  const shelfImageUrl = "https://images.unsplash.com/photo-1588964895597-cfccd6e2dbf9?q=80&w=1000&auto=format&fit=crop"
+
+  if (isZoomed) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-4">
+        <button onClick={() => setIsZoomed(false)} className="absolute top-4 right-4 text-white/70 hover:text-white p-2 bg-black/50 rounded-full">
+          <ZoomOut className="size-6" />
+        </button>
+        <img src={shelfImageUrl} alt="Fullsize Shelf" className="max-w-full max-h-full object-contain" />
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
+          {cell.store} • {cell.colKey}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={onClose}>
+      <div className="bg-background rounded-lg shadow-xl w-full max-w-lg overflow-hidden flex flex-col animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-4 py-3 border-b">
+          <h3 className="font-semibold text-lg">Chi tiết lỗ trống OOS</h3>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+            <X className="size-5" />
+          </button>
+        </div>
+        
+        <div className="p-4 space-y-4">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-muted-foreground mb-1 text-xs">Chi nhánh</p>
+              <p className="font-medium">{cell.store}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground mb-1 text-xs">Khu vực</p>
+              <p className="font-medium">{cell.region}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground mb-1 text-xs">Phân loại (Ngành hàng / Giờ)</p>
+              <p className="font-medium">{cell.colKey}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground mb-1 text-xs">Thời gian ghi nhận</p>
+              <p className="font-medium">Hôm nay, {cell.colKey.includes('h') ? cell.colKey.replace('h', ':00') : '14:30'}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4 bg-muted/30 p-3 rounded-lg border">
+            <div className="flex items-center gap-3 flex-1">
+              <Camera className="size-8 text-[hsl(var(--info))]" />
+              <div>
+                <p className="text-xs text-muted-foreground">Kênh Camera AI</p>
+                <p className="font-semibold text-sm">CAM-03 - Quầy {cell.colKey.includes('h') ? 'Tổng hợp' : cell.colKey}</p>
+              </div>
+            </div>
+            <div className="text-right pl-4 border-l">
+              <p className="text-xs text-muted-foreground">Lỗ trống</p>
+              <p className="font-bold text-2xl text-destructive leading-none">{cell.value}</p>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Hình ảnh hiện trường (Click để phóng to)</p>
+            <div 
+              className="relative aspect-video bg-muted rounded-lg overflow-hidden cursor-zoom-in group border"
+              onClick={() => setIsZoomed(true)}
+            >
+              <img src={shelfImageUrl} alt="Shelf" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                <ZoomIn className="size-10 text-white opacity-0 group-hover:opacity-100 drop-shadow-lg transition-opacity" />
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        <div className="px-4 py-3 border-t bg-muted/20 flex justify-end">
+          <button onClick={onClose} className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md shadow hover:bg-primary/90">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function OsaDashboardPage() {
+  const [selectedCell, setSelectedCell] = useState<CellDetail | null>(null)
+
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
       <Header 
@@ -345,7 +450,7 @@ export function OsaDashboardPage() {
                   </div>
                 </div>
                 <div className="p-4 flex-1 overflow-auto">
-                  <OsaHeatmap data={HEATMAP_DATA} cols={CATEGORY_KEYS} />
+                  <OsaHeatmap data={HEATMAP_DATA} cols={CATEGORY_KEYS} onCellClick={setSelectedCell} />
                 </div>
               </div>
 
@@ -372,7 +477,7 @@ export function OsaDashboardPage() {
                   </div>
                 </div>
                 <div className="p-4 flex-1 overflow-auto">
-                  <OsaTimelineHeatmap data={TIMELINE_DATA} hours={HOURS} />
+                  <OsaTimelineHeatmap data={TIMELINE_DATA} hours={HOURS} onCellClick={setSelectedCell} />
                 </div>
               </div>
             </div>
@@ -461,6 +566,10 @@ export function OsaDashboardPage() {
           </div>
         </div>
       </div>
+
+      {selectedCell && (
+        <OsaDetailModal cell={selectedCell} onClose={() => setSelectedCell(null)} />
+      )}
     </div>
   )
 }
