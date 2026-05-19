@@ -333,6 +333,8 @@ function OsaTimelineHeatmap({ data, hours, onCellClick }: { data: typeof TIMELIN
 
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
 function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => void }) {
+  const isCategoryHeatmap = CATEGORY_KEYS.includes(cell.colKey)
+  const [selectedCategory, setSelectedCategory] = useState<string>(isCategoryHeatmap ? cell.colKey : "Tất cả")
   const [zoomedImage, setZoomedImage] = useState<{src: string, label: string} | null>(null)
   const [sidebarWidth, setSidebarWidth] = useState(480)
   const isResizing = useRef(false)
@@ -367,14 +369,29 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
       cancelAnimationFrame(animationFrameId)
     }
   }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (zoomedImage) {
+          setZoomedImage(null)
+        } else {
+          onClose()
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [zoomedImage, onClose])
   
   // Mocking multiple records for the AI detection every 10 mins
   const mockRecords = Array.from({ length: 6 }).map((_, i) => {
     const min = (i * 10).toString().padStart(2, '0')
+    let cat = selectedCategory !== "Tất cả" ? selectedCategory : CATEGORY_KEYS[i % CATEGORY_KEYS.length]
     return {
       id: i + 1,
       time: cell.colKey.includes('h') ? cell.colKey.replace('h', `:${min}`) : `14:${min}`,
-      category: cell.colKey.includes('h') ? (i % 2 === 0 ? "Sữa & Chế phẩm" : "Thịt Cá Tươi Sống") : cell.colKey,
+      category: cat,
       camera: "CAM-03",
       oosLines: Math.max(1, Math.floor(cell.value * (0.15 + (Math.random() * 0.1)))),
       image: i % 2 === 0 ? "https://images.unsplash.com/photo-1588964895597-cfccd6e2dbf9?q=80&w=1000&auto=format&fit=crop" : "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=1000&auto=format&fit=crop"
@@ -438,7 +455,7 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
               Lịch sử ghi nhận AI (OOS)
             </h3>
             <p className="text-sm text-muted-foreground mt-1">
-              {cell.store} • {cell.region} • <span className="font-medium text-foreground">{cell.colKey}</span>
+              {cell.store} • {cell.region}{!isCategoryHeatmap && <> • <span className="font-medium text-foreground">{cell.colKey}</span></>}
             </p>
           </div>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground hover:bg-muted p-1.5 rounded-md transition-colors">
@@ -449,9 +466,19 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
         {/* Modal Body */}
         <div className="p-0 overflow-y-auto flex-1 bg-muted/10">
           <div className="p-5 space-y-4">
-            <div className="flex items-center gap-3 mb-2">
-              <Badge variant="destructive" className="px-3 py-1 text-sm shadow-sm">Tổng OOS: {cell.value}</Badge>
-              <Badge variant="outline" className="bg-background px-3 py-1 shadow-sm text-muted-foreground">Chu kỳ quét: 10 phút</Badge>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <Badge variant="destructive" className="px-3 py-1 text-sm shadow-sm">Tổng OOS: {cell.value}</Badge>
+                <Badge variant="outline" className="bg-background px-3 py-1 shadow-sm text-muted-foreground">Chu kỳ quét: 10 phút</Badge>
+              </div>
+              <select 
+                className="text-xs font-medium border rounded-md px-2 py-1.5 bg-background text-foreground hover:bg-muted/50 cursor-pointer outline-none shadow-sm"
+                value={selectedCategory}
+                onChange={e => setSelectedCategory(e.target.value)}
+              >
+                <option value="Tất cả">Tất cả ngành hàng</option>
+                {CATEGORY_KEYS.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
             </div>
             
             <div className="space-y-4">
@@ -500,13 +527,6 @@ function OsaDetailModal({ cell, onClose }: { cell: CellDetail, onClose: () => vo
             </div>
             
           </div>
-        </div>
-        
-        {/* Modal Footer */}
-        <div className="px-5 py-3 border-t bg-muted/30 flex justify-end">
-          <button onClick={onClose} className="px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md shadow hover:bg-primary/90 transition-colors">
-            Đóng
-          </button>
         </div>
       </div>
     </div>
